@@ -7,7 +7,9 @@ use Illuminate\Support\Collection;
 
 interface UserOTPVerificationRepository
 {
-
     public function insert(UserOTPVerificationDAO $userOTPVerificationDAO): int;
-    public function findByUserIdAndOtp(int $userId, string $otp): Collection;
+
+    public function findByEmailAndOtp(string $email, string $otp): Collection;
+    
+    public function findByEmailAndOtpAndExpiry(string $email, string $otp): Collection;
 }

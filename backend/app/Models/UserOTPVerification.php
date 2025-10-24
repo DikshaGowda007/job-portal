@@ -15,7 +15,6 @@ class UserOTPVerification extends Model
         'otp',
         'expires_at',
         'created_at',
-        'updated_at',
     ];
 
     public function getTableName(): string

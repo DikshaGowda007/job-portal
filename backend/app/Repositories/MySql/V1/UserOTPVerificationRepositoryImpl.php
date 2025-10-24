@@ -10,15 +10,25 @@ use Illuminate\Support\Collection;
 
 class UserOTPVerificationRepositoryImpl implements UserOTPVerificationRepository
 {
-
     public function insert(UserOTPVerificationDAO $userOTPVerificationDAO): int
     {
         $userOTPVerificationDAO->setCreatedAt(Carbon::now()->format('Y-m-d H:i:s'));
+
         return UserOTPVerification::create($userOTPVerificationDAO->toArray())->id;
     }
 
-    public function findByUserIdAndOtp(int $userId, string $otp): Collection
+    public function findByEmailAndOtp(string $email, string $otp): Collection
     {
-        return UserOTPVerification::where('user_id', $userId)->where('otp', $otp)->where('expires_at', '>=', Carbon::now()->format('Y-m-d H:i:s'))->get();
+        return UserOTPVerification::where('email', $email)
+            ->where('otp', $otp)
+            ->get();
+    }
+
+    public function findByEmailAndOtpAndExpiry(string $email, string $otp): Collection
+    {
+        return UserOTPVerification::where('email', $email)
+            ->where('otp', $otp)
+            ->where('expires_at', '>', Carbon::now()->format('Y-m-d H:i:s'))
+            ->get();
     }
 }
