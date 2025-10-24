@@ -4,10 +4,12 @@ namespace App\Modules\Auth\Signup\Services;
 
 use App\Constants\CommonConstant;
 use App\Exceptions\DataInsertFailed;
+use App\Exceptions\DataNotFoundException;
 use App\Mail\SendOtpMail;
 use App\Repositories\DAO\V1\UserOTPVerificationDAO;
 use App\Repositories\V1\UserOTPVerificationRepository;
 use Carbon\Carbon;
+use Exception;
 use Mail;
 
 class OtpService
@@ -21,6 +23,9 @@ class OtpService
             $this->insert($userId);
             $this->sendMail($email);
             return ['status' => CommonConstant::OTP_SENT_SUCCESS, 'user_id' => $userId];
+        } catch (Exception $e) {
+            \Log::error('OTP Send Error: ' . $e->getMessage());
+            return ['status' => CommonConstant::ERROR, 'message' => CommonConstant::OTP_SENT_FAIL];
         } catch (\Throwable $e) {
             \Log::error('OTP Send Error: ' . $e->getMessage());
             return ['status' => CommonConstant::ERROR, 'message' => CommonConstant::OTP_SENT_FAIL];
@@ -49,6 +54,17 @@ class OtpService
 
     private function sendMail(string $email): void
     {
-        Mail::to($email)->send(new SendOtpMail($this->userOTPVerificationDAO->getOtp()));
+        try {
+            $otp = $this->userOTPVerificationDAO->getOtp();
+
+            if (empty($otp)) {
+                throw DataNotFoundException::withMessage("OTP not found while sending email to {$email}");
+            }
+
+            Mail::to($email)->send(new SendOtpMail($otp));
+
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }
