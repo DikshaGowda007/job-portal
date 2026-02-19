@@ -40,4 +40,6 @@ class CommonConstant
     public const STATUS_ACTIVE = 1;
 
     public const STATUS_INACTIVE = 0;
+
+    public const STATUS_BLOCKED = 2;
 }

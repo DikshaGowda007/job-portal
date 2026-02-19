@@ -1,9 +1,15 @@
 <?php
 
+use App\Constants\UserConstant;
 use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\Job\JobController;
 
 Route::prefix('auth')->group(function () {
     Route::post('/signup', [UserController::class, 'signup'])->name('UserController.signup');
     Route::post('/login', [UserController::class, 'login'])->name('UserController.login');
     Route::post('/verifyOtp', [UserController::class, 'verifyOtp'])->name('verifyOtp');
+});
+
+Route::prefix('job')->middleware(['jwt.verify', 'access.role:' . UserConstant::USER_ROLE_ADMIN . '|' . UserConstant::USER_ROLE_SUB_ADMIN . '|' . UserConstant::USER_ROLE_RECRUITER . '|' . UserConstant::USER_ROLE_JOB_SEEKER])->group(function () {
+    Route::post('/add', [JobController::class, 'add'])->name('JobController.add');
 });
