@@ -27,6 +27,6 @@ class GateServiceProvider extends ServiceProvider
     private function registerJobGates(): void
     {
         Gate::define('job_publish', [JobPolicy::class, 'publish']);
-
+        Gate::define('job_edit', [JobPolicy::class, 'edit']);
     }
 }
