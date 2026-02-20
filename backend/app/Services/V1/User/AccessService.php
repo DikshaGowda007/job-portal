@@ -18,4 +18,9 @@ class AccessService
     {
         return Gate::allows('job_publish', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
     }
+
+    public function hasJobEditAccess()
+    {
+        return Gate::allows('job_edit', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Repositories\DAO\V1;
 
 class JobPostDAO
 {
+    private ?int $id = null;
     private ?int $userId = null;
     private ?string $companyName = null;
     private ?string $title = null;
@@ -120,11 +121,25 @@ class JobPostDAO
     /**
      * Set the value of userId
      */
-    public function setUserId(?int $userId): self
+    public function setUserId(?int $userId): void
     {
         $this->userId = $userId;
+    }
 
-        return $this;
+    /**
+     * Get the value of id
+     */
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set the value of id
+     */
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
     }
 
     /**

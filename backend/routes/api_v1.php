@@ -12,4 +12,5 @@ Route::prefix('auth')->group(function () {
 
 Route::prefix('job')->middleware(['jwt.verify', 'access.role:' . UserConstant::USER_ROLE_ADMIN . '|' . UserConstant::USER_ROLE_SUB_ADMIN . '|' . UserConstant::USER_ROLE_RECRUITER . '|' . UserConstant::USER_ROLE_JOB_SEEKER])->group(function () {
     Route::post('/add', [JobController::class, 'add'])->name('JobController.add');
+    Route::post('/edit', [JobController::class, 'edit'])->name('JobController.edit');
 });

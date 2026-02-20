@@ -3,7 +3,9 @@
 namespace App\Modules\V1\Job\Helpers;
 
 use App\Modules\V1\Job\Bo\Add\DetailsBo as AddDetailsBo;
+use App\Modules\V1\Job\Bo\Edit\DetailsBo as EditDetailsBo;
 use App\Http\Requests\V1\Job\Add\DetailsRequest as AddDetailsRequest;
+use App\Http\Requests\V1\Job\Edit\DetailsRequest as EditDetailsRequest;
 use App\Repositories\DAO\V1\JobPostDAO;
 use App\Traits\V1\AccessRightsTrait;
 
@@ -16,17 +18,24 @@ class JobHelper
         $this->initializeUserAuthorizationData();
     }
 
-    public function prepareBo(AddDetailsRequest $detailsRequest): AddDetailsBo
+    public function prepareBo(AddDetailsRequest|EditDetailsRequest $detailsRequest): AddDetailsBo|EditDetailsBo
     {
         $detailsBo = null;
 
-        if ($detailsRequest instanceof AddDetailsRequest) { 
+        if ($detailsRequest instanceof AddDetailsRequest) {
             $detailsBo = new AddDetailsBo();
+            $detailsBo->setUserId($this->loggedInUserId);
+        } elseif ($detailsRequest instanceof EditDetailsRequest) {
+            $detailsBo = new EditDetailsBo();
+            $detailsBo->setModifiedByUserId($this->loggedInUserId);
         }
 
+        if (!empty($detailsRequest->input('id'))) {
+            $detailsBo->setId($detailsRequest->input('id'));
+        }
         if (!empty($detailsRequest->input('title'))) {
             $detailsBo->setTitle($detailsRequest->input('title'));
-            }
+        }
         if (!empty($detailsRequest->input('company_name'))) {
             $detailsBo->setCompanyName($detailsRequest->input('company_name'));
         }
@@ -91,34 +100,81 @@ class JobHelper
         return $detailsBo;
     }
 
-    public function prepareDAO(AddDetailsBo $detailsBo): JobPostDAO
+    public function prepareDAO(AddDetailsBo|EditDetailsBo $detailsBo): JobPostDAO
     {
         $this->jobPostDAO->setUserId($this->loggedInUserId);
-        $this->jobPostDAO->setCompanyName($detailsBo->getCompanyName());
-        $this->jobPostDAO->setTitle($detailsBo->getTitle());
-        $this->jobPostDAO->setJobDescription($detailsBo->getJobDescription());
-        $this->jobPostDAO->setLocation($detailsBo->getLocation());
 
-        $this->jobPostDAO->setSalary($detailsBo->getSalary());
-        $this->jobPostDAO->setSalaryMin($detailsBo->getSalaryMin());
-        $this->jobPostDAO->setSalaryMax($detailsBo->getSalaryMax());
-        $this->jobPostDAO->setSalaryCurrency($detailsBo->getSalaryCurrency());
-        $this->jobPostDAO->setSalaryType($detailsBo->getSalaryType());
+        if (!empty($detailsBo->getId())) {
+            $this->jobPostDAO->setId($detailsBo->getId());
+        }
 
-        $this->jobPostDAO->setJobCategoryId($detailsBo->getJobCategoryId());
-        $this->jobPostDAO->setWorkMode($detailsBo->getWorkMode());
-        $this->jobPostDAO->setJobType($detailsBo->getJobType());
+        if (!empty($detailsBo->getCompanyName())) {
+            $this->jobPostDAO->setCompanyName($detailsBo->getCompanyName());
+        }
+        if (!empty($detailsBo->getTitle())) {
+            $this->jobPostDAO->setTitle($detailsBo->getTitle());
+        }
+        if (!empty($detailsBo->getJobDescription())) {
+            $this->jobPostDAO->setJobDescription($detailsBo->getJobDescription());
+        }
+        if (!empty($detailsBo->getLocation())) {
+            $this->jobPostDAO->setLocation($detailsBo->getLocation());
+        }
 
-        $this->jobPostDAO->setRolesResponsibility($detailsBo->getRolesResponsibility());
-        $this->jobPostDAO->setExperienceLevel($detailsBo->getExperienceLevel());
-        $this->jobPostDAO->setExperienceMin($detailsBo->getExperienceMin());
-        $this->jobPostDAO->setExperienceMax($detailsBo->getExperienceMax());
-        $this->jobPostDAO->setEducation($detailsBo->getEducation());
+        if (!empty($detailsBo->getSalary())) {
+            $this->jobPostDAO->setSalary($detailsBo->getSalary());
+        }
+        if (!empty($detailsBo->getSalaryMin())) {
+            $this->jobPostDAO->setSalaryMin($detailsBo->getSalaryMin());
+        }
+        if (!empty($detailsBo->getSalaryMax())) {
+            $this->jobPostDAO->setSalaryMax($detailsBo->getSalaryMax());
+        }
+        if (!empty($detailsBo->getSalaryCurrency())) {
+            $this->jobPostDAO->setSalaryCurrency($detailsBo->getSalaryCurrency());
+        }
+        if (!empty($detailsBo->getSalaryType())) {
+            $this->jobPostDAO->setSalaryType($detailsBo->getSalaryType());
+        }
 
-        $this->jobPostDAO->setSkills($detailsBo->getSkills());
-        $this->jobPostDAO->setStatus($detailsBo->getStatus());
-        $this->jobPostDAO->setExpiresAt($detailsBo->getExpiresAt());
-        $this->jobPostDAO->setOpeningsCount($detailsBo->getOpeningsCount());
+        if (!empty($detailsBo->getJobCategoryId())) {
+            $this->jobPostDAO->setJobCategoryId($detailsBo->getJobCategoryId());
+        }
+        if (!empty($detailsBo->getWorkMode())) {
+            $this->jobPostDAO->setWorkMode($detailsBo->getWorkMode());
+        }
+        if (!empty($detailsBo->getJobType())) {
+            $this->jobPostDAO->setJobType($detailsBo->getJobType());
+        }
+
+        if (!empty($detailsBo->getRolesResponsibility())) {
+            $this->jobPostDAO->setRolesResponsibility($detailsBo->getRolesResponsibility());
+        }
+        if (!empty($detailsBo->getExperienceLevel())) {
+            $this->jobPostDAO->setExperienceLevel($detailsBo->getExperienceLevel());
+        }
+        if (!empty($detailsBo->getExperienceMin())) {
+            $this->jobPostDAO->setExperienceMin($detailsBo->getExperienceMin());
+        }
+        if (!empty($detailsBo->getExperienceMax())) {
+            $this->jobPostDAO->setExperienceMax($detailsBo->getExperienceMax());
+        }
+        if (!empty($detailsBo->getEducation())) {
+            $this->jobPostDAO->setEducation($detailsBo->getEducation());
+        }
+
+        if (!empty($detailsBo->getSkills())) {
+            $this->jobPostDAO->setSkills($detailsBo->getSkills());
+        }
+        if (!empty($detailsBo->getStatus())) {
+            $this->jobPostDAO->setStatus($detailsBo->getStatus());
+        }
+        if (!empty($detailsBo->getExpiresAt())) {
+            $this->jobPostDAO->setExpiresAt($detailsBo->getExpiresAt());
+        }
+        if (!empty($detailsBo->getOpeningsCount())) {
+            $this->jobPostDAO->setOpeningsCount($detailsBo->getOpeningsCount());
+        }
 
         return $this->jobPostDAO;
     }

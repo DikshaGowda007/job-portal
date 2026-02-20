@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Job;
 
 use App\Http\Controllers\Controller;
 use App\Modules\V1\Job\Services\Add\DetailsService as AddJobDetailsService;
+use App\Modules\V1\Job\Services\Edit\DetailsService as EditJobDetailsService;
 use App\Http\Requests\V1\Job\Add\DetailsRequest as AddDetailsRequest;
+use App\Http\Requests\V1\Job\Edit\DetailsRequest as EditDetailsRequest;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
@@ -16,6 +18,17 @@ class JobController extends Controller
             $addJobDetailsService = app(AddJobDetailsService::class);
             $addJobDetailsBo = $addJobDetailsService->prepareBo($addDetailsRequest);
             return $addJobDetailsService->add($addJobDetailsBo);
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
+
+    public function edit(EditDetailsRequest $editDetailsRequest): JsonResponse
+    {
+        try {
+            $editJobDetailsService = app(EditJobDetailsService::class);
+            $editJobDetailsBo = $editJobDetailsService->prepareBo($editDetailsRequest);
+            return $editJobDetailsService->edit($editJobDetailsBo);
         } catch (Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
         }
