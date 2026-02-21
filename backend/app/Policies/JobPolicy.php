@@ -15,4 +15,9 @@ class JobPolicy
     {
         return $userAccessDetails[AccessControlConstants::JOB_EDIT] === 1;
     }
+
+    public function delete(?string $user, array $userAccessDetails, string $role): bool
+    {
+        return $userAccessDetails[AccessControlConstants::JOB_DELETE] === 1;
+    }
 }

@@ -28,5 +28,6 @@ class GateServiceProvider extends ServiceProvider
     {
         Gate::define('job_publish', [JobPolicy::class, 'publish']);
         Gate::define('job_edit', [JobPolicy::class, 'edit']);
+        Gate::define('job_delete', [JobPolicy::class, 'delete']);
     }
 }
