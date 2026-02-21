@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Job;
 use App\Http\Controllers\Controller;
 use App\Modules\V1\Job\Services\Add\DetailsService as AddJobDetailsService;
 use App\Modules\V1\Job\Services\Edit\DetailsService as EditJobDetailsService;
+use App\Modules\V1\Job\Services\Delete\DeleteService as DeleteJobDetailsService;
 use App\Http\Requests\V1\Job\Add\DetailsRequest as AddDetailsRequest;
 use App\Http\Requests\V1\Job\Edit\DetailsRequest as EditDetailsRequest;
+use App\Http\Requests\V1\Job\Delete\DetailsRequest as DeleteDetailsRequest;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
@@ -29,6 +31,17 @@ class JobController extends Controller
             $editJobDetailsService = app(EditJobDetailsService::class);
             $editJobDetailsBo = $editJobDetailsService->prepareBo($editDetailsRequest);
             return $editJobDetailsService->edit($editJobDetailsBo);
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
+
+    public function delete(DeleteDetailsRequest $deleteDetailsRequest): JsonResponse
+    {
+        try {
+            $deleteJobDetailsService = app(DeleteJobDetailsService::class);
+            $jobId = $deleteDetailsRequest->input('id');
+            return $deleteJobDetailsService->delete($jobId);
         } catch (Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
         }

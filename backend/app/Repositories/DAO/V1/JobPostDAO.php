@@ -29,6 +29,7 @@ class JobPostDAO
     private ?int $openingsCount = null;
     private ?string $createdAt = null;
     private ?string $updatedAt = null;
+    private ?int $isDeleted = null;
 
     public function toArray(): array
     {
@@ -105,6 +106,9 @@ class JobPostDAO
         }
         if (isset($this->updatedAt)) {
             $collection['updated_at'] = $this->updatedAt;
+        }
+        if (isset($this->isDeleted)) {
+            $collection['is_deleted'] = $this->isDeleted;
         }
 
         return $collection;
@@ -552,6 +556,24 @@ class JobPostDAO
     public function setUpdatedAt(?string $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of isDeleted
+     */
+    public function getIsDeleted(): ?int
+    {
+        return $this->isDeleted;
+    }
+
+    /**
+     * Set the value of isDeleted
+     */
+    public function setIsDeleted(?int $isDeleted): self
+    {
+        $this->isDeleted = $isDeleted;
 
         return $this;
     }

@@ -42,4 +42,8 @@ class CommonConstant
     public const STATUS_INACTIVE = 0;
 
     public const STATUS_BLOCKED = 2;
+
+    public const IS_DELETED_YES = 1;
+    
+    public const IS_DELETED_NO = 0;
 }

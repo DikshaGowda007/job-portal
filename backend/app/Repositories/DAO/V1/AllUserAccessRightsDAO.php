@@ -33,6 +33,9 @@ class AllUserAccessRightsDAO
     private ?string $createdDate = null;
     private ?string $modifiedDate = null;
 
+    private ?int $status = null;
+    private ?int $isDeleted = null;
+
     public function toArray(): array
     {
         $collection = [];
@@ -102,6 +105,12 @@ class AllUserAccessRightsDAO
         }
         if (isset($this->modifiedDate)) {
             $collection['modified_date'] = $this->modifiedDate;
+        }
+        if (isset($this->status)) {
+            $collection['status'] = $this->status;
+        }
+        if (isset($this->isDeleted)) {
+            $collection['is_deleted'] = $this->isDeleted;
         }
 
         return $collection;
@@ -209,6 +218,26 @@ class AllUserAccessRightsDAO
     public function setModifiedDate(string $val): self
     {
         $this->modifiedDate = $val;
+        return $this;
+    }
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+    public function setStatus(?int $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+    public function getIsDeleted(): ?int
+    {
+        return $this->isDeleted;
+    }
+    public function setIsDeleted(?int $isDeleted): self
+    {
+        $this->isDeleted = $isDeleted;
+
         return $this;
     }
 }
