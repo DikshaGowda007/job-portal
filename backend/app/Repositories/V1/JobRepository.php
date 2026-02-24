@@ -13,4 +13,6 @@ interface JobRepository
     public function findById(int $id): Collection;
 
     public function updateById(int $id, JobPostDAO $jobPostDAO): bool|int;
+
+    public function fetch(?string $data): Collection;
 }

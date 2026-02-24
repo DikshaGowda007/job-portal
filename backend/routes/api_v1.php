@@ -14,4 +14,5 @@ Route::prefix('job')->middleware(['jwt.verify', 'access.role:' . UserConstant::U
     Route::post('/add', [JobController::class, 'add'])->name('JobController.add');
     Route::post('/edit', [JobController::class, 'edit'])->name('JobController.edit');
     Route::post('/delete', [JobController::class, 'delete'])->name('JobController.delete');
+    Route::post('/list', [JobController::class, 'list'])->name('JobController.list');
 });
