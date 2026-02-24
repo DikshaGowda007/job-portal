@@ -102,12 +102,15 @@ class JobHelper
 
     public function prepareDAO(AddDetailsBo|EditDetailsBo $detailsBo): JobPostDAO
     {
-        $this->jobPostDAO->setUserId($this->loggedInUserId);
-
-        if (!empty($detailsBo->getId())) {
+        if (!empty($detailsBo->getUserId())) {
+            $this->jobPostDAO->setUserId($detailsBo->getUserId());
+        }
+        if (method_exists($detailsBo, 'getModifiedByUserId') && !empty($detailsBo->getModifiedByUserId())) {
+            $this->jobPostDAO->setModifiedByUserId($detailsBo->getModifiedByUserId());
+        }
+        if (method_exists($detailsBo, 'getId') && !empty($detailsBo->getId())) {
             $this->jobPostDAO->setId($detailsBo->getId());
         }
-
         if (!empty($detailsBo->getCompanyName())) {
             $this->jobPostDAO->setCompanyName($detailsBo->getCompanyName());
         }

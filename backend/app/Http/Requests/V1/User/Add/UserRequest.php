@@ -24,7 +24,8 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:6']
         ];
@@ -44,14 +45,16 @@ class UserRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => 'Name',
+            'first_name' => 'First Name',
+            'last_name' => 'Last Name',
             'email' => 'Email Id',
             'password' => 'password',
         ];
     }
 
     protected $fields = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password'
     ];

@@ -16,9 +16,6 @@ return new class extends Migration {
 
             $table->integer('user_id')->default(0)->index();
 
-            $table->dateTime('created_date')->useCurrent();
-            $table->dateTime('modified_date')->useCurrent()->useCurrentOnUpdate();
-
             // Job Management
             $table->tinyInteger('job_view')->default(0);
             $table->tinyInteger('job_create')->default(0);
@@ -42,8 +39,12 @@ return new class extends Migration {
             $table->tinyInteger('category_manage')->default(0);
             $table->tinyInteger('user_manage')->default(0);
             $table->tinyInteger('role_manage')->default(0);
+
+            $table->dateTime('created_date')->useCurrent();
+            $table->dateTime('modified_date')->useCurrent()->useCurrentOnUpdate();
+
             $table->unsignedTinyInteger('status')->default(1)->comment('1 - Active, 2 - Inactive');
-            $table->unsignedTinyInteger('is_deleted')->default(0)->comment('1 - Yes, 2 - No');
+            $table->unsignedTinyInteger('is_deleted')->default(0)->comment('1 - Yes, 0 - No');
         });
     }
 

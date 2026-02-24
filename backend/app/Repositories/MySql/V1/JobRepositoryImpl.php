@@ -25,6 +25,7 @@ class JobRepositoryImpl implements JobRepository
 
     public function updateById(int $id, JobPostDAO $jobPostDAO): bool|int
     {
+        $jobPostDAO->setUpdatedAt(Carbon::now()->format('Y-m-d H:i:s'));
         return JobPost::where('id', $id)
             ->update($jobPostDAO->toArray());
     }
