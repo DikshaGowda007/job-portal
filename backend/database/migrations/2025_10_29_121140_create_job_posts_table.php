@@ -15,6 +15,7 @@ return new class extends Migration {
 
             // Who created the job (Admin/SubAdmin/Employer)
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->integer('modified_by_user_id')->nullable();
 
             // Basic job info
             $table->string('company_name');
@@ -69,7 +70,7 @@ return new class extends Migration {
             // Timestamps
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
-            $table->unsignedTinyInteger('is_deleted')->default(0)->comment('1 - Yes, 2 - No');
+            $table->unsignedTinyInteger('is_deleted')->default(0)->comment('1 - Yes, 0 - No');
         });
     }
 

@@ -6,6 +6,7 @@ class JobPostDAO
 {
     private ?int $id = null;
     private ?int $userId = null;
+    private ?int $modifiedByUserId = null;
     private ?string $companyName = null;
     private ?string $title = null;
     private ?string $jobDescription = null;
@@ -37,6 +38,9 @@ class JobPostDAO
 
         if (isset($this->userId)) {
             $collection['user_id'] = $this->userId;
+        }
+        if (isset($this->modifiedByUserId)) {
+            $collection['modified_by_user_id'] = $this->modifiedByUserId;
         }
         if (isset($this->companyName)) {
             $collection['company_name'] = $this->companyName;
@@ -128,6 +132,24 @@ class JobPostDAO
     public function setUserId(?int $userId): void
     {
         $this->userId = $userId;
+    }
+
+    /**
+     * Get the value of modifiedByUserId
+     */
+    public function getModifiedByUserId(): ?int
+    {
+        return $this->modifiedByUserId;
+    }
+
+    /**
+     * Set the value of modifiedByUserId
+     */
+    public function setModifiedByUserId(?int $modifiedByUserId): self
+    {
+        $this->modifiedByUserId = $modifiedByUserId;
+
+        return $this;
     }
 
     /**

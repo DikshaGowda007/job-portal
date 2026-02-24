@@ -103,7 +103,7 @@ class DetailsBo
             $data['openings_count'] = $this->openingsCount;
         }
         if ($this->modifiedByUserId !== null) {
-            $data['modified_by_userId'] = $this->modifiedByUserId;
+            $data['modified_by_user_id'] = $this->modifiedByUserId;
         }
 
         return $data;

@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->unsignedTinyInteger('status')->default(1)->comment('1 - Active, 2 - Inactive');
-            $table->unsignedTinyInteger('is_deleted')->default(0)->comment('1 - Yes, 2 - No');
+            $table->unsignedTinyInteger('is_deleted')->default(0)->comment('1 - Yes, 0 - No');
         });
     }
 

@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobPost extends Model
 {
-    use SoftDeletes;
     /**
      * The attributes that are mass assignable.
      *
@@ -15,6 +13,7 @@ class JobPost extends Model
      */
     protected $fillable = [
         'user_id',
+        'modified_by_user_id',
         'company_name',
         'title',
         'job_description',
@@ -39,6 +38,8 @@ class JobPost extends Model
         'created_by_user_id',
         'is_deleted',
     ];
+
+    public $timestamps = false;
 
     public function getTableName(): string
     {
