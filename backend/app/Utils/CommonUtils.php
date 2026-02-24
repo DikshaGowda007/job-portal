@@ -24,6 +24,11 @@ class CommonUtils
         return ['status' => CommonConstant::SUCCESS, 'data' => $message];
     }
 
+    public static function successDataResponse(array $data)
+    {
+        return ['status' => CommonConstant::SUCCESS, 'data' => $data];
+    }
+
     public static function xssClean($data)
     {
         $data = str_replace(['&amp;', '&lt;', '&gt;'], ['&amp;amp;', '&amp;lt;', '&amp;gt;'], $data);
