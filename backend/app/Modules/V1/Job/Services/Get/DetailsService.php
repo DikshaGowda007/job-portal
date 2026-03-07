@@ -14,12 +14,13 @@ class DetailsService
 {
     public function __construct(
         private JobRepository $jobRepository
-    ) {}
+    ) {
+    }
 
-    public function get(?string $text): JsonResponse
+    public function get(int $id): JsonResponse
     {
         try {
-            $jobList = $this->listJobs($text);
+            $jobList = $this->findJob($id);
             $data = $this->formatResponse($jobList);
 
             return response()->json(CommonUtils::successDataResponse($data));
@@ -31,11 +32,11 @@ class DetailsService
         }
     }
 
-    private function listJobs(?string $text): Collection
+    private function findJob(int $id): Collection
     {
-        $jobData = $this->jobRepository->fetch($text);
+        $jobData = $this->jobRepository->findById($id);
         if ($jobData->isEmpty()) {
-            throw DataNotFoundException::withMessage('Jobs not found');
+            throw DataNotFoundException::withMessage('Job not found');
         }
         return $jobData->sortByDesc('id');
     }
