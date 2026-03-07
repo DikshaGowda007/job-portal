@@ -16,6 +16,8 @@ class AccessControlConstants
 
     public const JOB_CLOSE = 'job_close';
 
+    public const JOB_APPLY = 'job_apply';
+
     public const APPLICATION_VIEW = 'application_view';
 
     public const APPLICATION_SHORTLIST = 'application_shortlist';
