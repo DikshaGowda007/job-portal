@@ -33,4 +33,9 @@ class AccessService
     {
         return Gate::allows('job_apply', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
     }
+
+    public function hasApplicationViewAccess()
+    {
+        return Gate::allows('application_view', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
 }

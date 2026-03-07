@@ -26,4 +26,28 @@ class JobApplicationRepositoryImpl implements JobApplicationRepository
 
         return JobApplication::create($dao->toArray());
     }
+
+    public function findByUserIdOrStatus(int $userId, ?string $status = null): Collection
+    {
+        $query = JobApplication::where('user_id', $userId)
+            ->where('is_deleted', CommonConstant::IS_DELETED_NO);
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        return $query->get();
+    }
+
+    public function findByJobPostIdOrStatus(int $jobPostId, ?string $status = null): Collection
+    {
+        $query = JobApplication::where('job_post_id', $jobPostId)
+            ->where('is_deleted', CommonConstant::IS_DELETED_NO);
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        return $query->get();
+    }
 }
