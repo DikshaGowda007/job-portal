@@ -28,4 +28,9 @@ class AccessService
     {
         return Gate::allows('job_delete', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
     }
+
+    public function hasJobApplyAccess()
+    {
+        return Gate::allows('job_apply', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
 }

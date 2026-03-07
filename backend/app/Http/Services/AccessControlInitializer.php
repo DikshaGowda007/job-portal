@@ -16,6 +16,7 @@ class AccessControlInitializer
         $userAccessDetails[AccessControlConstants::JOB_DELETE] = 0;
         $userAccessDetails[AccessControlConstants::JOB_PUBLISH] = 0;
         $userAccessDetails[AccessControlConstants::JOB_CLOSE] = 0;
+        $userAccessDetails[AccessControlConstants::JOB_APPLY] = 0;
 
         $userAccessDetails[AccessControlConstants::APPLICATION_VIEW] = 0;
         $userAccessDetails[AccessControlConstants::APPLICATION_SHORTLIST] = 0;

@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -47,12 +48,11 @@ return new class extends Migration {
 
             // Experience & education
             $table->enum('experience_level', ['FRESHER', 'JUNIOR', 'MID', 'SENIOR', 'TEAM_LEAD'])
-                ->default('FRESHER');
+                ->nullable();
             // Experience range (years)
             $table->integer('experience_min')->nullable();
             $table->integer('experience_max')->nullable();
             $table->string('education')->nullable(); // e.g., B.Tech, MBA
-
 
             // Skills and meta
             $table->json('skills')->nullable(); // e.g., ["PHP", "React", "Laravel"]
