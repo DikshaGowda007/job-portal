@@ -2,36 +2,22 @@
 
 namespace App\Http\Requests\V1\Job\Get;
 
-use App\Exceptions\AccessForbiddenException;
-use App\Services\V1\User\AccessService;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class DetailsRequest extends FormRequest
 {
-    private AccessService $accessService;
 
     public function authorize(): bool
     {
-        $this->accessService = app(AccessService::class);
-        $this->accessService->initializeUserAuth();
-        // $this->hasAccess();
-
         return true;
-    }
-
-    private function hasAccess(): void
-    {
-        if ($this->accessService->hasJobDeleteAccess() === false) {
-            throw AccessForbiddenException::withMessage();
-        }
     }
 
     public function rules(): array
     {
         return [
-            'text' => 'nullable',
+            'id' => 'required|integer|exists:job_posts,id',
         ];
     }
 
@@ -47,11 +33,11 @@ class DetailsRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'text' => 'Text',
+            'id' => 'Job ID',
         ];
     }
 
     protected $fields = [
-        'text',
+        'id',
     ];
 }
