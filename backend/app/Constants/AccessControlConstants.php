@@ -24,6 +24,8 @@ class AccessControlConstants
 
     public const APPLICATION_REJECT = 'application_reject';
 
+    public const APPLICATION_WITHDRAW = 'application_withdraw';
+
     public const APPLICATION_DOWNLOAD_RESUME = 'application_download_resume';
 
     public const COMPANY_PROFILE_VIEW = 'company_profile_view';

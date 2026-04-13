@@ -5,8 +5,10 @@ namespace App\Http\Controllers\JobApplication;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\JobApplication\Apply\DetailsRequest as ApplyDetailsRequest;
 use App\Http\Requests\V1\JobApplication\MyApplications\DetailsRequest as MyApplicationsDetailsRequest;
+use App\Http\Requests\V1\JobApplication\Withdraw\DetailsRequest as WithdrawDetailsRequest;
 use App\Modules\V1\JobApplication\Services\Apply\DetailsService as ApplyDetailsService;
 use App\Modules\V1\JobApplication\Services\List\DetailsService as ListDetailsService;
+use App\Modules\V1\JobApplication\Services\Withdraw\DetailsService as WithdrawDetailsService;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
@@ -32,6 +34,18 @@ class JobApplicationController extends Controller
             $status = $request->input('status');
 
             return $service->list($userId, $status);
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
+
+    public function withdraw(WithdrawDetailsRequest $request): JsonResponse
+    {
+        try {
+            $withdrawDetailsService = app(WithdrawDetailsService::class);
+            $applicationId = $request->input('application_id');
+
+            return $withdrawDetailsService->withdraw($applicationId);
         } catch (Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
         }

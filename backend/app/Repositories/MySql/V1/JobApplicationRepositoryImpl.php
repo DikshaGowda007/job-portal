@@ -50,4 +50,20 @@ class JobApplicationRepositoryImpl implements JobApplicationRepository
 
         return $query->get();
     }
+
+    public function findById(int $id): ?JobApplication
+    {
+        return JobApplication::with(['user', 'jobPost.recruiter'])
+            ->where('id', $id)
+            ->where('is_deleted', CommonConstant::IS_DELETED_NO)
+            ->first();
+    }
+
+    public function updateById(int $id, JobApplicationDAO $jobApplicationDAO): bool|int
+    {
+        $jobApplicationDAO->setUpdatedAt(Carbon::now()->format('Y-m-d H:i:s'));
+
+        return JobApplication::where('id', $id)
+            ->update($jobApplicationDAO->toArray());
+    }
 }
