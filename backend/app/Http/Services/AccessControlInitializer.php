@@ -21,6 +21,7 @@ class AccessControlInitializer
         $userAccessDetails[AccessControlConstants::APPLICATION_VIEW] = 0;
         $userAccessDetails[AccessControlConstants::APPLICATION_SHORTLIST] = 0;
         $userAccessDetails[AccessControlConstants::APPLICATION_REJECT] = 0;
+        $userAccessDetails[AccessControlConstants::APPLICATION_WITHDRAW] = 0;
         $userAccessDetails[AccessControlConstants::APPLICATION_DOWNLOAD_RESUME] = 0;
 
         $userAccessDetails[AccessControlConstants::COMPANY_PROFILE_VIEW] = 0;

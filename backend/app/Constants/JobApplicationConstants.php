@@ -6,8 +6,11 @@ class JobApplicationConstants
 {
     public const STATUS_PENDING = 'PENDING';
 
+    public const STATUS_WITHDRAWN = 'WITHDRAWN';
+
     public const VALID_STATUSES = [
         self::STATUS_PENDING,
+        self::STATUS_WITHDRAWN,
     ];
 
     public const CURRENCY_INR = 'INR';

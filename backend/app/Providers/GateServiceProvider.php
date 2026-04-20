@@ -36,6 +36,7 @@ class GateServiceProvider extends ServiceProvider
     private function registerJobApplicationGates(): void
     {
         Gate::define('job_apply', [JobApplicationPolicy::class, 'apply']);
+        Gate::define('application_withdraw', [JobApplicationPolicy::class, 'withdraw']);
         Gate::define('application_view', [JobApplicationPolicy::class, 'view']);
     }
 }
