@@ -22,6 +22,7 @@ Route::prefix('job')->middleware(['jwt.verify', 'access.role:'.UserConstant::USE
 Route::prefix('application')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN.'|'.UserConstant::USER_ROLE_RECRUITER])->group(function () {
     Route::post('/list', [JobApplicationController::class, 'list'])->name('JobApplicationController.list');
     Route::post('/my-applications', [JobApplicationController::class, 'myApplications'])->name('JobApplicationController.myApplications');
+    Route::post('/view', [JobApplicationController::class, 'view'])->name('JobApplicationController.view');
 });
 
 // Job Seeker operations

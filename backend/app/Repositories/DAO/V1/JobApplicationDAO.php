@@ -34,6 +34,12 @@ class JobApplicationDAO
 
     private ?int $isDeleted = null;
 
+    private ?int $viewed = null;
+
+    private ?int $viewedByUserId = null;
+
+    private ?string $viewedAt = null;
+
     public function toArray(): array
     {
         $collection = [];
@@ -82,6 +88,15 @@ class JobApplicationDAO
         }
         if (isset($this->isDeleted)) {
             $collection['is_deleted'] = $this->isDeleted;
+        }
+        if (isset($this->viewed)) {
+            $collection['viewed'] = $this->viewed;
+        }
+        if (isset($this->viewedByUserId)) {
+            $collection['viewed_by_user_id'] = $this->viewedByUserId;
+        }
+        if (isset($this->viewedAt)) {
+            $collection['viewed_at'] = $this->viewedAt;
         }
 
         return $collection;
@@ -353,6 +368,60 @@ class JobApplicationDAO
     public function setIsDeleted(?int $isDeleted): self
     {
         $this->isDeleted = $isDeleted;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of viewed
+     */
+    public function getViewed(): ?int
+    {
+        return $this->viewed;
+    }
+
+    /**
+     * Set the value of viewed
+     */
+    public function setViewed(?int $viewed): self
+    {
+        $this->viewed = $viewed;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of viewedByUserId
+     */
+    public function getViewedByUserId(): ?int
+    {
+        return $this->viewedByUserId;
+    }
+
+    /**
+     * Set the value of viewedByUserId
+     */
+    public function setViewedByUserId(?int $viewedByUserId): self
+    {
+        $this->viewedByUserId = $viewedByUserId;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of viewedAt
+     */
+    public function getViewedAt(): ?string
+    {
+        return $this->viewedAt;
+    }
+
+    /**
+     * Set the value of viewedAt
+     */
+    public function setViewedAt(?string $viewedAt): self
+    {
+        $this->viewedAt = $viewedAt;
 
         return $this;
     }

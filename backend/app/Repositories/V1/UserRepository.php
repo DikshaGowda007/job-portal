@@ -13,4 +13,6 @@ interface UserRepository
     public function updateById(int $userId, UserDAO $userDAO): bool;
     
     public function findByEmailAndPassword(string $email, string $password): Collection;
+
+    public function findById(int $userId): Collection;
 }

@@ -20,6 +20,9 @@ class JobApplication extends Model
         'recruiter_notes',
         'reviewed_by_user_id',
         'reviewed_at',
+        'viewed',
+        'viewed_at',
+        'viewed_by',
         'is_deleted',
         'created_at',
         'updated_at',
@@ -30,6 +33,8 @@ class JobApplication extends Model
     protected $casts = [
         'expected_salary' => 'decimal:2',
         'reviewed_at' => 'datetime',
+        'viewed' => 'boolean',
+        'viewed_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
