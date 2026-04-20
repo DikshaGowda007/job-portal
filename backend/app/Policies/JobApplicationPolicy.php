@@ -11,4 +11,9 @@ class JobApplicationPolicy
     {
         return $role == UserConstant::USER_ROLE_JOB_SEEKER && $userAccessDetails[AccessControlConstants::JOB_APPLY];
     }
+
+    public function view(?string $user, array $userAccessDetails, string $role): bool
+    {
+        return $userAccessDetails[AccessControlConstants::APPLICATION_VIEW] === 1;
+    }
 }

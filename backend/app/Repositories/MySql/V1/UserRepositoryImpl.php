@@ -30,4 +30,9 @@ class UserRepositoryImpl implements UserRepository
             ->where('password', $password)
             ->get();
     }
+
+    public function findById(int $userId): Collection
+    {
+        return User::where('user_id', $userId)->get();
+    }
 }
