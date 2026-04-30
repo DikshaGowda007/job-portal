@@ -43,4 +43,9 @@ class AccessService
     {
         return Gate::allows('application_withdraw', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
     }
+
+    public function hasApplicationUpdateStatusAccess()
+    {
+        return Gate::allows('application_update_status', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
 }

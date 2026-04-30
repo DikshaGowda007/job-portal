@@ -38,5 +38,6 @@ class GateServiceProvider extends ServiceProvider
         Gate::define('job_apply', [JobApplicationPolicy::class, 'apply']);
         Gate::define('application_withdraw', [JobApplicationPolicy::class, 'withdraw']);
         Gate::define('application_view', [JobApplicationPolicy::class, 'view']);
+        Gate::define('application_update_status', [JobApplicationPolicy::class, 'status_update']);
     }
 }

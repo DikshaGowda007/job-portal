@@ -20,6 +20,8 @@ class AccessControlConstants
 
     public const APPLICATION_VIEW = 'application_view';
 
+    public const APPLICATION_STATUS_UPDATE = 'application_status_update';
+
     public const APPLICATION_SHORTLIST = 'application_shortlist';
 
     public const APPLICATION_REJECT = 'application_reject';
