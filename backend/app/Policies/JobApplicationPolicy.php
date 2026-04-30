@@ -21,4 +21,9 @@ class JobApplicationPolicy
     {
         return $userAccessDetails[AccessControlConstants::APPLICATION_VIEW] === 1;
     }
+
+    public function status_update(?string $user, array $userAccessDetails, string $role): bool
+    {
+        return $userAccessDetails[AccessControlConstants::APPLICATION_STATUS_UPDATE] === 1;
+    }
 }

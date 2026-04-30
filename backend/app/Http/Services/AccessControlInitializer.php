@@ -19,6 +19,7 @@ class AccessControlInitializer
         $userAccessDetails[AccessControlConstants::JOB_APPLY] = 0;
 
         $userAccessDetails[AccessControlConstants::APPLICATION_VIEW] = 0;
+        $userAccessDetails[AccessControlConstants::APPLICATION_STATUS_UPDATE] = 0;
         $userAccessDetails[AccessControlConstants::APPLICATION_SHORTLIST] = 0;
         $userAccessDetails[AccessControlConstants::APPLICATION_REJECT] = 0;
         $userAccessDetails[AccessControlConstants::APPLICATION_WITHDRAW] = 0;

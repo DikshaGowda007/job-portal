@@ -4,7 +4,9 @@ namespace App\Modules\V1\JobApplication\Helpers;
 
 use App\Constants\JobApplicationConstants;
 use App\Http\Requests\V1\JobApplication\Apply\DetailsRequest as ApplyDetailsRequest;
+use App\Http\Requests\V1\JobApplication\UpdateStatus\DetailsRequest as UpdateStatusDetailsRequest;
 use App\Modules\V1\JobApplication\Bo\Apply\DetailsBo as ApplyDetailsBo;
+use App\Modules\V1\JobApplication\Bo\UpdateStatus\DetailsBo as UpdateStatusDetailsBo;
 use App\Repositories\DAO\V1\JobApplicationDAO;
 use App\Traits\V1\AccessRightsTrait;
 
@@ -30,6 +32,17 @@ class JobApplicationHelper
         $applyDetailsBo->setExperienceYears($request->input('experience_years'));
 
         return $applyDetailsBo;
+    }
+
+    public function prepareUpdateStatusBo(UpdateStatusDetailsRequest $updateStatusDetailsRequest): UpdateStatusDetailsBo
+    {
+        $updateStatusDetailsBo = new UpdateStatusDetailsBo;
+
+        $updateStatusDetailsBo->setApplicationId($updateStatusDetailsRequest->input('application_id'));
+        $updateStatusDetailsBo->setStatus($updateStatusDetailsRequest->input('status'));
+        $updateStatusDetailsBo->setRecruiterNotes($updateStatusDetailsRequest->input('recruiter_notes'));
+
+        return $updateStatusDetailsBo;
     }
 
     public function prepareJobApplyDAO(ApplyDetailsBo $applyDetailsBo): JobApplicationDAO
