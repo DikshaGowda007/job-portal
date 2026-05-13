@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Job;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\Job\Publish\DetailsRequest as PublishDetailsRequest;
 use App\Modules\V1\Job\Services\Add\DetailsService as AddJobDetailsService;
 use App\Modules\V1\Job\Services\Delete\DeleteService as DeleteJobDetailsService;
 use App\Modules\V1\Job\Services\Edit\DetailsService as EditJobDetailsService;
@@ -13,6 +14,7 @@ use App\Http\Requests\V1\Job\Edit\DetailsRequest as EditDetailsRequest;
 use App\Http\Requests\V1\Job\List\DetailsRequest as ListDetailsRequest;
 use App\Http\Requests\V1\Job\Delete\DetailsRequest as DeleteDetailsRequest;
 use App\Http\Requests\V1\Job\Get\DetailsRequest as GetDetailsRequest;
+use App\Modules\V1\Job\Services\Publish\DetailsService as PublishJobDetailsService;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
@@ -24,6 +26,18 @@ class JobController extends Controller
             $addJobDetailsService = app(AddJobDetailsService::class);
             $addJobDetailsBo = $addJobDetailsService->prepareBo($addDetailsRequest);
             return $addJobDetailsService->add($addJobDetailsBo);
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
+
+    public function publish(PublishDetailsRequest $publishDetailsRequest): JsonResponse
+    {
+        try {
+            $publishJobDetailsService = app(PublishJobDetailsService::class);
+            $publishJobDetailsBo = $publishJobDetailsService->prepareBo($publishDetailsRequest);
+
+            return $publishJobDetailsService->publish($publishJobDetailsBo);
         } catch (Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
         }
