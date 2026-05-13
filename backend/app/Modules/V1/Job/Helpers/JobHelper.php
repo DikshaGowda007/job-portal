@@ -6,6 +6,8 @@ use App\Modules\V1\Job\Bo\Add\DetailsBo as AddDetailsBo;
 use App\Modules\V1\Job\Bo\Edit\DetailsBo as EditDetailsBo;
 use App\Http\Requests\V1\Job\Add\DetailsRequest as AddDetailsRequest;
 use App\Http\Requests\V1\Job\Edit\DetailsRequest as EditDetailsRequest;
+use App\Http\Requests\V1\Job\Publish\DetailsRequest as PublishDetailsRequest;
+use App\Modules\V1\Job\Bo\Publish\DetailsBo as PublishDetailsBo;
 use App\Repositories\DAO\V1\JobPostDAO;
 use App\Traits\V1\AccessRightsTrait;
 
@@ -27,6 +29,8 @@ class JobHelper
             $detailsBo->setUserId($this->loggedInUserId);
         } elseif ($detailsRequest instanceof EditDetailsRequest) {
             $detailsBo = new EditDetailsBo();
+        } elseif ($detailsRequest instanceof PublishDetailsRequest) {
+            $detailsBo = new PublishDetailsBo;
             $detailsBo->setModifiedByUserId($this->loggedInUserId);
         }
 
@@ -100,7 +104,7 @@ class JobHelper
         return $detailsBo;
     }
 
-    public function prepareDAO(AddDetailsBo|EditDetailsBo $detailsBo): JobPostDAO
+    public function prepareDAO(AddDetailsBo|EditDetailsBo|PublishDetailsBo $detailsBo): JobPostDAO
     {
         if (!empty($detailsBo->getUserId())) {
             $this->jobPostDAO->setUserId($detailsBo->getUserId());
