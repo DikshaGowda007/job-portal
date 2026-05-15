@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Constants\ErrorResponseConstant;
 use App\Http\Requests\V1\User\Add\ResendOtpRequest;
-use App\Http\Requests\V1\User\Add\UserOtpVerificationRequest;
 use App\Http\Requests\V1\User\Add\UserLoginRequest;
+use App\Http\Requests\V1\User\Add\UserOtpVerificationRequest;
 use App\Http\Requests\V1\User\Add\UserRequest;
 use App\Modules\Auth\Signup\Services\LoginService;
 use App\Modules\Auth\Signup\Services\SignupService;
