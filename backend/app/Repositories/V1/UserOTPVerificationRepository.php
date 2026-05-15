@@ -9,7 +9,7 @@ interface UserOTPVerificationRepository
 {
     public function insert(UserOTPVerificationDAO $userOTPVerificationDAO): int;
 
-    public function findByEmailAndOtp(string $email, string $otp): Collection;
-    
-    public function findByEmailAndOtpAndExpiry(string $email, string $otp): Collection;
+    public function findByUserIdAndOtp(int $userId, string $otp): Collection;
+
+    public function updateByUserId(int $userId, UserOTPVerificationDAO $userOTPVerificationDAO);
 }

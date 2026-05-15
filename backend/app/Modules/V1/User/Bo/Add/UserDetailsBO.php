@@ -5,9 +5,14 @@ namespace App\Modules\V1\User\Bo\Add;
 class UserDetailsBo
 {
     private ?string $firstName = null;
+
     private ?string $lastName = null;
+
     private ?string $email = null;
+
     private ?string $password = null;
+
+    private ?int $userType = null;
 
     public function toArray(): array
     {
@@ -25,6 +30,9 @@ class UserDetailsBo
         if (isset($this->password)) {
             $collection['password'] = $this->password;
         }
+        if (isset($this->userType)) {
+            $collection['user_type'] = $this->userType;
+        }
 
         return $collection;
     }
@@ -40,7 +48,7 @@ class UserDetailsBo
     /**
      * Set the value of firstName
      *
-     * @return  self
+     * @return self
      */
     public function setFirstName($firstName)
     {
@@ -60,7 +68,7 @@ class UserDetailsBo
     /**
      * Set the value of lastName
      *
-     * @return  self
+     * @return self
      */
     public function setLastName($lastName)
     {
@@ -80,7 +88,7 @@ class UserDetailsBo
     /**
      * Set the value of email
      *
-     * @return  self
+     * @return self
      */
     public function setEmail($email)
     {
@@ -100,11 +108,23 @@ class UserDetailsBo
     /**
      * Set the value of password
      *
-     * @return  self
+     * @return self
      */
     public function setPassword($password)
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getUserType()
+    {
+        return $this->userType;
+    }
+
+    public function setUserType($userType)
+    {
+        $this->userType = $userType;
 
         return $this;
     }

@@ -4,3 +4,8 @@ export const ROLES = {
   RECRUITER: "RECRUITER",
   JOB_SEEKER: "JOB_SEEKER",
 };
+
+export const USER_TYPE_MAP = {
+  [ROLES.RECRUITER]: 3,
+  [ROLES.JOB_SEEKER]: 4,
+};
