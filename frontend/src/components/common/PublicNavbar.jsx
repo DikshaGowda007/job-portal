@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/utils/routePaths";
 import { useAuth } from "@/context/AuthContext";
 import { ROLES } from "@/utils/roles";
@@ -11,7 +11,13 @@ const ROLE_DASHBOARD = {
 };
 
 export default function PublicNavbar() {
-  const { isAuthenticated, role } = useAuth();
+  const { isAuthenticated, role, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate(ROUTES.LOGIN, { replace: true });
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-sm dark:border-gray-800 dark:bg-gray-900/80">
@@ -29,12 +35,20 @@ export default function PublicNavbar() {
 
         <div className="flex items-center gap-3">
           {isAuthenticated ? (
-            <Link
-              to={ROLE_DASHBOARD[role] ?? ROUTES.LOGIN}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400"
-            >
-              Dashboard
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                to={ROLE_DASHBOARD[role] ?? ROUTES.LOGIN}
+                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400"
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
+              >
+                Logout
+              </button>
+            </div>
           ) : (
             <>
               <Link

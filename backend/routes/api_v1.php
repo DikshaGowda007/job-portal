@@ -12,6 +12,10 @@ Route::prefix('auth')->group(function () {
     Route::post('/resend-otp', [UserController::class, 'resendOtp'])->name('UserController.resendOtp')->middleware('throttle:3,1');
 });
 
+Route::prefix('auth')->middleware(['jwt.verify'])->group(function () {
+    Route::post('/logout', [UserController::class, 'logout'])->name('UserController.logout');
+});
+
 Route::prefix('job')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN.'|'.UserConstant::USER_ROLE_RECRUITER.'|'.UserConstant::USER_ROLE_JOB_SEEKER])->group(function () {
     Route::post('/add', [JobController::class, 'add'])->name('JobController.add');
     Route::post('/publish', [JobController::class, 'publish'])->name('JobController.publish');

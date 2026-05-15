@@ -7,6 +7,7 @@ use App\Http\Requests\V1\User\Add\ResendOtpRequest;
 use App\Http\Requests\V1\User\Add\UserLoginRequest;
 use App\Http\Requests\V1\User\Add\UserOtpVerificationRequest;
 use App\Http\Requests\V1\User\Add\UserRequest;
+use App\Modules\Auth\Services\LogoutService;
 use App\Modules\Auth\Signup\Services\LoginService;
 use App\Modules\Auth\Signup\Services\SignupService;
 use App\Modules\Auth\Signup\Services\OtpVerificationService;
@@ -46,6 +47,17 @@ class UserController
             $resendOtpService = app(ResendOtpService::class);
 
             return $resendOtpService->resend($email);
+        } catch (\Throwable $e) {
+            return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_GENERAL));
+        }
+    }
+
+    public function logout(): JsonResponse
+    {
+        try {
+            $logoutService = app(LogoutService::class);
+
+            return $logoutService->logout();
         } catch (\Throwable $e) {
             return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_GENERAL));
         }

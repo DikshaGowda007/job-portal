@@ -9,6 +9,10 @@ export const API = {
     RESEND_OTP: `${BASE_URL}/api/v1/auth/resend-otp`,
   },
 
+  USER: {
+    LOGOUT: `${BASE_URL}/api/v1/auth/logout`,
+  },
+
   JOB: {
     LIST: `${BASE_URL}/api/v1/job/list`,
   },
