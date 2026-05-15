@@ -17,18 +17,16 @@ class UserOTPVerificationRepositoryImpl implements UserOTPVerificationRepository
         return UserOTPVerification::create($userOTPVerificationDAO->toArray())->id;
     }
 
-    public function findByEmailAndOtp(string $email, string $otp): Collection
+    public function findByUserIdAndOtp(int $userId, string $otp): Collection
     {
-        return UserOTPVerification::where('email', $email)
+        return UserOTPVerification::where('user_id', $userId)
             ->where('otp', $otp)
             ->get();
     }
 
-    public function findByEmailAndOtpAndExpiry(string $email, string $otp): Collection
+    public function updateByUserId(int $userId, UserOTPVerificationDAO $userOTPVerificationDAO)
     {
-        return UserOTPVerification::where('email', $email)
-            ->where('otp', $otp)
-            ->where('expires_at', '>', Carbon::now()->format('Y-m-d H:i:s'))
-            ->get();
+        return UserOTPVerification::where('user_id', $userId)
+            ->update($userOTPVerificationDAO->toArray());
     }
 }

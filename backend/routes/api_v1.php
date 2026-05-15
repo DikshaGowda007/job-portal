@@ -9,6 +9,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/signup', [UserController::class, 'signup'])->name('UserController.signup');
     Route::post('/login', [UserController::class, 'login'])->name('UserController.login');
     Route::post('/verifyOtp', [UserController::class, 'verifyOtp'])->name('verifyOtp');
+    Route::post('/resend-otp', [UserController::class, 'resendOtp'])->name('UserController.resendOtp')->middleware('throttle:3,1');
 });
 
 Route::prefix('job')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN.'|'.UserConstant::USER_ROLE_RECRUITER.'|'.UserConstant::USER_ROLE_JOB_SEEKER])->group(function () {

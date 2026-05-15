@@ -14,5 +14,7 @@ interface UserRepository
     
     public function findByEmailAndPassword(string $email, string $password): Collection;
 
-    public function findById(int $userId): Collection;
+    public function findById(int $userId): ?User;
+
+   public function findByEmail(string $email): Collection;
 }

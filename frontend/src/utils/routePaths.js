@@ -1,8 +1,8 @@
 export const ROUTES = {
   HOME: "/",
-  PUBLIC_JOBS: "/jobs",
   LOGIN: "/login",
   SIGNUP: "/signup",
+  OTP: "/otp",
 
   ADMIN_DASHBOARD: "/admin/dashboard",
 

@@ -14,20 +14,23 @@ use Mail;
 
 class OtpService
 {
-    public function __construct(private UserOTPVerificationDAO $userOTPVerificationDAO, private UserOTPVerificationRepository $userOTPVerificationRepository)
-    {}
+    public function __construct(
+        private UserOTPVerificationDAO $userOTPVerificationDAO,
+        private UserOTPVerificationRepository $userOTPVerificationRepository
+    ) {}
 
     public function sendOtp(int $userId, string $email)
     {
         try {
             $this->insert($userId);
             $this->sendMail($email);
+
             return ['status' => CommonConstant::OTP_SENT_SUCCESS, 'user_id' => $userId];
         } catch (Exception $e) {
-            \Log::error('OTP Send Error: ' . $e->getMessage());
+            \Log::error('OTP Send Error: '.$e->getMessage());
             return ['status' => CommonConstant::ERROR, 'message' => CommonConstant::OTP_SENT_FAIL];
         } catch (\Throwable $e) {
-            \Log::error('OTP Send Error: ' . $e->getMessage());
+            \Log::error('OTP Send Error: '.$e->getMessage());
             return ['status' => CommonConstant::ERROR, 'message' => CommonConstant::OTP_SENT_FAIL];
         }
     }
@@ -41,7 +44,7 @@ class OtpService
 
         $insertedId = $this->userOTPVerificationRepository->insert($this->userOTPVerificationDAO);
 
-        return !$insertedId ? throw DataInsertFailed::withMessage() : $insertedId;
+        return ! $insertedId ? throw DataInsertFailed::withMessage() : $insertedId;
     }
 
     private function prepareUserVerificationDAO(int $userId, string $otp, string $expiresAt): UserOTPVerificationDAO
@@ -49,6 +52,7 @@ class OtpService
         $this->userOTPVerificationDAO->setUserId($userId);
         $this->userOTPVerificationDAO->setOtp($otp);
         $this->userOTPVerificationDAO->setExpiresAt($expiresAt);
+
         return $this->userOTPVerificationDAO;
     }
 

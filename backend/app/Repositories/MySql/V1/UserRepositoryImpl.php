@@ -31,8 +31,13 @@ class UserRepositoryImpl implements UserRepository
             ->get();
     }
 
-    public function findById(int $userId): Collection
+    public function findById(int $userId): ?User
     {
-        return User::where('user_id', $userId)->get();
+        return User::find($userId);
+    }
+
+    public function findByEmail(string $email): Collection
+    {
+        return User::where('email', $email)->get();
     }
 }

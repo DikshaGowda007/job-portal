@@ -5,12 +5,21 @@ namespace App\Repositories\DAO\V1;
 class UserDAO
 {
     private ?string $firstName = null;
+
     private ?string $lastName = null;
+
     private ?string $email = null;
+
     private ?string $password = null;
+
+    private ?int $userType = null;
+
     private ?int $verified = null;
+
     private ?string $lastLogin = null;
+
     private ?string $createdAt = null;
+
     private ?string $updatedAt = null;
 
     public function toArray()
@@ -29,6 +38,9 @@ class UserDAO
         if (isset($this->password)) {
             $collection['password'] = $this->password;
         }
+        if (isset($this->userType)) {
+            $collection['user_type'] = $this->userType;
+        }
         if (isset($this->verified)) {
             $collection['verified'] = $this->verified;
         }
@@ -44,6 +56,7 @@ class UserDAO
 
         return $collection;
     }
+
     /**
      * Get the value of firstName
      */
@@ -51,10 +64,11 @@ class UserDAO
     {
         return $this->firstName;
     }
+
     /**
      * Set the value of firstName
      *
-     * @return  self
+     * @return self
      */
     public function setFirstName($firstName)
     {
@@ -62,6 +76,7 @@ class UserDAO
 
         return $this;
     }
+
     /**
      * Get the value of lastName
      */
@@ -69,10 +84,11 @@ class UserDAO
     {
         return $this->lastName;
     }
+
     /**
      * Set the value of lastName
      *
-     * @return  self
+     * @return self
      */
     public function setLastName($lastName)
     {
@@ -80,6 +96,7 @@ class UserDAO
 
         return $this;
     }
+
     /**
      * Get the value of email
      */
@@ -87,10 +104,11 @@ class UserDAO
     {
         return $this->email;
     }
+
     /**
      * Set the value of email
      *
-     * @return  self
+     * @return self
      */
     public function setEmail($email)
     {
@@ -98,6 +116,7 @@ class UserDAO
 
         return $this;
     }
+
     /**
      * Get the value of password
      */
@@ -105,10 +124,11 @@ class UserDAO
     {
         return $this->password;
     }
+
     /**
      * Set the value of password
      *
-     * @return  self
+     * @return self
      */
     public function setPassword($password)
     {
@@ -116,6 +136,7 @@ class UserDAO
 
         return $this;
     }
+
     /**
      * Get the value of verified
      */
@@ -123,10 +144,23 @@ class UserDAO
     {
         return $this->verified;
     }
+
+    public function getUserType()
+    {
+        return $this->userType;
+    }
+
+    public function setUserType($userType)
+    {
+        $this->userType = $userType;
+
+        return $this;
+    }
+
     /**
      * Set the value of verified
      *
-     * @return  self
+     * @return self
      */
     public function setVerified($verified)
     {
@@ -134,6 +168,7 @@ class UserDAO
 
         return $this;
     }
+
     /**
      * Get the value of createdAt
      */
@@ -141,10 +176,11 @@ class UserDAO
     {
         return $this->createdAt;
     }
+
     /**
      * Set the value of createdAt
      *
-     * @return  self
+     * @return self
      */
     public function setCreatedAt($createdAt)
     {
@@ -152,6 +188,7 @@ class UserDAO
 
         return $this;
     }
+
     /**
      * Get the value of updatedAt
      */
@@ -159,10 +196,11 @@ class UserDAO
     {
         return $this->updatedAt;
     }
+
     /**
      * Set the value of updatedAt
      *
-     * @return  self
+     * @return self
      */
     public function setUpdatedAt($updatedAt)
     {
@@ -170,6 +208,7 @@ class UserDAO
 
         return $this;
     }
+
     /**
      * Get the value of lastLogin
      */
@@ -177,10 +216,11 @@ class UserDAO
     {
         return $this->lastLogin;
     }
+
     /**
      * Set the value of lastLogin
      *
-     * @return  self
+     * @return self
      */
     public function setLastLogin($lastLogin)
     {

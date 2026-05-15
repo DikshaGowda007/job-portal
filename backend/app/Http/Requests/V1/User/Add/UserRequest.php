@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\V1\User\Add;
 
+use App\Constants\UserConstant;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -26,8 +27,9 @@ class UserRequest extends FormRequest
         $rules = [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:6']
+            'email' => ['required', 'email', 'max:255'],
+            'password' => ['required', 'string', 'min:6'],
+            'user_type' => ['required', 'integer', 'in:'.UserConstant::USER_ROLE_RECRUITER.','.UserConstant::USER_ROLE_JOB_SEEKER],
         ];
 
         return $rules;
@@ -38,7 +40,7 @@ class UserRequest extends FormRequest
         $firstError = $validator->errors()->first();
         throw new HttpResponseException(response()->json([
             'status' => 'error',
-            'message' => $firstError
+            'message' => $firstError,
         ]));
     }
 
@@ -48,7 +50,8 @@ class UserRequest extends FormRequest
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'email' => 'Email Id',
-            'password' => 'password',
+            'password' => 'Password',
+            'user_type' => 'User Type',
         ];
     }
 
@@ -56,6 +59,6 @@ class UserRequest extends FormRequest
         'first_name',
         'last_name',
         'email',
-        'password'
+        'password',
     ];
 }

@@ -5,13 +5,20 @@ import { ROUTES } from "@/utils/routePaths";
 import PublicLayout from "@/layouts/PublicLayout";
 
 import HomePage from "@/features/home/pages/HomePage";
+import SignupPage from "@/features/auth/pages/SignupPage";
+import OtpPage from "@/features/auth/pages/OtpPage";
 
 const router = createBrowserRouter([
   // Public layout
   {
     element: <PublicLayout />,
-    children: [{ path: ROUTES.HOME, element: <HomePage /> }],
+    children: [
+      { path: ROUTES.HOME, element: <HomePage /> },
+    ],
   },
+
+  { path: ROUTES.SIGNUP, element: <SignupPage /> },
+  { path: "/otp", element: <OtpPage /> },
 
   { path: "*", element: <Navigate to={ROUTES.HOME} replace /> },
 ]);
