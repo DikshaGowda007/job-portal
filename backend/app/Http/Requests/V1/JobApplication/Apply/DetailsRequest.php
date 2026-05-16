@@ -5,16 +5,22 @@ namespace App\Http\Requests\V1\JobApplication\Apply;
 use App\Constants\JobApplicationConstants;
 use App\Exceptions\AccessForbiddenException;
 use App\Services\V1\User\AccessService;
+use App\Traits\V1\AccessRightsTrait;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class DetailsRequest extends FormRequest
 {
+    use AccessRightsTrait;
+
+    private AccessService $accessService;
+
     public function authorize(): bool
     {
         $this->accessService = app(AccessService::class);
         $this->accessService->initializeUserAuth();
+        $this->initializeUserAuthorizationData();
         $this->hasAccess();
 
         return true;
