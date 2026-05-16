@@ -15,6 +15,7 @@ const router = createBrowserRouter([
     element: <PublicLayout />,
     children: [
       { path: ROUTES.HOME, element: <HomePage /> },
+      { path: ROUTES.PUBLIC_JOB_DETAIL, element: <JobDetailPage /> },
     ],
   },
 

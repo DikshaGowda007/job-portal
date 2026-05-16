@@ -8,8 +8,10 @@ import Pagination from "@/components/common/Pagination";
 import JobSearchBar from "../components/JobSearchBar";
 import JobFilters from "../components/JobFilters";
 import PublicJobCard from "../components/PublicJobCard";
+import JobDetailModal from "../components/JobDetailModal";
 
 export default function HomePage() {
+  const [selectedJobId, setSelectedJobId] = useState(null);
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
   const [location, setLocation] = useState("");
@@ -39,8 +41,6 @@ export default function HomePage() {
 
   const jobs = data?.jobs ?? [];
   const totalPages = data?.total_pages ?? 1;
-
-  // console.log(data)
 
   const handleSearch = (kw, loc) => {
     setKeyword(kw);
@@ -83,7 +83,11 @@ export default function HomePage() {
             <>
               <div className="space-y-3">
                 {jobs.map((job) => (
-                  <PublicJobCard key={job.id} job={job} />
+                  <PublicJobCard
+                    key={job.job_id}
+                    job={job}
+                    onClick={() => setSelectedJobId(job.job_id)}
+                  />
                 ))}
               </div>
               <Pagination
@@ -95,6 +99,12 @@ export default function HomePage() {
           )}
         </main>
       </div>
+      {selectedJobId && (
+        <JobDetailModal
+          jobId={selectedJobId}
+          onClose={() => setSelectedJobId(null)}
+        />
+      )}
     </div>
   );
 }
