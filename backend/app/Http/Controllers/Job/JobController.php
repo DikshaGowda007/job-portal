@@ -81,6 +81,7 @@ class JobController extends Controller
         try {
             $getJobDetailsService = app(GetJobDetailsService::class);
             $jobId = $getDetailsRequest->input('id');
+
             return $getJobDetailsService->get($jobId);
         } catch (Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
