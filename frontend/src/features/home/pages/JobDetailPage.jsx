@@ -1,13 +1,12 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { jobsApi } from "@/api/jobs.api";
-import { useAuth } from "@/context/AuthContext";
 import { ROUTES } from "@/utils/routePaths";
-import { ROLES } from "@/utils/roles";
 import { formatSalary, formatDate } from "@/utils/formatters";
 import Loader from "@/components/common/Loader";
 import JobSection from "@/features/home/components/JobSection";
 import JobDetailRow from "@/features/home/components/JobDetailRow";
+import ApplyCard from "@/features/home/components/ApplyCard";
 import {
   MapPin,
   Briefcase,
@@ -21,8 +20,6 @@ import {
 
 export default function JobDetailPage() {
   const { id } = useParams();
-  const { isAuthenticated, role } = useAuth();
-  const canApply = !isAuthenticated || role === ROLES.JOB_SEEKER;
 
   const { data: job, isLoading } = useQuery({
     queryKey: ["public-job", id],
@@ -30,7 +27,6 @@ export default function JobDetailPage() {
   });
 
   if (isLoading) return <Loader />;
-
   if (!job) {
     return (
       <div className="py-20 text-center">
@@ -47,7 +43,6 @@ export default function JobDetailPage() {
 
   return (
     <div className="mx-auto max-w-4xl py-6">
-      {/* Back */}
       <Link
         to={ROUTES.HOME}
         className="mb-6 flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -114,7 +109,6 @@ export default function JobDetailPage() {
             )}
           </div>
 
-          {/* Description */}
           {job.job_description && (
             <JobSection title="Job Description">
               <p className="whitespace-pre-line text-sm leading-relaxed text-gray-700 dark:text-gray-300">
@@ -123,7 +117,6 @@ export default function JobDetailPage() {
             </JobSection>
           )}
 
-          {/* Responsibilities */}
           {job.roles_responsibility?.length > 0 && (
             <JobSection title="Roles & Responsibilities">
               <ul className="space-y-1.5">
@@ -143,7 +136,6 @@ export default function JobDetailPage() {
             </JobSection>
           )}
 
-          {/* Skills */}
           {job.skills?.length > 0 && (
             <JobSection title="Required Skills">
               <div className="flex flex-wrap gap-2">
@@ -162,25 +154,8 @@ export default function JobDetailPage() {
 
         {/* Sidebar */}
         <div className="space-y-4">
-          {/* Apply card — only for guests and job seekers */}
-          {canApply && (
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              {
-                <div className="text-center">
-                  <button className="w-full rounded-xl bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400">
-                    Apply Now
-                  </button>
-                  {!isAuthenticated && (
-                    <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-                      You'll be asked to log in before applying.
-                    </p>
-                  )}
-                </div>
-              }
-            </div>
-          )}
+          <ApplyCard jobId={id} />
 
-          {/* Details card */}
           <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
             <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-white">
               Job Details

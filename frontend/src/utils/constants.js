@@ -5,3 +5,5 @@ export const PAGINATION_DEFAULT = {
   PAGE: 1,
   PER_PAGE: 10,
 };
+
+export const CURRENCIES = ["INR", "USD", "EUR", "GBP"];
