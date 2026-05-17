@@ -9,15 +9,13 @@ use App\Exceptions\DataNotFoundException;
 use App\Repositories\V1\JobApplicationRepository;
 use App\Traits\V1\AccessRightsTrait;
 use App\Utils\CommonUtils;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class DetailsService
 {
     use AccessRightsTrait;
-
-    private ?Collection $jobApplication = null;
 
     public function __construct(
         private JobApplicationRepository $jobApplicationRepository,
@@ -25,15 +23,17 @@ class DetailsService
         $this->initializeUserAuthorizationData();
     }
 
-    public function list(?int $jobPostId = null, ?string $status = null): JsonResponse
+    public function list(?int $jobPostId = null, ?string $status = null, int $page = 1, int $perPage = 20): JsonResponse
     {
         try {
-            $this->fetchApplications($jobPostId, $status);
-            $data = $this->formatResponse();
+            $seekerResponse = $this->fetchJobs($page, $perPage);
 
-            return response()->json(CommonUtils::successDataResponse($data));
+            if ($seekerResponse !== null) {
+                return $seekerResponse;
+            }
+
+            return response()->json(CommonUtils::successDataResponse([]));
         } catch (DataNotFoundException $e) {
-
             return response()->json(CommonUtils::errorResponse($e->getMessage()));
         } catch (\Throwable $e) {
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
@@ -42,39 +42,62 @@ class DetailsService
         }
     }
 
-    public function fetchApplications(?int $jobPostId = null, ?string $status = null)
+    private function fetchJobs(int $page = 1, int $perPage = 20): ?JsonResponse
     {
         if ($this->loggedInUserRole == UserConstant::USER_ROLE_JOB_SEEKER) {
-            $this->jobApplication = $this->jobApplicationRepository->findByUserIdOrStatus($this->loggedInUserId, $status);
-            if ($this->jobApplication->isEmpty()) {
+            $jobApplicationDetails = $this->jobApplicationRepository->fetchByUserIdAndStatus($this->loggedInUserId, CommonConstant::STATUS_ACTIVE);
+
+            $jobApplicationDetails->load(['jobPost']);
+            $jobApplicationDetails = $jobApplicationDetails->sortByDesc('created_at')->values();
+
+            $paginatedJobs = new LengthAwarePaginator(
+                $jobApplicationDetails->forPage($page, $perPage)->values(),
+                $jobApplicationDetails->count(),
+                $perPage,
+                $page
+            );
+
+            if ($paginatedJobs->isEmpty()) {
                 throw DataNotFoundException::withMessage();
             }
 
-            return;
+            return response()->json([
+                'status' => CommonConstant::SUCCESS,
+                'data' => $this->formatPaginatedJobResponse($paginatedJobs),
+                'pagination' => [
+                    'current_page' => $paginatedJobs->currentPage(),
+                    'per_page' => $paginatedJobs->perPage(),
+                    'total' => $paginatedJobs->total(),
+                    'last_page' => $paginatedJobs->lastPage(),
+                    'from' => $paginatedJobs->firstItem(),
+                    'to' => $paginatedJobs->lastItem(),
+                ],
+            ]);
         }
 
-        $this->jobApplication = $this->jobApplicationRepository->findByJobPostIdOrStatus($jobPostId, $status);
-        if ($this->jobApplication->isEmpty()) {
-            throw DataNotFoundException::withMessage();
-        }
+        return null;
     }
 
-    private function formatResponse()
+    private function formatPaginatedJobResponse(LengthAwarePaginator $paginatedJobs): array
     {
-        $transformedArray = [];
-        foreach ($this->jobApplication as $value) {
-            $this->formatJob($transformedArray, collect($value));
+        $applications = [];
+        foreach ($paginatedJobs->items() as $value) {
+            $this->formatJob($applications, collect($value->toArray()));
         }
 
-        return $transformedArray;
+        return $applications;
     }
 
-    private function formatJob(array &$transformedArray, SupportCollection $jobApplication)
+    private function formatJob(array &$transformedArray, Collection $jobApplication)
     {
+        $jobPost = $jobApplication->get('job_post') ?? [];
+
         $transformedArray[] = [
             'id' => $jobApplication->get('id'),
             'user_id' => $jobApplication->get('user_id'),
             'job_post_id' => $jobApplication->get('job_post_id'),
+            'job_title' => $jobPost['title'] ?? null,
+            'company_name' => $jobPost['company_name'] ?? null,
             'resume_path' => $jobApplication->get('resume_path'),
             'cover_letter' => $jobApplication->get('cover_letter'),
             'expected_salary' => $jobApplication->get('expected_salary'),

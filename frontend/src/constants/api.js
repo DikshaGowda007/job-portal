@@ -17,4 +17,9 @@ export const API = {
     LIST: `${BASE_URL}/api/v1/job/list`,
     GET: `${BASE_URL}/api/v1/job/get`,
   },
+
+  APPLICATION: {
+    LIST: `${BASE_URL}/api/v1/application/list`,
+    VIEW: `${BASE_URL}/api/v1/application/view`,
+  },
 };

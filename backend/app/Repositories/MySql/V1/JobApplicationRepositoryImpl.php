@@ -51,12 +51,12 @@ class JobApplicationRepositoryImpl implements JobApplicationRepository
         return $query->get();
     }
 
-    public function findById(int $id): ?JobApplication
+    public function findByIdWithJobPost(int $id): Collection
     {
-        return JobApplication::with(['user', 'jobPost.recruiter'])
+        return JobApplication::with(['jobPost'])
             ->where('id', $id)
             ->where('is_deleted', CommonConstant::IS_DELETED_NO)
-            ->first();
+            ->get();
     }
 
     public function updateById(int $id, JobApplicationDAO $jobApplicationDAO): bool|int
@@ -65,5 +65,13 @@ class JobApplicationRepositoryImpl implements JobApplicationRepository
 
         return JobApplication::where('id', $id)
             ->update($jobApplicationDAO->toArray());
+    }
+
+    public function fetchByUserIdAndStatus(int $userId, int $status): Collection
+    {
+        return JobApplication::where('user_id', $userId)
+            ->where('status', $status)
+            ->where('is_deleted', CommonConstant::IS_DELETED_NO)
+            ->get();
     }
 }

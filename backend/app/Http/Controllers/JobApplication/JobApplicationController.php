@@ -4,11 +4,13 @@ namespace App\Http\Controllers\JobApplication;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\JobApplication\Apply\DetailsRequest as ApplyDetailsRequest;
+use App\Http\Requests\V1\JobApplication\Get\DetailsRequest as GetDetailsRequest;
 use App\Http\Requests\V1\JobApplication\MyApplications\DetailsRequest as MyApplicationsDetailsRequest;
 use App\Http\Requests\V1\JobApplication\UpdateStatus\DetailsRequest as UpdateStatusDetailsRequest;
 use App\Http\Requests\V1\JobApplication\Withdraw\DetailsRequest as WithdrawDetailsRequest;
 use App\Http\Requests\V1\JobApplication\View\DetailsRequest as ViewDetailsRequest;
 use App\Modules\V1\JobApplication\Services\Apply\DetailsService as ApplyDetailsService;
+use App\Modules\V1\JobApplication\Services\Get\DetailsService as GetDetailsService;
 use App\Modules\V1\JobApplication\Services\List\DetailsService as ListDetailsService;
 use App\Modules\V1\JobApplication\Services\UpdateStatus\DetailsService as UpdateStatusDetailsService;
 use App\Modules\V1\JobApplication\Services\Withdraw\DetailsService as WithdrawDetailsService;
@@ -30,14 +32,28 @@ class JobApplicationController extends Controller
         }
     }
 
-    public function myApplications(MyApplicationsDetailsRequest $request): JsonResponse
+    public function myApplications(MyApplicationsDetailsRequest $myApplicationsDetailsRequest): JsonResponse
     {
         try {
-            $service = app(ListDetailsService::class);
-            $userId = $request->input('user_id');
-            $status = $request->input('status');
+            $listDetailsService = app(ListDetailsService::class);
+            $jobPostId = $myApplicationsDetailsRequest->input('job_post_id');
+            $status = $myApplicationsDetailsRequest->input('status');
+            $page = $myApplicationsDetailsRequest->input('page', 1);
+            $perPage = $myApplicationsDetailsRequest->input('per_page', 20);
 
-            return $service->list($userId, $status);
+            return $listDetailsService->list($jobPostId, $status, $page, $perPage);
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
+
+    public function get(GetDetailsRequest $getDetailsRequest): JsonResponse
+    {
+        try {
+            $getDetailsService = app(GetDetailsService::class);
+            $applicationId = $getDetailsRequest->input('application_id');
+
+            return $getDetailsService->get($applicationId);
         } catch (Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
         }
