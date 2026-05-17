@@ -1,27 +1,22 @@
 <?php
 
-namespace App\Http\Requests\V1\JobApplication\MyApplications;
+namespace App\Http\Requests\V1\JobApplication\List;
 
 use App\Constants\JobApplicationConstants;
-use App\Constants\UserConstant;
 use App\Exceptions\AccessForbiddenException;
 use App\Services\V1\User\AccessService;
-use App\Traits\V1\AccessRightsTrait;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class DetailsRequest extends FormRequest
 {
-    use AccessRightsTrait;
-
     private AccessService $accessService;
 
     public function authorize(): bool
     {
         $this->accessService = app(AccessService::class);
         $this->accessService->initializeUserAuth();
-        $this->initializeUserAuthorizationData();
         $this->hasAccess();
 
         return true;
@@ -36,19 +31,10 @@ class DetailsRequest extends FormRequest
 
     public function rules(): array
     {
-        $rules = [
+        return [
+            'job_post_id' => 'required|integer|exists:job_posts,id',
             'status' => 'nullable|in:'.implode(',', JobApplicationConstants::VALID_STATUSES),
-            'page' => 'nullable|integer|min:1',
-            'per_page' => 'nullable|integer|min:1|max:100',
         ];
-
-        if ($this->loggedInUserRole != UserConstant::USER_ROLE_JOB_SEEKER) {
-            $rules = array_merge($rules, [
-                'job_post_id' => 'nullable|integer|exists:job_posts,id',
-            ]);
-        }
-
-        return $rules;
     }
 
     protected function failedValidation(Validator $validator): void
@@ -63,6 +49,7 @@ class DetailsRequest extends FormRequest
     public function attributes(): array
     {
         return [
+            'job_post_id' => 'Job',
             'status' => 'Status',
         ];
     }

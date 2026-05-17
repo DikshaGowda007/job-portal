@@ -16,7 +16,9 @@ interface JobApplicationRepository
 
     public function findByJobPostIdOrStatus(int $jobPostId, ?string $status = null): Collection;
 
-    public function findById(int $id): ?JobApplication;
-    
+    public function findByIdWithJobPost(int $id): Collection;
+
     public function updateById(int $id, JobApplicationDAO $jobApplicationDAO): bool|int;
+
+    public function fetchByUserIdAndStatus(int $userId, int $status): Collection;
 }

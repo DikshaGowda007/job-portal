@@ -1,13 +1,22 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import { ROUTES } from "@/utils/routePaths";
+import { ROLES } from "@/utils/roles";
 
 import PublicLayout from "@/layouts/PublicLayout";
+import SeekerLayout from "@/layouts/SeekerLayout";
+
+import ProtectedRoute from "@/routes/ProtectedRoute";
+import RoleRoute from "@/routes/RoleRoute";
+import GuestRoute from "@/routes/GuestRoute";
 
 import HomePage from "@/features/home/pages/HomePage";
-import LoginPage from "@/features/auth/pages/LoginPage";
+import JobDetailPage from "@/features/home/pages/JobDetailPage";
+
 import SignupPage from "@/features/auth/pages/SignupPage";
-import OtpPage from "@/features/auth/pages/OtpPage";
+
+import SeekerApplicationsPage from "@/features/seeker/pages/SeekerApplicationsPage";
+import SeekerApplicationDetailPage from "@/features/seeker/pages/SeekerApplicationDetailPage";
 
 const router = createBrowserRouter([
   // Public layout
@@ -18,10 +27,33 @@ const router = createBrowserRouter([
       { path: ROUTES.PUBLIC_JOB_DETAIL, element: <JobDetailPage /> },
     ],
   },
+  
+  {
+    element: <GuestRoute />,
+    children: [
+      { path: ROUTES.SIGNUP, element: <SignupPage /> },
+    ],
+  },
 
-  { path: ROUTES.SIGNUP, element: <SignupPage /> },
-  { path: "/otp", element: <OtpPage /> },
-  { path: ROUTES.LOGIN, element: <LoginPage /> },
+  // Protected routes
+  {
+    element: <ProtectedRoute />,
+    children: [
+      // Seeker
+      {
+        element: <RoleRoute allowedRoles={[ROLES.JOB_SEEKER]} />,
+        children: [
+          {
+            element: <SeekerLayout />,
+            children: [
+              { path: ROUTES.SEEKER_APPLICATIONS, element: <SeekerApplicationsPage /> },
+              { path: ROUTES.SEEKER_APPLICATION_DETAIL, element: <SeekerApplicationDetailPage /> },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 
   { path: "*", element: <Navigate to={ROUTES.HOME} replace /> },
 ]);
