@@ -48,4 +48,19 @@ class AccessService
     {
         return Gate::allows('application_update_status', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
     }
+
+    public function hasSavedJobAddAccess()
+    {
+        return Gate::allows('saved_job_add', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
+    public function hasSavedJobListAccess()
+    {
+        return Gate::allows('saved_job_list', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
+    public function hasSavedJobDeleteAccess()
+    {
+        return Gate::allows('saved_job_delete', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
 }

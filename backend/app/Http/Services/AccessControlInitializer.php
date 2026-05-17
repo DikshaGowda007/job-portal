@@ -25,6 +25,10 @@ class AccessControlInitializer
         $userAccessDetails[AccessControlConstants::APPLICATION_WITHDRAW] = 0;
         $userAccessDetails[AccessControlConstants::APPLICATION_DOWNLOAD_RESUME] = 0;
 
+        $userAccessDetails[AccessControlConstants::SAVED_JOB_LIST] = 0;
+        $userAccessDetails[AccessControlConstants::SAVED_JOB_ADD] = 0;
+        $userAccessDetails[AccessControlConstants::SAVED_JOB_DELETE] = 0;
+
         $userAccessDetails[AccessControlConstants::COMPANY_PROFILE_VIEW] = 0;
         $userAccessDetails[AccessControlConstants::COMPANY_PROFILE_EDIT] = 0;
         $userAccessDetails[AccessControlConstants::RECRUITER_MANAGE] = 0;

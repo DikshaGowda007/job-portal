@@ -22,4 +22,10 @@ export const API = {
     LIST: `${BASE_URL}/api/v1/application/list`,
     VIEW: `${BASE_URL}/api/v1/application/view`,
   },
+
+  SAVED_JOB: {
+    ADD: `${BASE_URL}/api/v1/saved-job/add`,
+    LIST: `${BASE_URL}/api/v1/saved-job/list`,
+    DELETE: `${BASE_URL}/api/v1/saved-job/delete`,
+  },
 };
