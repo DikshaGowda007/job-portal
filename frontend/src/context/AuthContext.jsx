@@ -28,6 +28,11 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const updateUser = (userData) => {
+    storage.setUser(userData);
+    setUser(userData);
+  };
+
   const isAuthenticated = !!token;
   const role = user?.role ?? null;
 

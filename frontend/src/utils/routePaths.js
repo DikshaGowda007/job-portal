@@ -7,6 +7,11 @@ export const ROUTES = {
   ADMIN_DASHBOARD: "/admin/dashboard",
   
   PUBLIC_JOB_DETAIL: "/jobs/:id",
+
+  SEEKER_APPLICATIONS: "/seeker/applications",
+  SEEKER_SAVED_JOBS: "/seeker/saved-jobs",
+  SEEKER_PROFILE: "/seeker/profile",
+
   RECRUITER_DASHBOARD: "/recruiter/dashboard",
 
   SEEKER_DASHBOARD: "/seeker/dashboard",

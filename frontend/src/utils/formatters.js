@@ -34,3 +34,14 @@ export function formatSalary(min, max, currency = "INR", salaryType) {
 export function capitalize(str = "") {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
+
+export function timeAgo(dateStr) {
+  if (!dateStr) return "";
+  const days = Math.floor(
+    (Date.now() - new Date(dateStr).getTime()) / 86400000,
+  );
+  if (days === 0) return "Today";
+  if (days === 1) return "Yesterday";
+  if (days < 30) return `${days}d ago`;
+  return `${Math.floor(days / 30)}mo ago`;
+}

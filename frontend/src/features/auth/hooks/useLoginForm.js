@@ -3,14 +3,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { authApi } from "@/api/auth.api";
 import { useAuth } from "@/context/AuthContext";
 import { ROUTES } from "@/utils/routePaths";
-import { ROLES } from "@/utils/roles";
+import { ROLES, USER_TYPE_TO_ROLE } from "@/utils/roles";
 import { tokenService } from "@/services/token.service";
 
 const ROLE_REDIRECT = {
   [ROLES.ADMIN]: ROUTES.ADMIN_DASHBOARD,
   [ROLES.SUB_ADMIN]: ROUTES.ADMIN_DASHBOARD,
   [ROLES.RECRUITER]: ROUTES.RECRUITER_DASHBOARD,
-  [ROLES.JOB_SEEKER]: ROUTES.SEEKER_DASHBOARD,
+  [ROLES.JOB_SEEKER]: ROUTES.HOME,
 };
 
 export function useLoginForm() {
