@@ -4,6 +4,7 @@ use App\Constants\UserConstant;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Job\JobController;
 use App\Http\Controllers\JobApplication\JobApplicationController;
+use App\Http\Controllers\SavedJob\SavedJobController;
 
 Route::prefix('auth')->group(function () {
     Route::post('/signup', [UserController::class, 'signup'])->name('UserController.signup');
@@ -42,4 +43,10 @@ Route::prefix('application')->middleware(['jwt.verify', 'access.role:'.UserConst
     Route::post('/my-applications', [JobApplicationController::class, 'myApplications'])->name('JobApplicationController.myApplications');
     Route::post('/get', [JobApplicationController::class, 'get'])->name('JobApplicationController.get');
     Route::post('/withdraw', [JobApplicationController::class, 'withdraw'])->name('JobApplicationController.withdraw');
+});
+
+Route::prefix('saved-job')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_JOB_SEEKER])->group(function () {
+    Route::post('/add', [SavedJobController::class, 'add'])->name('SavedJobController.add');
+    Route::post('/list', [SavedJobController::class, 'list'])->name('SavedJobController.list');
+    Route::post('/delete', [SavedJobController::class, 'delete'])->name('SavedJobController.delete');
 });

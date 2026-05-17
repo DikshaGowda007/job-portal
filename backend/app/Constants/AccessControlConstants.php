@@ -30,6 +30,12 @@ class AccessControlConstants
 
     public const APPLICATION_DOWNLOAD_RESUME = 'application_download_resume';
 
+    public const SAVED_JOB_LIST = 'saved_job_list';
+
+    public const SAVED_JOB_ADD = 'saved_job_add';
+
+    public const SAVED_JOB_DELETE = 'saved_job_delete';
+
     public const COMPANY_PROFILE_VIEW = 'company_profile_view';
 
     public const COMPANY_PROFILE_EDIT = 'company_profile_edit';

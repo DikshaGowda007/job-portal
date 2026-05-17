@@ -16,6 +16,7 @@ class GateServiceProvider extends ServiceProvider
     {
         $this->registerJobGates();
         $this->registerJobApplicationGates();
+        $this->registerSavedJobGates();
     }
 
     /**
@@ -31,6 +32,13 @@ class GateServiceProvider extends ServiceProvider
         Gate::define('job_publish', [JobPolicy::class, 'publish']);
         Gate::define('job_edit', [JobPolicy::class, 'edit']);
         Gate::define('job_delete', [JobPolicy::class, 'delete']);
+    }
+
+    private function registerSavedJobGates(): void
+    {
+        Gate::define('saved_job_list', [SavedJobPolicy::class, 'list']);
+        Gate::define('saved_job_add', [SavedJobPolicy::class, 'add']);
+        Gate::define('saved_job_delete', [SavedJobPolicy::class, 'delete']);
     }
 
     private function registerJobApplicationGates(): void

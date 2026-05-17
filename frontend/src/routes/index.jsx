@@ -17,6 +17,7 @@ import SignupPage from "@/features/auth/pages/SignupPage";
 
 import SeekerApplicationsPage from "@/features/seeker/pages/SeekerApplicationsPage";
 import SeekerApplicationDetailPage from "@/features/seeker/pages/SeekerApplicationDetailPage";
+import SeekerSavedJobsPage from "@/features/seeker/pages/SeekerSavedJobsPage";
 
 const router = createBrowserRouter([
   // Public layout
@@ -48,6 +49,7 @@ const router = createBrowserRouter([
             children: [
               { path: ROUTES.SEEKER_APPLICATIONS, element: <SeekerApplicationsPage /> },
               { path: ROUTES.SEEKER_APPLICATION_DETAIL, element: <SeekerApplicationDetailPage /> },
+              { path: ROUTES.SEEKER_SAVED_JOBS, element: <SeekerSavedJobsPage /> },
             ],
           },
         ],
