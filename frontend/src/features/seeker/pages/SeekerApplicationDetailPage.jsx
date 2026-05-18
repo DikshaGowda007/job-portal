@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { seekerApi } from "@/api/seeker.api";
 import { APPLICATION_STATUS } from "@/utils/constants";
 import { ROUTES } from "@/utils/routePaths";
 import { formatDate, timeAgo } from "@/utils/formatters";
 import Loader from "@/components/common/Loader";
 import CompanyLogo from "@/components/common/CompanyLogo";
+import ConfirmModal from "@/components/modals/ConfirmModal";
 import {
   ArrowLeft,
   Clock,
@@ -89,12 +92,11 @@ function StatusPipeline({ status }) {
 }
 
 function DetailRow({ label, value }) {
-  if (!value) return null;
   return (
     <div>
       <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
       <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-white">
-        {value}
+        {value ?? "—"}
       </p>
     </div>
   );
@@ -113,11 +115,19 @@ export default function SeekerApplicationDetailPage() {
         .then((r) => r.data?.data),
   });
 
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const withdrawMutation = useMutation({
-    mutationFn: () => seekerApi.withdraw({ id: Number(id) }),
+    mutationFn: () => seekerApi.withdraw(Number(id)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["seeker-applications"] });
       queryClient.invalidateQueries({ queryKey: ["seeker-application", id] });
+      toast.success("Application withdrawn successfully");
+      setShowConfirm(false);
+    },
+    onError: (err) => {
+      toast.error(err?.data?.message ?? "Failed to withdraw application");
+      setShowConfirm(false);
     },
   });
 
@@ -195,10 +205,7 @@ export default function SeekerApplicationDetailPage() {
             </span>
             {canWithdraw && (
               <button
-                onClick={() => {
-                  if (confirm("Withdraw this application?"))
-                    withdrawMutation.mutate();
-                }}
+                onClick={() => setShowConfirm(true)}
                 disabled={withdrawMutation.isPending}
                 className="text-xs text-red-500 hover:text-red-700 disabled:opacity-60 dark:text-red-400"
               >
@@ -245,20 +252,20 @@ export default function SeekerApplicationDetailPage() {
           />
         </div>
 
-        {data.cover_letter && (
-          <div className="mt-5">
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Cover Letter
-            </p>
+        <div className="mt-5">
+          <p className="text-xs text-gray-500 dark:text-gray-400">Cover Letter</p>
+          {data.cover_letter ? (
             <p className="mt-1 whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300">
               {data.cover_letter}
             </p>
-          </div>
-        )}
+          ) : (
+            <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-white">—</p>
+          )}
+        </div>
 
-        {data.resume_path && (
-          <div className="mt-4">
-            <p className="text-xs text-gray-500 dark:text-gray-400">Resume</p>
+        <div className="mt-4">
+          <p className="text-xs text-gray-500 dark:text-gray-400">Resume</p>
+          {data.resume_path ? (
             <a
               href={data.resume_path}
               target="_blank"
@@ -267,8 +274,10 @@ export default function SeekerApplicationDetailPage() {
             >
               View Resume
             </a>
-          </div>
-        )}
+          ) : (
+            <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-white">—</p>
+          )}
+        </div>
       </div>
 
       {/* Recruiter notes */}
@@ -282,6 +291,17 @@ export default function SeekerApplicationDetailPage() {
           </p>
         </div>
       )}
+
+      <ConfirmModal
+        open={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={() => withdrawMutation.mutate()}
+        title="Withdraw Application"
+        description="Are you sure you want to withdraw this application? This action cannot be undone."
+        confirmText="Withdraw"
+        loading={withdrawMutation.isPending}
+        danger
+      />
     </div>
   );
 }
