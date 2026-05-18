@@ -22,7 +22,6 @@ use App\Traits\V1\AccessRightsTrait;
 use App\Utils\CommonUtils;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use App\Events\ApplicationWithdrawn;
 
 class DetailsService
 {
@@ -48,9 +47,12 @@ class DetailsService
             $this->sendWithdrawalNotification();
 
             return response()->json(CommonUtils::successResponse('Application withdrawn successfully'));
-        } catch (DataNotFoundException | InvalidJobException $e) {
+        } catch (DataNotFoundException|InvalidJobException $e) {
+            dd($e);
+
             return response()->json(CommonUtils::errorResponse($e->getMessage()));
         } catch (\Throwable $e) {
+            dd($e);
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
 
             return response()->json(CommonUtils::errorResponse('Failed to withdraw application'));
@@ -59,12 +61,12 @@ class DetailsService
 
     private function findApplication(int $applicationId): void
     {
-        $applicationDetails = $this->jobApplicationRepository->findById($applicationId);
-        if (!$applicationDetails) {
+        $applicationDetails = collect($this->jobApplicationRepository->findByIdWithJobPostAndUser($applicationId)->first());
+        if ($applicationDetails->isEmpty()) {
             throw DataNotFoundException::withMessage('Application not found');
         }
 
-        $this->application = collect($applicationDetails);
+        $this->application = $applicationDetails;
     }
 
     private function hasWithdrawAccess(): void
@@ -77,7 +79,7 @@ class DetailsService
     private function validateApplicationStatus()
     {
         if (in_array($this->application->get('job_post')['status'], [JobConstants::STATUS_CLOSED, JobConstants::STATUS_EXPIRED])) {
-            throw InvalidJobException::withMessage('Job already ' . strtolower($this->application->get('job_post')['status']));
+            throw InvalidJobException::withMessage('Job already '.strtolower($this->application->get('job_post')['status']));
         }
     }
 
@@ -113,11 +115,10 @@ class DetailsService
         $templateBo = new TemplateBo;
 
         $templateBo->setTemplateCode('SEEKER_WITHDRAW_JOB_APPLICATION_EMAIL');
-        $templateBo->setModuleType(EmailConstant::MODULE_TYPE_QUEUED);
+        $templateBo->setModuleType(EmailConstant::MODULE_TYPE_GENERAL);
         $templateBo->setEmailId($this->application->get('user')['email']);
         $templateBo->setMailableClass(SeekerWithdrawJobApplicationMail::class);
         $templateBo->setMailableDtoClass(WithdrawJobApplicationMailDto::class);
-        $templateBo->setEventClass(ApplicationWithdrawn::class);
         $templateBo->setUserId($this->application->get('user')['id']);
 
         return $templateBo;
@@ -127,11 +128,10 @@ class DetailsService
     {
         $emailDto = new WithdrawJobApplicationMailDto;
 
-        $emailDto->setApplicationId($this->application->get('id'));
         $emailDto->setJobTitle($this->application->get('job_post')['title']);
-        $emailDto->setCandidateName($this->application->get('user')['first_name'] . ' ' . $this->application->get('user')['last_name']);
+        $emailDto->setCandidateName($this->application->get('user')['first_name'].' '.$this->application->get('user')['last_name']);
         $emailDto->setCandidateEmail($this->application->get('user')['email']);
-        $emailDto->setRecruiterName($this->application->get('job_post')['recruiter']['first_name'] . ' ' . $this->application->get('job_post')['recruiter']['last_name']);
+        $emailDto->setApplicationId($this->application->get('id'));
 
         return $emailDto;
     }
@@ -141,11 +141,10 @@ class DetailsService
         $templateBo = new TemplateBo;
 
         $templateBo->setTemplateCode('RECRUITER_WITHDRAW_JOB_APPLICATION_EMAIL');
-        $templateBo->setModuleType(EmailConstant::MODULE_TYPE_QUEUED);
+        $templateBo->setModuleType(EmailConstant::MODULE_TYPE_GENERAL);
         $templateBo->setEmailId($this->application->get('job_post')['recruiter']['email']);
         $templateBo->setMailableClass(RecruiterWithdrawJobApplicationMail::class);
         $templateBo->setMailableDtoClass(WithdrawJobApplicationMailDto::class);
-        $templateBo->setEventClass(ApplicationWithdrawn::class);
         $templateBo->setUserId($this->application->get('job_post')['recruiter']['id']);
 
         return $templateBo;
@@ -155,9 +154,9 @@ class DetailsService
     {
         $emailDto = new WithdrawJobApplicationMailDto;
 
-        $emailDto->setRecruiterName($this->application->get('job_post')['recruiter']['first_name'] . ' ' . $this->application->get('job_post')['recruiter']['last_name']);
+        $emailDto->setRecruiterName($this->application->get('job_post')['recruiter']['first_name'].' '.$this->application->get('job_post')['recruiter']['last_name']);
         $emailDto->setJobTitle($this->application->get('job_post')['title']);
-        $emailDto->setCandidateName($this->application->get('user')['first_name'] . ' ' . $this->application->get('user')['last_name']);
+        $emailDto->setCandidateName($this->application->get('user')['first_name'].' '.$this->application->get('user')['last_name']);
         $emailDto->setCandidateEmail($this->application->get('user')['email']);
         $emailDto->setApplicationId($this->application->get('id'));
 

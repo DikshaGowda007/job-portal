@@ -21,6 +21,7 @@ export const API = {
   APPLICATION: {
     LIST: `${BASE_URL}/api/v1/application/list`,
     VIEW: `${BASE_URL}/api/v1/application/view`,
+    WITHDRAW: `${BASE_URL}/api/v1/application/withdraw`,
   },
 
   SAVED_JOB: {
