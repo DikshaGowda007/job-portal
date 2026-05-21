@@ -50,3 +50,14 @@ Route::prefix('saved-job')->middleware(['jwt.verify', 'access.role:'.UserConstan
     Route::post('/list', [SavedJobController::class, 'list'])->name('SavedJobController.list');
     Route::post('/delete', [SavedJobController::class, 'delete'])->name('SavedJobController.delete');
 });
+
+Route::prefix('profile')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_JOB_SEEKER])->group(function () {
+    Route::post('/get', [JobSeekerProfileController::class, 'get'])->name('JobSeekerProfileController.get');
+    Route::post('/update', [JobSeekerProfileController::class, 'update'])->name('JobSeekerProfileController.update');
+    Route::post('/experience/add', [JobSeekerProfileController::class, 'addExperience'])->name('JobSeekerProfileController.addExperience');
+    Route::post('/experience/update', [JobSeekerProfileController::class, 'updateExperience'])->name('JobSeekerProfileController.updateExperience');
+    Route::post('/experience/delete', [JobSeekerProfileController::class, 'deleteExperience'])->name('JobSeekerProfileController.deleteExperience');
+    Route::post('/education/add', [JobSeekerProfileController::class, 'addEducation'])->name('JobSeekerProfileController.addEducation');
+    Route::post('/education/update', [JobSeekerProfileController::class, 'updateEducation'])->name('JobSeekerProfileController.updateEducation');
+    Route::post('/education/delete', [JobSeekerProfileController::class, 'deleteEducation'])->name('JobSeekerProfileController.deleteEducation');
+});

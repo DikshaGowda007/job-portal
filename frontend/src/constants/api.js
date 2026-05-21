@@ -29,4 +29,19 @@ export const API = {
     LIST: `${BASE_URL}/api/v1/saved-job/list`,
     DELETE: `${BASE_URL}/api/v1/saved-job/delete`,
   },
+
+  PROFILE: {
+    GET: `${BASE_URL}/api/v1/profile/get`,
+    UPDATE: `${BASE_URL}/api/v1/profile/update`,
+
+    ADD_EXPERIENCE: `${BASE_URL}/api/v1/profile/experience/add`,
+    UPDATE_EXPERIENCE: `${BASE_URL}/api/v1/profile/experience/update`,
+    DELETE_EXPERIENCE: `${BASE_URL}/api/v1/profile/experience/delete`,
+
+    ADD_EDUCATION: `${BASE_URL}/api/v1/profile/education/add`,
+    UPDATE_EDUCATION: `${BASE_URL}/api/v1/profile/education/update`,
+    DELETE_EDUCATION: `${BASE_URL}/api/v1/profile/education/delete`,
+
+    VIEW: `${BASE_URL}/api/v1/profile/view`,
+  },
 };
