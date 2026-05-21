@@ -7,6 +7,17 @@ export const seekerApi = {
   getApplication: (payload) => axiosClient.post(API.APPLICATION.GET, payload),
   withdraw: (applicationId) => axiosClient.post(API.APPLICATION.WITHDRAW, { application_id: applicationId }),
 
+  getProfile: () => axiosClient.post(API.PROFILE.GET),
+  updateProfile: (payload) => axiosClient.post(API.PROFILE.UPDATE, payload),
+
+  addExperience: (payload) => axiosClient.post(API.PROFILE.ADD_EXPERIENCE, payload),
+  updateExperience: (payload) => axiosClient.post(API.PROFILE.UPDATE_EXPERIENCE, payload),
+  deleteExperience: (payload) => axiosClient.post(API.PROFILE.DELETE_EXPERIENCE, payload),
+
+  addEducation: (payload) => axiosClient.post(API.PROFILE.ADD_EDUCATION, payload),
+  updateEducation: (payload) => axiosClient.post(API.PROFILE.UPDATE_EDUCATION, payload),
+  deleteEducation: (payload) => axiosClient.post(API.PROFILE.DELETE_EDUCATION, payload),
+
   savedJobs: (params) => axiosClient.post(API.SAVED_JOB.LIST, params),
   saveJob: (payload) => axiosClient.post(API.SAVED_JOB.ADD, payload),
   unsaveJob: (payload) => axiosClient.post(API.SAVED_JOB.DELETE, payload),
