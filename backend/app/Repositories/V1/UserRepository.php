@@ -16,5 +16,11 @@ interface UserRepository
 
     public function findById(int $userId): ?User;
 
-   public function findByEmail(string $email): Collection;
+    public function findByEmail(string $email): Collection;
+
+    public function findByUserTypeOrStatusOrFirstNameOrLstNameOrEmail(array $filters): Collection;
+
+    public function findAll(): Collection;
+
+    public function findByCreatedAt(Carbon $startDate, Carbon $endDate): Collection;
 }

@@ -40,4 +40,36 @@ class UserRepositoryImpl implements UserRepository
     {
         return User::where('email', $email)->get();
     }
+
+    public function findByUserTypeOrStatusOrFirstNameOrLstNameOrEmail(array $filters): Collection
+    {
+        $query = User::query();
+
+        if (! empty($filters['user_type'])) {
+            $query->where('user_type', $filters['user_type']);
+        }
+        if (! empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+        if (! empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->orderBy('created_at', 'desc')->get();
+    }
+
+    public function findAll(): Collection
+    {
+        return User::select('*')->get();
+    }
+
+    public function findByCreatedAt(Carbon $startDate, Carbon $endDate): Collection
+    {
+        return User::whereBetween('created_at', [$startDate, $endDate])->get();
+    }
 }

@@ -60,4 +60,9 @@ class CommonUtils
     {
         return response(['status' => CommonConstant::ERROR, 'message' => $message], 401);
     }
+
+    public static function getUserStatus(int $status): string
+    {
+        return $status === CommonConstant::STATUS_ACTIVE ? 'active' : 'inactive';
+    }
 }
