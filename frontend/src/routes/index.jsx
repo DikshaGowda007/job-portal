@@ -5,6 +5,7 @@ import { ROLES } from "@/utils/roles";
 
 import PublicLayout from "@/layouts/PublicLayout";
 import SeekerLayout from "@/layouts/SeekerLayout";
+import AdminLayout from "@/layouts/AdminLayout";
 
 import ProtectedRoute from "@/routes/ProtectedRoute";
 import RoleRoute from "@/routes/RoleRoute";
@@ -19,6 +20,12 @@ import SeekerApplicationsPage from "@/features/seeker/pages/SeekerApplicationsPa
 import SeekerApplicationDetailPage from "@/features/seeker/pages/SeekerApplicationDetailPage";
 import SeekerSavedJobsPage from "@/features/seeker/pages/SeekerSavedJobsPage";
 import SeekerProfilePage from "@/features/seeker/pages/SeekerProfilePage";
+import AdminDashboard from "@/features/admin/pages/AdminDashboard";
+import AdminJobsPage from "@/features/admin/pages/AdminJobsPage";
+import AdminApplicationsPage from "@/features/admin/pages/AdminApplicationsPage";
+import AdminUsersPage from "@/features/admin/pages/AdminUsersPage";
+import AdminSubAdminsPage from "@/features/admin/pages/AdminSubAdminsPage";
+import AdminCategoriesPage from "@/features/admin/pages/AdminCategoriesPage";
 
 const router = createBrowserRouter([
   // Public layout
@@ -52,6 +59,36 @@ const router = createBrowserRouter([
               { path: ROUTES.SEEKER_APPLICATION_DETAIL, element: <SeekerApplicationDetailPage /> },
               { path: ROUTES.SEEKER_SAVED_JOBS,         element: <SeekerSavedJobsPage /> },
               { path: ROUTES.SEEKER_PROFILE,            element: <SeekerProfilePage /> },
+            ],
+          },
+        ],
+      },
+
+      // Admin + Sub-Admin
+      {
+        element: <RoleRoute allowedRoles={[ROLES.ADMIN, ROLES.SUB_ADMIN]} />,
+        children: [
+          {
+            element: <AdminLayout />,
+            children: [
+              { path: ROUTES.ADMIN_DASHBOARD,    element: <AdminDashboard /> },
+              { path: ROUTES.ADMIN_JOBS,         element: <AdminJobsPage /> },
+              { path: ROUTES.ADMIN_APPLICATIONS, element: <AdminApplicationsPage /> },
+              { path: ROUTES.ADMIN_CATEGORIES,   element: <AdminCategoriesPage /> },
+              { path: ROUTES.ADMIN_USERS,        element: <AdminUsersPage /> },
+            ],
+          },
+        ],
+      },
+
+      // Admin only
+      {
+        element: <RoleRoute allowedRoles={[ROLES.ADMIN]} />,
+        children: [
+          {
+            element: <AdminLayout />,
+            children: [
+              { path: ROUTES.ADMIN_SUB_ADMINS, element: <AdminSubAdminsPage /> },
             ],
           },
         ],

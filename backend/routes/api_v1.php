@@ -1,6 +1,7 @@
 <?php
 
 use App\Constants\UserConstant;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Job\JobController;
 use App\Http\Controllers\JobApplication\JobApplicationController;
@@ -60,4 +61,18 @@ Route::prefix('profile')->middleware(['jwt.verify', 'access.role:'.UserConstant:
     Route::post('/education/add', [JobSeekerProfileController::class, 'addEducation'])->name('JobSeekerProfileController.addEducation');
     Route::post('/education/update', [JobSeekerProfileController::class, 'updateEducation'])->name('JobSeekerProfileController.updateEducation');
     Route::post('/education/delete', [JobSeekerProfileController::class, 'deleteEducation'])->name('JobSeekerProfileController.deleteEducation');
+});
+
+// Admin Dashboard Routes
+Route::prefix('admin')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN])->group(function () {
+    Route::post('/dashboard', [AdminController::class, 'dashboard'])->name('AdminController.dashboard');
+    Route::post('/users/list', [AdminController::class, 'listUsers'])->name('AdminController.listUsers');
+    Route::post('/users/view', [AdminController::class, 'viewUser'])->name('AdminController.viewUser');
+    Route::post('/users/toggle-status', [AdminController::class, 'toggleUserStatus'])->name('AdminController.toggleUserStatus');
+});
+
+// Admin-only routes
+Route::prefix('admin')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_ADMIN])->group(function () {
+    Route::post('/sub-admin/create', [AdminController::class, 'createSubAdmin'])->name('AdminController.createSubAdmin');
+    Route::post('/sub-admin/list', [AdminController::class, 'listSubAdmins'])->name('AdminController.listSubAdmins');
 });

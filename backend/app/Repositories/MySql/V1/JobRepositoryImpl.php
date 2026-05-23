@@ -53,4 +53,9 @@ class JobRepositoryImpl implements JobRepository
                 ->orWhere('expires_at', 'like', "%$data%");
         })->get();
     }
+
+    public function findAll(): Collection
+    {
+        return JobPost::where('is_deleted', CommonConstant::IS_DELETED_NO)->get();
+    }
 }

@@ -15,5 +15,10 @@ export const ROUTES = {
 
   RECRUITER_DASHBOARD: "/recruiter/dashboard",
 
-  SEEKER_DASHBOARD: "/seeker/dashboard",
+  ADMIN_DASHBOARD: "/admin/dashboard",
+  ADMIN_JOBS: "/admin/jobs",
+  ADMIN_APPLICATIONS: "/admin/applications",
+  ADMIN_USERS: "/admin/users",
+  ADMIN_SUB_ADMINS: "/admin/sub-admins",
+  ADMIN_CATEGORIES: "/admin/categories",
 };
