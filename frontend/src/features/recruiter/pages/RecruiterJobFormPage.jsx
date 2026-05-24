@@ -258,13 +258,33 @@ export default function RecruiterJobFormPage() {
                 />
               </div>
             </Field>
-            <SelectField
-              label="Job Category"
-              value={form.job_category_id}
-              onChange={set("job_category_id")}
-              options={categories.map((c) => ({ value: c.id, label: c.name }))}
-              placeholder="— No category —"
-            />
+            <Field label="Job Category">
+              <div className="flex flex-wrap gap-2 rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800/60">
+                {categories.length === 0 ? (
+                  <p className="text-xs text-gray-400">No categories available</p>
+                ) : (
+                  categories.map((cat) => {
+                    const selected = String(form.job_category_id) === String(cat.id);
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() =>
+                          setForm((f) => ({ ...f, job_category_id: selected ? "" : cat.id }))
+                        }
+                        className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                          selected
+                            ? "bg-indigo-600 text-white shadow-sm dark:bg-indigo-500"
+                            : "bg-white text-gray-600 ring-1 ring-inset ring-gray-200 hover:text-indigo-600 hover:ring-indigo-300 dark:bg-gray-900 dark:text-gray-400 dark:ring-gray-700 dark:hover:text-indigo-400 dark:hover:ring-indigo-700"
+                        }`}
+                      >
+                        {cat.name}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            </Field>
           </div>
 
           <GroupLabel>Type & Status</GroupLabel>

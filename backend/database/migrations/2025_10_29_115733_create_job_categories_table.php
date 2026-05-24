@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -16,7 +17,7 @@ return new class extends Migration {
             $table->string('slug')->unique();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
-            $table->unsignedTinyInteger('status')->default(1)->comment('1 - Active, 2 - Inactive');
+            $table->unsignedTinyInteger('status')->default(1)->comment('1 - Active, 0 - Inactive');
             $table->unsignedTinyInteger('is_deleted')->default(0)->comment('1 - Yes, 0 - No');
         });
     }
