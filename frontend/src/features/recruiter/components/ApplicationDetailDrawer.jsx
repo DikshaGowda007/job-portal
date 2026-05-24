@@ -10,6 +10,7 @@ export default function ApplicationDetailDrawer({
   onClose,
   viewFn = (payload) => recruiterApi.viewApplication(payload),
   updateStatusFn = (payload) => recruiterApi.updateApplicationStatus(payload),
+  historyFn = (payload) => recruiterApi.getApplicationHistory(payload),
   invalidateKey = "recruiter-applications",
 }) {
   const queryClient = useQueryClient();
@@ -21,6 +22,15 @@ export default function ApplicationDetailDrawer({
     queryFn: () => viewFn({ application_id: app.id }).then((r) => r.data?.data),
     enabled: !!app?.id,
   });
+
+  const { data: historyData } = useQuery({
+    queryKey: ["application-history", app?.id],
+    queryFn: () =>
+      historyFn({ application_id: app.id }).then((r) => r.data?.data),
+    enabled: !!app?.id,
+  });
+
+  const timeline = historyData?.timeline ?? [];
 
   const updateStatus = useMutation({
     mutationFn: (payload) => updateStatusFn(payload),
@@ -231,6 +241,46 @@ export default function ApplicationDetailDrawer({
                           {edu.institution} &middot; {edu.start_year} –{" "}
                           {edu.end_year}
                         </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            )}
+
+            {/* Status history */}
+            {timeline.length > 0 && (
+              <Section title="Status History">
+                <div className="space-y-3">
+                  {timeline.map((entry) => (
+                    <div key={entry.id} className="flex gap-3">
+                      <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
+                        <History
+                          size={13}
+                          className="text-gray-500 dark:text-gray-400"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-900 dark:text-white">
+                          <span className="capitalize">
+                            {entry.previous_status}
+                          </span>
+                          <span className="mx-1.5 text-gray-400">→</span>
+                          <span className="font-medium capitalize">
+                            {entry.new_status}
+                          </span>
+                        </p>
+                        <div className="mt-0.5 flex flex-wrap gap-2 text-xs text-gray-400 dark:text-gray-500">
+                          <span className="flex items-center gap-1">
+                            <Clock size={10} /> {formatDate(entry.created_at)}
+                          </span>
+                          {entry.changed_by?.name && (
+                            <span>by {entry.changed_by.name}</span>
+                          )}
+                          {entry.notes && (
+                            <span className="italic">{entry.notes}</span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}
