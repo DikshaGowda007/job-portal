@@ -46,6 +46,12 @@ Route::prefix('application')->middleware(['jwt.verify', 'access.role:'.UserConst
     Route::post('/withdraw', [JobApplicationController::class, 'withdraw'])->name('JobApplicationController.withdraw');
 });
 
+Route::prefix('recruiter')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_RECRUITER.'|'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN])->group(function () {
+    Route::post('/dashboard', [RecruiterController::class, 'dashboard'])->name('RecruiterController.dashboard');
+    Route::post('/my-jobs', [RecruiterController::class, 'myJobs'])->name('RecruiterController.myJobs');
+    Route::post('/my-applications', [RecruiterController::class, 'myApplications'])->name('RecruiterController.myApplications');
+});
+
 Route::prefix('saved-job')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_JOB_SEEKER])->group(function () {
     Route::post('/add', [SavedJobController::class, 'add'])->name('SavedJobController.add');
     Route::post('/list', [SavedJobController::class, 'list'])->name('SavedJobController.list');

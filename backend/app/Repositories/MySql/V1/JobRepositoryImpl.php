@@ -54,8 +54,71 @@ class JobRepositoryImpl implements JobRepository
         })->get();
     }
 
+    public function fetchByRecruiterWithFilters(int $recruiterId, array $filters): Collection
+    {
+        $query = JobPost::withCount(['applications' => fn ($q) => $q->where('is_deleted', CommonConstant::IS_DELETED_NO)])
+            ->where('user_id', $recruiterId)
+            ->where('is_deleted', CommonConstant::IS_DELETED_NO);
+
+        if (! empty($filters['text'])) {
+            $searchText = $filters['text'];
+            $query->where(function ($q) use ($searchText) {
+                $q->where('title', 'like', "%$searchText%")
+                    ->orWhere('company_name', 'like', "%$searchText%")
+                    ->orWhere('location', 'like', "%$searchText%")
+                    ->orWhere('education', 'like', "%$searchText%")
+                    ->orWhere('skills', 'like', "%$searchText%");
+            });
+        }
+
+        if (! empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        if (! empty($filters['work_mode'])) {
+            $workModes = array_map('strtoupper', $filters['work_mode']);
+            $query->whereIn('work_mode', $workModes);
+        }
+
+        if (! empty($filters['job_type'])) {
+            $query->whereIn('job_type', $filters['job_type']);
+        }
+
+        if (! empty($filters['experience_level'])) {
+            $query->whereIn('experience_level', $filters['experience_level']);
+        }
+
+        if (isset($filters['salary_min']) && $filters['salary_min'] !== null) {
+            $query->where('salary_max', '>=', $filters['salary_min']);
+        }
+        if (isset($filters['salary_max']) && $filters['salary_max'] !== null) {
+            $query->where('salary_min', '<=', $filters['salary_max']);
+        }
+
+        if (! empty($filters['location'])) {
+            $query->where('location', 'like', '%'.$filters['location'].'%');
+        }
+
+        if (! empty($filters['job_category_id'])) {
+            $query->where('job_category_id', $filters['job_category_id']);
+        }
+
+        $sortBy = $filters['sort_by'] ?? 'created_at';
+        $sortOrder = $filters['sort_order'] ?? 'desc';
+        $query->orderBy($sortBy, $sortOrder);
+
+        return $query->get();
+    }
+
     public function findAll(): Collection
     {
         return JobPost::where('is_deleted', CommonConstant::IS_DELETED_NO)->get();
+    }
+
+    public function findByRecruiterId(int $recruiterId): Collection
+    {
+        return JobPost::where('user_id', $recruiterId)
+            ->where('is_deleted', CommonConstant::IS_DELETED_NO)
+            ->get();
     }
 }

@@ -14,6 +14,11 @@ export const ROUTES = {
   SEEKER_PROFILE: "/seeker/profile",
 
   RECRUITER_DASHBOARD: "/recruiter/dashboard",
+  RECRUITER_JOBS: "/recruiter/jobs",
+  RECRUITER_JOB_ADD: "/recruiter/jobs/add",
+  RECRUITER_JOB_PUBLISH: "/recruiter/jobs/publish",
+  RECRUITER_JOB_EDIT: "/recruiter/jobs/:id/edit",
+  RECRUITER_APPLICATIONS: "/recruiter/applications",
 
   ADMIN_DASHBOARD: "/admin/dashboard",
   ADMIN_JOBS: "/admin/jobs",

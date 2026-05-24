@@ -16,5 +16,9 @@ interface JobRepository
 
     public function fetch(?string $data): Collection;
 
+    public function fetchByRecruiterWithFilters(int $recruiterId, array $filters): Collection;
+
     public function findAll(): Collection;
+
+    public function findByRecruiterId(int $recruiterId): Collection;
 }
