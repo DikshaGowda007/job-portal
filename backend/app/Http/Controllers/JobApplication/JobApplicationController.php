@@ -5,12 +5,14 @@ namespace App\Http\Controllers\JobApplication;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\JobApplication\Apply\DetailsRequest as ApplyDetailsRequest;
 use App\Http\Requests\V1\JobApplication\Get\DetailsRequest as GetDetailsRequest;
+use App\Http\Requests\V1\JobApplication\History\DetailsRequest as HistoryDetailsRequest;
 use App\Http\Requests\V1\JobApplication\MyApplications\DetailsRequest as MyApplicationsDetailsRequest;
 use App\Http\Requests\V1\JobApplication\UpdateStatus\DetailsRequest as UpdateStatusDetailsRequest;
 use App\Http\Requests\V1\JobApplication\Withdraw\DetailsRequest as WithdrawDetailsRequest;
 use App\Http\Requests\V1\JobApplication\View\DetailsRequest as ViewDetailsRequest;
 use App\Modules\V1\JobApplication\Services\Apply\DetailsService as ApplyDetailsService;
 use App\Modules\V1\JobApplication\Services\Get\DetailsService as GetDetailsService;
+use App\Modules\V1\JobApplication\Services\History\DetailsService as HistoryDetailsService;
 use App\Modules\V1\JobApplication\Services\List\DetailsService as ListDetailsService;
 use App\Modules\V1\JobApplication\Services\UpdateStatus\DetailsService as UpdateStatusDetailsService;
 use App\Modules\V1\JobApplication\Services\Withdraw\DetailsService as WithdrawDetailsService;
@@ -78,6 +80,18 @@ class JobApplicationController extends Controller
             $applicationId = $viewDetailsRequest->input('application_id');
 
             return $viewDetailsService->view($applicationId);
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
+
+    public function history(HistoryDetailsRequest $historyDetailsRequest): JsonResponse
+    {
+        try {
+            $historyDetailsService = app(HistoryDetailsService::class);
+            $applicationId = $historyDetailsRequest->input('application_id');
+
+            return $historyDetailsService->getHistory($applicationId);
         } catch (Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
         }
