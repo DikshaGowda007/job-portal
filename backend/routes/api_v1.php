@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Job\JobController;
 use App\Http\Controllers\JobApplication\JobApplicationController;
+use App\Http\Controllers\JobCategory\JobCategoryController;
 use App\Http\Controllers\SavedJob\SavedJobController;
 
 Route::prefix('auth')->group(function () {
@@ -50,6 +51,17 @@ Route::prefix('recruiter')->middleware(['jwt.verify', 'access.role:'.UserConstan
     Route::post('/dashboard', [RecruiterController::class, 'dashboard'])->name('RecruiterController.dashboard');
     Route::post('/my-jobs', [RecruiterController::class, 'myJobs'])->name('RecruiterController.myJobs');
     Route::post('/my-applications', [RecruiterController::class, 'myApplications'])->name('RecruiterController.myApplications');
+});
+
+Route::prefix('category')->middleware(['jwt.verify'])->group(function () {
+    Route::post('/list', [JobCategoryController::class, 'list'])->name('JobCategoryController.list');
+    Route::post('/get', [JobCategoryController::class, 'get'])->name('JobCategoryController.get');
+});
+
+Route::prefix('category')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN])->group(function () {
+    Route::post('/add', [JobCategoryController::class, 'add'])->name('JobCategoryController.add');
+    Route::post('/edit', [JobCategoryController::class, 'edit'])->name('JobCategoryController.edit');
+    Route::post('/delete', [JobCategoryController::class, 'delete'])->name('JobCategoryController.delete');
 });
 
 Route::prefix('saved-job')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_JOB_SEEKER])->group(function () {

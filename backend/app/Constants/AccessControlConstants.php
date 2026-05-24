@@ -42,7 +42,13 @@ class AccessControlConstants
 
     public const RECRUITER_MANAGE = 'recruiter_manage';
 
-    public const CATEGORY_MANAGE = 'category_manage';
+    public const CATEGORY_VIEW = 'category_view';
+
+    public const CATEGORY_ADD = 'category_add';
+
+    public const CATEGORY_EDIT = 'category_edit';
+
+    public const CATEGORY_DELETE = 'category_delete';
 
     public const USER_MANAGE = 'user_manage';
 

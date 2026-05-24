@@ -63,4 +63,24 @@ class AccessService
     {
         return Gate::allows('saved_job_delete', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
     }
+
+    public function hasJobCategoryViewAccess()
+    {
+        return Gate::allows('category_view', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
+    public function hasJobCategoryAddAccess()
+    {
+        return Gate::allows('category_add', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
+    public function hasJobCategoryEditAccess()
+    {
+        return Gate::allows('category_edit', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
+    public function hasJobCategoryDeleteAccess()
+    {
+        return Gate::allows('category_delete', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
 }
