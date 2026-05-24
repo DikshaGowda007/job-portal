@@ -24,6 +24,13 @@ export const API = {
     WITHDRAW: `${BASE_URL}/api/v1/application/withdraw`,
   },
 
+
+  RECRUITER: {
+    DASHBOARD: `${BASE_URL}/api/v1/recruiter/dashboard`,
+    MY_JOBS: `${BASE_URL}/api/v1/recruiter/my-jobs`,
+    MY_APPLICATIONS: `${BASE_URL}/api/v1/recruiter/my-applications`,
+  },
+
   SAVED_JOB: {
     ADD: `${BASE_URL}/api/v1/saved-job/add`,
     LIST: `${BASE_URL}/api/v1/saved-job/list`,

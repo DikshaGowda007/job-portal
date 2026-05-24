@@ -5,6 +5,7 @@ import { ROLES } from "@/utils/roles";
 
 import PublicLayout from "@/layouts/PublicLayout";
 import SeekerLayout from "@/layouts/SeekerLayout";
+import RecruiterLayout from "@/layouts/RecruiterLayout";
 import AdminLayout from "@/layouts/AdminLayout";
 
 import ProtectedRoute from "@/routes/ProtectedRoute";
@@ -20,6 +21,12 @@ import SeekerApplicationsPage from "@/features/seeker/pages/SeekerApplicationsPa
 import SeekerApplicationDetailPage from "@/features/seeker/pages/SeekerApplicationDetailPage";
 import SeekerSavedJobsPage from "@/features/seeker/pages/SeekerSavedJobsPage";
 import SeekerProfilePage from "@/features/seeker/pages/SeekerProfilePage";
+
+import RecruiterDashboard from "@/features/recruiter/pages/RecruiterDashboard";
+import RecruiterJobsPage from "@/features/recruiter/pages/RecruiterJobsPage";
+import RecruiterJobFormPage from "@/features/recruiter/pages/RecruiterJobFormPage";
+import RecruiterApplicationsPage from "@/features/recruiter/pages/RecruiterApplicationsPage";
+
 import AdminDashboard from "@/features/admin/pages/AdminDashboard";
 import AdminJobsPage from "@/features/admin/pages/AdminJobsPage";
 import AdminApplicationsPage from "@/features/admin/pages/AdminApplicationsPage";
@@ -59,6 +66,24 @@ const router = createBrowserRouter([
               { path: ROUTES.SEEKER_APPLICATION_DETAIL, element: <SeekerApplicationDetailPage /> },
               { path: ROUTES.SEEKER_SAVED_JOBS,         element: <SeekerSavedJobsPage /> },
               { path: ROUTES.SEEKER_PROFILE,            element: <SeekerProfilePage /> },
+            ],
+          },
+        ],
+      },
+
+      // Recruiter
+      {
+        element: <RoleRoute allowedRoles={[ROLES.RECRUITER]} />,
+        children: [
+          {
+            element: <RecruiterLayout />,
+            children: [
+              { path: ROUTES.RECRUITER_DASHBOARD, element: <RecruiterDashboard /> },
+              { path: ROUTES.RECRUITER_JOBS, element: <RecruiterJobsPage /> },
+              { path: ROUTES.RECRUITER_JOB_ADD, element: <RecruiterJobFormPage /> },
+              { path: ROUTES.RECRUITER_JOB_PUBLISH, element: <RecruiterJobFormPage /> },
+              { path: ROUTES.RECRUITER_JOB_EDIT, element: <RecruiterJobFormPage /> },
+              { path: ROUTES.RECRUITER_APPLICATIONS, element: <RecruiterApplicationsPage /> },
             ],
           },
         ],
