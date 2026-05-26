@@ -7,11 +7,15 @@ use App\Http\Requests\V1\User\Add\ResendOtpRequest;
 use App\Http\Requests\V1\User\Add\UserLoginRequest;
 use App\Http\Requests\V1\User\Add\UserOtpVerificationRequest;
 use App\Http\Requests\V1\User\Add\UserRequest;
+use App\Http\Requests\V1\User\ForgotPassword\DetailsRequest as ForgotPasswordRequest;
+use App\Http\Requests\V1\User\ResetPassword\DetailsRequest as ResetPasswordRequest;
 use App\Modules\Auth\Services\LogoutService;
 use App\Modules\Auth\Signup\Services\LoginService;
 use App\Modules\Auth\Signup\Services\SignupService;
 use App\Modules\Auth\Signup\Services\OtpVerificationService;
 use App\Modules\Auth\Signup\Services\ResendOtpService;
+use App\Modules\V1\User\Services\ForgotPassword\DetailsService as ForgotPasswordService;
+use App\Modules\V1\User\Services\ResetPassword\DetailsService as ResetPasswordService;
 use App\Utils\CommonUtils;
 use Illuminate\Http\JsonResponse;
 
@@ -47,6 +51,30 @@ class UserController
             $resendOtpService = app(ResendOtpService::class);
 
             return $resendOtpService->resend($email);
+        } catch (\Throwable $e) {
+            return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_GENERAL));
+        }
+    }
+
+    public function forgotPassword(ForgotPasswordRequest $forgotPasswordRequest): JsonResponse
+    {
+        try {
+            $forgotPasswordService = app(ForgotPasswordService::class);
+            $email = $forgotPasswordRequest->input('email');
+
+            return $forgotPasswordService->sendResetOtp($email);
+        } catch (\Throwable $e) {
+            return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_GENERAL));
+        }
+    }
+
+    public function resetPassword(ResetPasswordRequest $resetPasswordRequest): JsonResponse
+    {
+        try {
+            $resetPasswordService = app(ResetPasswordService::class);
+            $resetPasswordDetailsBo = $resetPasswordService->prepareBo($resetPasswordRequest);
+
+            return $resetPasswordService->resetPassword($resetPasswordDetailsBo);
         } catch (\Throwable $e) {
             return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_GENERAL));
         }
