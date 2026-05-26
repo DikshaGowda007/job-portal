@@ -34,6 +34,9 @@ import AdminUsersPage from "@/features/admin/pages/AdminUsersPage";
 import AdminSubAdminsPage from "@/features/admin/pages/AdminSubAdminsPage";
 import AdminCategoriesPage from "@/features/admin/pages/AdminCategoriesPage";
 
+import ForgotPasswordPage from "@/features/auth/pages/ForgotPasswordPage";
+import ResetPasswordPage from "@/features/auth/pages/ResetPasswordPage";
+
 const router = createBrowserRouter([
   // Public layout
   {
@@ -50,6 +53,8 @@ const router = createBrowserRouter([
       { path: ROUTES.SIGNUP, element: <SignupPage /> },
     ],
   },
+  { path: ROUTES.FORGOT_PASSWORD, element: <ForgotPasswordPage /> },
+  { path: ROUTES.RESET_PASSWORD, element: <ResetPasswordPage /> },
 
   // Protected routes
   {

@@ -13,6 +13,8 @@ Route::prefix('auth')->group(function () {
     Route::post('/login', [UserController::class, 'login'])->name('UserController.login');
     Route::post('/verifyOtp', [UserController::class, 'verifyOtp'])->name('verifyOtp');
     Route::post('/resend-otp', [UserController::class, 'resendOtp'])->name('UserController.resendOtp')->middleware('throttle:3,1');
+    Route::post('/forgot-password', [UserController::class, 'forgotPassword'])->name('UserController.forgotPassword')->middleware('throttle:5,1');
+    Route::post('/reset-password', [UserController::class, 'resetPassword'])->name('UserController.resetPassword')->middleware('throttle:5,1');
 });
 
 Route::prefix('auth')->middleware(['jwt.verify'])->group(function () {
