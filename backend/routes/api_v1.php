@@ -7,6 +7,7 @@ use App\Http\Controllers\Job\JobController;
 use App\Http\Controllers\JobApplication\JobApplicationController;
 use App\Http\Controllers\JobCategory\JobCategoryController;
 use App\Http\Controllers\SavedJob\SavedJobController;
+use App\Http\Controllers\User\ProfileController;
 
 Route::prefix('auth')->group(function () {
     Route::post('/signup', [UserController::class, 'signup'])->name('UserController.signup');
@@ -19,6 +20,10 @@ Route::prefix('auth')->group(function () {
 
 Route::prefix('auth')->middleware(['jwt.verify'])->group(function () {
     Route::post('/logout', [UserController::class, 'logout'])->name('UserController.logout');
+});
+
+Route::prefix('user')->middleware(['jwt.verify'])->group(function () {
+    Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('ProfileController.changePassword');
 });
 
 Route::prefix('job')->group(function () {
