@@ -11,6 +11,7 @@ export const API = {
 
   USER: {
     LOGOUT: `${BASE_URL}/api/v1/auth/logout`,
+    CHANGE_PASSWORD: `${BASE_URL}/api/v1/user/change-password`,
   },
 
   JOB: {
