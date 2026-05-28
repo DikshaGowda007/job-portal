@@ -10,6 +10,7 @@ use App\Http\Requests\V1\JobSeekerProfile\Experience\Add\DetailsRequest as AddEx
 use App\Http\Requests\V1\JobSeekerProfile\Experience\Delete\DetailsRequest as DeleteExperienceDetailsRequest;
 use App\Http\Requests\V1\JobSeekerProfile\Experience\Update\DetailsRequest as UpdateExperienceDetailsRequest;
 use App\Http\Requests\V1\JobSeekerProfile\Update\DetailsRequest as UpdateDetailsRequest;
+use App\Http\Requests\V1\JobSeekerProfile\UploadResume\DetailsRequest as UploadResumeDetailsRequest;
 use App\Http\Requests\V1\JobSeekerProfile\View\DetailsRequest as ViewDetailsRequest;
 use App\Modules\V1\JobSeekerProfile\Services\Education\Add\DetailsService as AddEducationDetailsService;
 use App\Modules\V1\JobSeekerProfile\Services\Education\Delete\DeleteService as DeleteEducationDetailsService;
@@ -19,6 +20,7 @@ use App\Modules\V1\JobSeekerProfile\Services\Experience\Delete\DeleteService as 
 use App\Modules\V1\JobSeekerProfile\Services\Experience\Update\DetailsService as UpdateExperienceDetailsService;
 use App\Modules\V1\JobSeekerProfile\Services\Get\DetailsService as GetDetailsService;
 use App\Modules\V1\JobSeekerProfile\Services\Update\DetailsService as UpdateDetailsService;
+use App\Modules\V1\JobSeekerProfile\Services\UploadResume\DetailsService as UploadResumeDetailsService;
 use App\Modules\V1\JobSeekerProfile\Services\View\DetailsService as ViewDetailsService;
 use Illuminate\Http\JsonResponse;
 use Throwable;
@@ -59,6 +61,17 @@ class JobSeekerProfileController extends Controller
         }
     }
 
+    public function uploadResume(UploadResumeDetailsRequest $uploadResumeDetailsRequest): JsonResponse
+    {
+        try {
+            $uploadResumeDetailsService = app(UploadResumeDetailsService::class);
+            $uploadResumeDetailsBo = $uploadResumeDetailsService->prepareBo($uploadResumeDetailsRequest);
+
+            return $uploadResumeDetailsService->upload($uploadResumeDetailsBo);
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
 
     public function addExperience(AddExperienceDetailsRequest $addExperienceDetailsRequest): JsonResponse
     {

@@ -41,6 +41,7 @@ export const API = {
   PROFILE: {
     GET: `${BASE_URL}/api/v1/profile/get`,
     UPDATE: `${BASE_URL}/api/v1/profile/update`,
+    UPLOAD_RESUME: `${BASE_URL}/api/v1/profile/upload-resume`,
 
     ADD_EXPERIENCE: `${BASE_URL}/api/v1/profile/experience/add`,
     UPDATE_EXPERIENCE: `${BASE_URL}/api/v1/profile/experience/update`,

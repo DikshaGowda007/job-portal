@@ -1,3 +1,6 @@
+import { useRef } from "react";
+import PropTypes from "prop-types";
+import { Paperclip, UploadCloud, Loader2 } from "lucide-react";
 import { CURRENCIES } from "@/utils/constants";
 
 export default function ApplyForm({
@@ -7,12 +10,64 @@ export default function ApplyForm({
   onCancel,
   loading,
   error,
+  resumeFilename,
+  resumeUploading,
+  onResumeUpload,
 }) {
+  const fileInputRef = useRef(null);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) onResumeUpload(file);
+    e.target.value = "";
+  };
+
   return (
     <form onSubmit={onSubmit} className="space-y-3">
       <p className="text-sm font-semibold text-gray-900 dark:text-white">
         Apply for this job
       </p>
+
+      {/* Resume */}
+      <div className="flex flex-col gap-1">
+        <label className="text-xs text-gray-500 dark:text-gray-400">
+          Resume
+        </label>
+        {resumeUploading ? (
+          <div className="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2 text-xs text-gray-500 dark:border-gray-700">
+            <Loader2 size={13} className="animate-spin" /> Uploading…
+          </div>
+        ) : resumeFilename ? (
+          <div className="flex items-center justify-between rounded-xl border border-green-200 bg-green-50 px-3 py-2 dark:border-green-900 dark:bg-green-950/30">
+            <span className="flex items-center gap-1.5 truncate text-xs text-green-700 dark:text-green-400">
+              <Paperclip size={12} />
+              {resumeFilename}
+            </span>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="ml-2 shrink-0 text-xs text-indigo-600 hover:underline dark:text-indigo-400"
+            >
+              Replace
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-2 rounded-xl border border-dashed border-gray-300 px-3 py-2.5 text-xs text-gray-500 hover:border-indigo-400 hover:text-indigo-600 dark:border-gray-700 dark:hover:border-indigo-500"
+          >
+            <UploadCloud size={14} /> Upload resume (PDF, DOC)
+          </button>
+        )}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.doc,.docx"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+      </div>
 
       {/* Cover letter */}
       <div className="flex flex-col gap-1">
@@ -93,7 +148,7 @@ export default function ApplyForm({
       <div className="flex gap-2">
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || resumeUploading}
           className="flex-1 rounded-xl bg-indigo-600 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60 dark:bg-indigo-500"
         >
           {loading ? "Submitting…" : "Submit Application"}
@@ -109,3 +164,21 @@ export default function ApplyForm({
     </form>
   );
 }
+
+ApplyForm.propTypes = {
+  form: PropTypes.shape({
+    cover_letter: PropTypes.string,
+    expected_salary: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    expected_salary_currency: PropTypes.string,
+    notice_period: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    experience_years: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  }).isRequired,
+  onChange: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.string,
+  resumeFilename: PropTypes.string,
+  resumeUploading: PropTypes.bool.isRequired,
+  onResumeUpload: PropTypes.func.isRequired,
+};
