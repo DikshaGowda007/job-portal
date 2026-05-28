@@ -7,6 +7,8 @@ import {
   Plus,
   Trash2,
   Save,
+  FileText,
+  Upload,
   CheckCircle2,
   Circle,
   Pencil,
@@ -16,6 +18,10 @@ import {
   GraduationCap,
   UserCircle,
   X,
+  Building2,
+  SlidersHorizontal,
+  Link2,
+  ChevronDown,
 } from "lucide-react";
 import DatePicker from "@/components/ui/DatePicker";
 import YearPicker from "@/components/ui/YearPicker";
@@ -26,16 +32,9 @@ const COMPLETION_STEPS = [
   { key: "city", label: "City", check: (p) => !!p?.city },
   { key: "summary", label: "Summary", check: (p) => !!p?.summary },
   { key: "skills", label: "Skills", check: (p) => p?.skills?.length > 0 },
-  {
-    key: "experience",
-    label: "Experience",
-    check: (p) => p?.experiences?.length > 0,
-  },
-  {
-    key: "education",
-    label: "Education",
-    check: (p) => p?.education?.length > 0,
-  },
+  { key: "resume", label: "Resume", check: (p) => !!p?.resume_filename },
+  { key: "experience", label: "Experience", check: (p) => p?.experiences?.length > 0 },
+  { key: "education", label: "Education", check: (p) => p?.education?.length > 0 },
 ];
 
 function ProfileCompletion({ profile }) {
@@ -120,6 +119,12 @@ export default function SeekerProfilePage() {
     },
     onError: () => toast.error("Failed to save profile"),
   });
+  
+  const uploadMutation = useMutation({
+    mutationFn: (fd) => seekerApi.uploadResume(fd),
+    onSuccess: () => { invalidate(); toast.success("Resume uploaded"); },
+    onError: () => toast.error("Failed to upload resume"),
+  });
   const addExpMutation = useMutation({
     mutationFn: (p) => seekerApi.addExperience(p),
     onSuccess: () => {
@@ -184,10 +189,12 @@ export default function SeekerProfilePage() {
 
       <ProfileCompletion profile={profile} />
 
-      <BasicInfoSection
+      <BasicInfoSection profile={profile} onSave={(p) => updateMutation.mutate(p)} saving={saving} />
+
+      <ResumeSection
         profile={profile}
-        onSave={(p) => updateMutation.mutate(p)}
-        saving={updateMutation.isPending}
+        onUpload={(fd) => uploadMutation.mutate(fd)}
+        uploading={uploadMutation.isPending}
       />
 
       <ExperienceSection
@@ -375,6 +382,61 @@ function BasicInfoSection({ profile, onSave, saving }) {
           {saving ? "Saving…" : "Save Profile"}
         </button>
       </form>
+    </Section>
+  );
+}
+
+/* ─── Resume ─────────────────────────────────────────────────── */
+
+function ResumeSection({ profile, onUpload, uploading }) {
+  const [file, setFile] = useState(null);
+  const resumeName = profile?.resume_filename ?? null;
+
+  const handleUpload = () => {
+    if (!file) return;
+    const fd = new FormData();
+    fd.append("resume", file);
+    onUpload(fd);
+    setFile(null);
+  };
+
+  return (
+    <Section title="Resume" icon={FileText} iconColor="text-emerald-600" iconBg="bg-emerald-50 dark:bg-emerald-900/30">
+      {resumeName && (
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 dark:border-emerald-900/40 dark:bg-emerald-900/20">
+          <FileText size={16} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-300">{resumeName}</span>
+          <span className="shrink-0 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">
+            Active
+          </span>
+        </div>
+      )}
+
+      <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-200 px-6 py-8 transition hover:border-indigo-300 hover:bg-indigo-50/40 dark:border-gray-700 dark:hover:border-indigo-700 dark:hover:bg-indigo-900/10">
+        <input type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={(e) => setFile(e.target.files[0] ?? null)} />
+        <Upload size={22} className={file ? "text-indigo-500" : "text-gray-300 dark:text-gray-600"} />
+        <div className="text-center">
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {file ? file.name : "Click to upload resume"}
+          </p>
+          <p className="mt-0.5 text-xs text-gray-400">PDF, DOC or DOCX</p>
+        </div>
+      </label>
+
+      {file && (
+        <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 dark:border-gray-700 dark:bg-gray-800/50">
+          <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-400">{file.name}</span>
+          <div className="flex shrink-0 items-center gap-2">
+            <button type="button" onClick={() => setFile(null)} className="text-gray-400 hover:text-red-500">
+              <X size={14} />
+            </button>
+            <button onClick={handleUpload} disabled={uploading} className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-60">
+              <Upload size={12} />
+              {uploading ? "Uploading…" : "Upload"}
+            </button>
+          </div>
+        </div>
+      )}
     </Section>
   );
 }

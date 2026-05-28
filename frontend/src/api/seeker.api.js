@@ -9,6 +9,10 @@ export const seekerApi = {
 
   getProfile: () => axiosClient.post(API.PROFILE.GET),
   updateProfile: (payload) => axiosClient.post(API.PROFILE.UPDATE, payload),
+  uploadResume: (formData) =>
+    axiosClient.post(API.PROFILE.UPLOAD_RESUME, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
 
   addExperience: (payload) => axiosClient.post(API.PROFILE.ADD_EXPERIENCE, payload),
   updateExperience: (payload) => axiosClient.post(API.PROFILE.UPDATE_EXPERIENCE, payload),

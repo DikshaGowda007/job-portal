@@ -81,6 +81,7 @@ Route::prefix('saved-job')->middleware(['jwt.verify', 'access.role:'.UserConstan
 Route::prefix('profile')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_JOB_SEEKER])->group(function () {
     Route::post('/get', [JobSeekerProfileController::class, 'get'])->name('JobSeekerProfileController.get');
     Route::post('/update', [JobSeekerProfileController::class, 'update'])->name('JobSeekerProfileController.update');
+    Route::post('/upload-resume', [JobSeekerProfileController::class, 'uploadResume'])->name('JobSeekerProfileController.uploadResume');
     Route::post('/experience/add', [JobSeekerProfileController::class, 'addExperience'])->name('JobSeekerProfileController.addExperience');
     Route::post('/experience/update', [JobSeekerProfileController::class, 'updateExperience'])->name('JobSeekerProfileController.updateExperience');
     Route::post('/experience/delete', [JobSeekerProfileController::class, 'deleteExperience'])->name('JobSeekerProfileController.deleteExperience');
