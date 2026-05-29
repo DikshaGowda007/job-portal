@@ -10,30 +10,29 @@ use Illuminate\Database\Eloquent\Collection;
 
 class UserRepositoryImpl implements UserRepository
 {
-    public function insert(UserDAO $userDAO): User
+    public function insert(UserDAO $userDao): User
     {
-        $userDAO->setCreatedAt(Carbon::now()->format('Y-m-d H:i:s'));
-        $userDAO->setUpdatedAt(Carbon::now()->format('Y-m-d H:i:s'));
+        $userDao->setCreatedAt(Carbon::now()->format('Y-m-d H:i:s'));
+        $userDao->setUpdatedAt(Carbon::now()->format('Y-m-d H:i:s'));
 
-        return User::create($userDAO->toArray());
+        return User::create($userDao->toArray());
     }
 
-    public function updateById(int $userId, UserDAO $userDAO): bool
+    public function updateById(int $userId, UserDAO $userDao): bool
     {
-        $userDAO->setUpdatedAt(Carbon::now()->format('Y-m-d H:i:s'));
-        return User::where('id', $userId)->update($userDAO->toArray());
+        $userDao->setUpdatedAt(Carbon::now()->format('Y-m-d H:i:s'));
+
+        return User::where('id', $userId)->update($userDao->toArray());
     }
 
     public function findByEmailAndPassword(string $email, string $password): Collection
     {
-        return User::where('email', $email)
-            ->where('password', $password)
-            ->get();
+        return User::where('email', $email)->where('password', $password)->get();
     }
 
-    public function findById(int $userId): ?User
+    public function findById(int $id): Collection
     {
-        return User::find($userId);
+        return User::where('id', $id)->get();
     }
 
     public function findByEmail(string $email): Collection
@@ -41,7 +40,7 @@ class UserRepositoryImpl implements UserRepository
         return User::where('email', $email)->get();
     }
 
-    public function findByUserTypeOrStatusOrFirstNameOrLstNameOrEmail(array $filters): Collection
+    public function findByUserTypeOrStatusOrFirstNameOrLastNameOrEmail(array $filters): Collection
     {
         $query = User::query();
 
@@ -65,7 +64,7 @@ class UserRepositoryImpl implements UserRepository
 
     public function findAll(): Collection
     {
-        return User::select('*')->get();
+        return User::get();
     }
 
     public function findByCreatedAt(Carbon $startDate, Carbon $endDate): Collection
