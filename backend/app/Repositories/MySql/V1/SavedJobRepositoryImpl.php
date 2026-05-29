@@ -37,4 +37,18 @@ class SavedJobRepositoryImpl implements SavedJobRepository
             ->where('is_deleted', 0)
             ->first();
     }
+
+    public function softDeleteByUserAndJob(int $userId, int $jobPostId): bool
+    {
+        return (bool) SavedJob::where('user_id', $userId)
+            ->where('job_post_id', $jobPostId)
+            ->update(['is_deleted' => 1]);
+    }
+
+    public function deleteByUserAndJob(int $userId, int $jobPostId): bool
+    {
+        return (bool) SavedJob::where('user_id', $userId)
+            ->where('job_post_id', $jobPostId)
+            ->delete();
+    }
 }

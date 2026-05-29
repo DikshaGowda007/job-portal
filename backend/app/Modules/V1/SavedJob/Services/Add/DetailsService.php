@@ -3,6 +3,7 @@
 namespace App\Modules\V1\SavedJob\Services\Add;
 
 use App\Constants\CommonConstant;
+use App\Exceptions\DataNotFoundException;
 use App\Repositories\DAO\V1\SavedJobDAO;
 use App\Repositories\V1\SavedJobRepository;
 use App\Traits\V1\AccessRightsTrait;
@@ -23,10 +24,12 @@ class DetailsService
     public function add(int $jobPostId): JsonResponse
     {
         try {
-            $this->fetchSavedJob($jobPostId);
+            $this->validateNotAlreadySaved($jobPostId);
             $this->saveJob($jobPostId);
 
             return response()->json(CommonUtils::successResponse('Job saved successfully'));
+        } catch (DataNotFoundException $e) {
+            return response()->json(CommonUtils::errorResponse($e->getMessage()));
         } catch (\Throwable $e) {
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
 
@@ -34,14 +37,13 @@ class DetailsService
         }
     }
 
-    private function fetchSavedJob(int $jobPostId)
+    private function validateNotAlreadySaved(int $jobPostId): void
     {
-
         $existing = $this->savedJobRepository->findByUserAndJob($this->loggedInUserId, $jobPostId);
-        if ($existing) {
-            return response()->json(CommonUtils::errorResponse('Job already saved'));
-        }
 
+        if ($existing) {
+            throw DataNotFoundException::withMessage('Job already saved');
+        }
     }
 
     private function saveJob(int $jobPostId): void
