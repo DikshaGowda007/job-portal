@@ -7,9 +7,12 @@ export const ROUTES = {
   FORGOT_PASSWORD: "/forgot-password",
   RESET_PASSWORD: "/reset-password",
   CHANGE_PASSWORD: "/change-password",
-  
+
+  PUBLIC_JOBS: "/jobs",
   PUBLIC_JOB_DETAIL: "/jobs/:id",
 
+  SEEKER_JOBS: "/seeker/jobs",
+  SEEKER_JOB_DETAIL: "/seeker/jobs/:id",
   SEEKER_APPLICATIONS: "/seeker/applications",
   SEEKER_APPLICATION_DETAIL: "/seeker/applications/:id",
   SEEKER_SAVED_JOBS: "/seeker/saved-jobs",
@@ -23,6 +26,7 @@ export const ROUTES = {
   RECRUITER_JOB_EDIT: "/recruiter/jobs/:id/edit",
   RECRUITER_APPLICATIONS: "/recruiter/applications",
   RECRUITER_MESSAGES: "/recruiter/messages",
+  RECRUITER_PROFILE: "/recruiter/profile",
 
   ADMIN_DASHBOARD: "/admin/dashboard",
   ADMIN_JOBS: "/admin/jobs",
@@ -31,4 +35,5 @@ export const ROUTES = {
   ADMIN_SUB_ADMINS: "/admin/sub-admins",
   ADMIN_CATEGORIES: "/admin/categories",
   ADMIN_ACCESS_RIGHTS: "/admin/access-rights/:userId",
+  ADMIN_PROFILE: "/admin/profile",
 };

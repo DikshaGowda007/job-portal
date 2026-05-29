@@ -6,6 +6,7 @@ import {
   Shield,
   Tag,
   ClipboardList,
+  UserCircle,
 } from "lucide-react";
 import { ROUTES } from "@/utils/routePaths";
 import { useAuth } from "@/context/AuthContext";
@@ -23,6 +24,7 @@ const ALL_NAV = [
     to: ROUTES.ADMIN_SUB_ADMINS,
     adminOnly: true,
   },
+  { label: "My Profile", icon: UserCircle, to: ROUTES.ADMIN_PROFILE },
 ];
 
 export default function AdminLayout() {

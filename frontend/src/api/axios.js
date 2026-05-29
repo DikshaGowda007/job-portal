@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 import { storage } from "@/services/storage.service";
 import { ROUTES } from "@/utils/routePaths";
 
@@ -13,9 +14,16 @@ axiosClient.interceptors.request.use((config) => {
   return config;
 });
 
+const handleForbidden = () => {
+  toast.error("Access Forbidden.");
+  import("@/routes").then((m) => m.default.navigate(-1));
+  return new Promise(() => {});
+};
+
 axiosClient.interceptors.response.use(
   (response) => {
     if (response.data?.status === "error") {
+      if (response.data?.message === "Access Forbidden.") return handleForbidden();
       return Promise.reject(response);
     }
     return response;
@@ -25,6 +33,7 @@ axiosClient.interceptors.response.use(
       storage.clear();
       window.location.href = ROUTES.LOGIN;
     }
+    if (error.response?.status === 403) return handleForbidden();
     return Promise.reject(error);
   }
 );

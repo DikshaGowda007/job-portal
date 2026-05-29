@@ -9,3 +9,10 @@ export const USER_TYPE_MAP = {
   [ROLES.RECRUITER]: 3,
   [ROLES.JOB_SEEKER]: 4,
 };
+
+export const USER_TYPE_TO_ROLE = {
+  1: ROLES.ADMIN,
+  2: ROLES.SUB_ADMIN,
+  3: ROLES.RECRUITER,
+  4: ROLES.JOB_SEEKER,
+};
