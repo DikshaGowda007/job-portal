@@ -13,4 +13,10 @@ interface SavedJobRepository
     public function fetchByUserId(int $userId): Collection;
 
     public function updateById(int $id, SavedJobDAO $savedJobDao): bool|int;
+
+    public function findByUserAndJob(int $userId, int $jobPostId): ?SavedJob;
+
+    public function softDeleteByUserAndJob(int $userId, int $jobPostId): bool;
+
+    public function deleteByUserAndJob(int $userId, int $jobPostId): bool;
 }

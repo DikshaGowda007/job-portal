@@ -5,20 +5,25 @@ namespace App\Modules\V1\SavedJob\Services\List;
 use App\Constants\CommonConstant;
 use App\Constants\ErrorResponseConstant;
 use App\Repositories\V1\SavedJobRepository;
+use App\Traits\V1\AccessRightsTrait;
 use App\Utils\CommonUtils;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 
 class DetailsService
 {
+    use AccessRightsTrait;
+
     public function __construct(
         private SavedJobRepository $savedJobRepository
-    ) {}
+    ) {
+        $this->initializeUserAuthorizationData();
+    }
 
-    public function list(int $userId): JsonResponse
+    public function list(): JsonResponse
     {
         try {
-            $savedJobs = $this->fetchSavedJobs($userId);
+            $savedJobs = $this->savedJobRepository->fetchByUserId($this->loggedInUserId);
             $data = $this->formatResponse($savedJobs);
 
             return response()->json(CommonUtils::successDataResponse($data));
@@ -27,11 +32,6 @@ class DetailsService
 
             return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_FETCH_DATA));
         }
-    }
-
-    private function fetchSavedJobs(int $userId): Collection
-    {
-        return $this->savedJobRepository->fetchByUserId($userId);
     }
 
     private function formatResponse(Collection $savedJobs): array

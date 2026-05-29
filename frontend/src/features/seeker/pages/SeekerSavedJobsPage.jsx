@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { seekerApi } from "@/api/seeker.api";
 import { jobsApi } from "@/api/jobs.api";
 import { PAGINATION_DEFAULT } from "@/utils/constants";
+import { WORK_MODE_STYLE, JOB_TYPE_STYLE } from "@/utils/styles";
 import { formatSalary, timeAgo } from "@/utils/formatters";
 import { ROUTES } from "@/utils/routePaths";
 import Loader from "@/components/common/Loader";
@@ -24,25 +25,6 @@ import {
   Building2,
   ExternalLink,
 } from "lucide-react";
-
-const WORK_MODE_STYLE = {
-  remote:
-    "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-  onsite: "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  hybrid:
-    "bg-violet-50 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400",
-};
-
-const JOB_TYPE_STYLE = {
-  FULL_TIME:
-    "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400",
-  PART_TIME:
-    "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-  INTERNSHIP:
-    "bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
-  REMOTE:
-    "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-};
 
 export default function SeekerSavedJobsPage() {
   const navigate = useNavigate();

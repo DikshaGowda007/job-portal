@@ -17,7 +17,7 @@ class DetailsService
 
     public function __construct(
         private SavedJobRepository $savedJobRepository,
-        private SavedJobDAO $savedJobDAO
+        private SavedJobDAO $savedJobDao
     ) {
         $this->initializeUserAuthorizationData();
     }
@@ -25,7 +25,7 @@ class DetailsService
     public function delete(int $jobPostId): JsonResponse
     {
         try {
-            $savedJob = $this->fetchSavedJob($jobPostId);
+            $savedJob = $this->findSavedJob($jobPostId);
             $this->deleteSavedJob($savedJob->id);
 
             return response()->json(CommonUtils::successResponse('Saved job removed successfully'));
@@ -38,7 +38,7 @@ class DetailsService
         }
     }
 
-    private function fetchSavedJob(int $jobPostId): SavedJob
+    private function findSavedJob(int $jobPostId): SavedJob
     {
         $savedJob = $this->savedJobRepository->findByUserAndJob($this->loggedInUserId, $jobPostId);
         if (! $savedJob) {
@@ -50,7 +50,7 @@ class DetailsService
 
     private function deleteSavedJob(int $id): void
     {
-        $this->savedJobDAO->setIsDeleted(CommonConstant::IS_DELETED_YES);
-        $this->savedJobRepository->updateById($id, $this->savedJobDAO);
+        $this->savedJobDao->setIsDeleted(CommonConstant::IS_DELETED_YES);
+        $this->savedJobRepository->updateById($id, $this->savedJobDao);
     }
 }
