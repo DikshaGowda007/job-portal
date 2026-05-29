@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 
 class RecruiterWithdrawJobApplicationMail extends Mailable
 {
-public $subjectLine;
+    public $subjectLine;
 
     private WithdrawJobApplicationMailDto $withdrawJobApplicationMailDto;
 
