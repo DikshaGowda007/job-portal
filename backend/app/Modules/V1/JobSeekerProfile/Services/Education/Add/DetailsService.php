@@ -12,8 +12,8 @@ use App\Repositories\V1\JobSeekerEducationRepository;
 use App\Repositories\V1\JobSeekerProfileRepository;
 use App\Traits\V1\AccessRightsTrait;
 use App\Utils\CommonUtils;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 
 class DetailsService
 {
@@ -49,27 +49,27 @@ class DetailsService
         }
     }
 
-    public function prepareBo(DetailsRequest $addEducationDetailsRequest): DetailsBo
+    public function prepareBo(DetailsRequest $request): DetailsBo
     {
-        return $this->educationHelper->prepareBo($addEducationDetailsRequest);
+        return $this->educationHelper->prepareBo($request);
     }
 
-    private function fetchProfile(): Collection
+    private function findProfile(): Collection
     {
         return $this->jobSeekerProfileRepository->findByUserId($this->loggedInUserId);
     }
 
     private function addEducation(): int
     {
-        $profileDetails = $this->fetchProfile();
+        $profileDetails = $this->findProfile();
 
         if ($profileDetails->isEmpty()) {
             throw DataNotFoundException::withMessage('Profile not found. Please create your profile first.');
         }
 
-        $jobSeekerEducationDAO = $this->educationHelper->prepareDAO($this->detailsBo);
-        $jobSeekerEducationDAO->setJobSeekerProfileId($profileDetails->first()->id);
+        $jobSeekerEducationDao = $this->educationHelper->prepareDao($this->detailsBo);
+        $jobSeekerEducationDao->setJobSeekerProfileId(collect($profileDetails->first())->get('id'));
 
-        return collect($this->jobSeekerEducationRepository->insert($jobSeekerEducationDAO)->toArray())->get('id');
+        return collect($this->jobSeekerEducationRepository->insert($jobSeekerEducationDao)->toArray())->get('id');
     }
 }

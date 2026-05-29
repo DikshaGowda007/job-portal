@@ -109,107 +109,107 @@ class ProfileHelper
         return $detailsBo;
     }
 
-    public function prepareDAO(DetailsBo $detailsBo): JobSeekerProfileDAO
+    public function prepareDao(DetailsBo $detailsBo): JobSeekerProfileDAO
     {
-        $jobSeekerProfileDAO = new JobSeekerProfileDAO;
+        $jobSeekerProfileDao = new JobSeekerProfileDAO;
 
         if (! is_null($detailsBo->getHeadline())) {
-            $jobSeekerProfileDAO->setHeadline($detailsBo->getHeadline());
+            $jobSeekerProfileDao->setHeadline($detailsBo->getHeadline());
         }
         if (! is_null($detailsBo->getSummary())) {
-            $jobSeekerProfileDAO->setSummary($detailsBo->getSummary());
+            $jobSeekerProfileDao->setSummary($detailsBo->getSummary());
         }
         if (! is_null($detailsBo->getPhone())) {
-            $jobSeekerProfileDAO->setPhone($detailsBo->getPhone());
+            $jobSeekerProfileDao->setPhone($detailsBo->getPhone());
         }
         if (! is_null($detailsBo->getDateOfBirth())) {
-            $jobSeekerProfileDAO->setDateOfBirth($detailsBo->getDateOfBirth());
+            $jobSeekerProfileDao->setDateOfBirth($detailsBo->getDateOfBirth());
         }
         if (! is_null($detailsBo->getGender())) {
-            $jobSeekerProfileDAO->setGender($detailsBo->getGender());
+            $jobSeekerProfileDao->setGender($detailsBo->getGender());
         }
         if (! is_null($detailsBo->getCity())) {
-            $jobSeekerProfileDAO->setCity($detailsBo->getCity());
+            $jobSeekerProfileDao->setCity($detailsBo->getCity());
         }
         if (! is_null($detailsBo->getState())) {
-            $jobSeekerProfileDAO->setState($detailsBo->getState());
+            $jobSeekerProfileDao->setState($detailsBo->getState());
         }
         if (! is_null($detailsBo->getCountry())) {
-            $jobSeekerProfileDAO->setCountry($detailsBo->getCountry());
+            $jobSeekerProfileDao->setCountry($detailsBo->getCountry());
         }
         if (! is_null($detailsBo->getPincode())) {
-            $jobSeekerProfileDAO->setPincode($detailsBo->getPincode());
+            $jobSeekerProfileDao->setPincode($detailsBo->getPincode());
         }
         if (! is_null($detailsBo->getCurrentJobTitle())) {
-            $jobSeekerProfileDAO->setCurrentJobTitle($detailsBo->getCurrentJobTitle());
+            $jobSeekerProfileDao->setCurrentJobTitle($detailsBo->getCurrentJobTitle());
         }
         if (! is_null($detailsBo->getCurrentCompany())) {
-            $jobSeekerProfileDAO->setCurrentCompany($detailsBo->getCurrentCompany());
+            $jobSeekerProfileDao->setCurrentCompany($detailsBo->getCurrentCompany());
         }
         if (! is_null($detailsBo->getTotalExperienceYears())) {
-            $jobSeekerProfileDAO->setTotalExperienceYears($detailsBo->getTotalExperienceYears());
+            $jobSeekerProfileDao->setTotalExperienceYears($detailsBo->getTotalExperienceYears());
         }
         if (! is_null($detailsBo->getTotalExperienceMonths())) {
-            $jobSeekerProfileDAO->setTotalExperienceMonths($detailsBo->getTotalExperienceMonths());
+            $jobSeekerProfileDao->setTotalExperienceMonths($detailsBo->getTotalExperienceMonths());
         }
         if (! is_null($detailsBo->getExpectedSalary())) {
-            $jobSeekerProfileDAO->setExpectedSalary($detailsBo->getExpectedSalary());
+            $jobSeekerProfileDao->setExpectedSalary($detailsBo->getExpectedSalary());
         }
         if (! is_null($detailsBo->getExpectedSalaryCurrency())) {
-            $jobSeekerProfileDAO->setExpectedSalaryCurrency($detailsBo->getExpectedSalaryCurrency());
+            $jobSeekerProfileDao->setExpectedSalaryCurrency($detailsBo->getExpectedSalaryCurrency());
         }
         if (! is_null($detailsBo->getCurrentSalary())) {
-            $jobSeekerProfileDAO->setCurrentSalary($detailsBo->getCurrentSalary());
+            $jobSeekerProfileDao->setCurrentSalary($detailsBo->getCurrentSalary());
         }
         if (! is_null($detailsBo->getCurrentSalaryCurrency())) {
-            $jobSeekerProfileDAO->setCurrentSalaryCurrency($detailsBo->getCurrentSalaryCurrency());
+            $jobSeekerProfileDao->setCurrentSalaryCurrency($detailsBo->getCurrentSalaryCurrency());
         }
         if (! is_null($detailsBo->getPreferredJobTypes())) {
-            $jobSeekerProfileDAO->setPreferredJobTypes(json_encode($detailsBo->getPreferredJobTypes()));
+            $jobSeekerProfileDao->setPreferredJobTypes(json_encode($detailsBo->getPreferredJobTypes()));
         }
         if (! is_null($detailsBo->getPreferredWorkModes())) {
-            $jobSeekerProfileDAO->setPreferredWorkModes(json_encode($detailsBo->getPreferredWorkModes()));
+            $jobSeekerProfileDao->setPreferredWorkModes(json_encode($detailsBo->getPreferredWorkModes()));
         }
         if (! is_null($detailsBo->getPreferredLocations())) {
-            $jobSeekerProfileDAO->setPreferredLocations(json_encode($detailsBo->getPreferredLocations()));
+            $jobSeekerProfileDao->setPreferredLocations(json_encode($detailsBo->getPreferredLocations()));
         }
         if (! is_null($detailsBo->getNoticePeriod())) {
-            $jobSeekerProfileDAO->setNoticePeriod($detailsBo->getNoticePeriod());
+            $jobSeekerProfileDao->setNoticePeriod($detailsBo->getNoticePeriod());
         }
         if (! is_null($detailsBo->getImmediateJoiner())) {
-            $jobSeekerProfileDAO->setImmediateJoiner($detailsBo->getImmediateJoiner());
+            $jobSeekerProfileDao->setImmediateJoiner($detailsBo->getImmediateJoiner());
         }
         if (! is_null($detailsBo->getSkills())) {
-            $jobSeekerProfileDAO->setSkills(json_encode($detailsBo->getSkills()));
+            $jobSeekerProfileDao->setSkills(json_encode($detailsBo->getSkills()));
         }
         if (! is_null($detailsBo->getLinkedinUrl())) {
-            $jobSeekerProfileDAO->setLinkedinUrl($detailsBo->getLinkedinUrl());
+            $jobSeekerProfileDao->setLinkedinUrl($detailsBo->getLinkedinUrl());
         }
         if (! is_null($detailsBo->getGithubUrl())) {
-            $jobSeekerProfileDAO->setGithubUrl($detailsBo->getGithubUrl());
+            $jobSeekerProfileDao->setGithubUrl($detailsBo->getGithubUrl());
         }
         if (! is_null($detailsBo->getPortfolioUrl())) {
-            $jobSeekerProfileDAO->setPortfolioUrl($detailsBo->getPortfolioUrl());
+            $jobSeekerProfileDao->setPortfolioUrl($detailsBo->getPortfolioUrl());
         }
         if (! is_null($detailsBo->getIsPublic())) {
-            $jobSeekerProfileDAO->setIsPublic($detailsBo->getIsPublic());
+            $jobSeekerProfileDao->setIsPublic($detailsBo->getIsPublic());
         }
         if (! is_null($detailsBo->getOpenToOpportunities())) {
-            $jobSeekerProfileDAO->setOpenToOpportunities($detailsBo->getOpenToOpportunities());
+            $jobSeekerProfileDao->setOpenToOpportunities($detailsBo->getOpenToOpportunities());
         }
 
-        return $jobSeekerProfileDAO;
+        return $jobSeekerProfileDao;
     }
 
-    public function prepareJobSeekerProfileDAO(int $userId): JobSeekerProfileDAO
+    public function prepareJobSeekerProfileDao(int $userId): JobSeekerProfileDAO
     {
-        $obSeekerProfileDAO = new JobSeekerProfileDAO;
-        $obSeekerProfileDAO->setUserId($userId);
-        $obSeekerProfileDAO->setProfileCompleteness(0);
-        $obSeekerProfileDAO->setIsPublic(true);
-        $obSeekerProfileDAO->setOpenToOpportunities(true);
+        $jobSeekerProfileDao = new JobSeekerProfileDAO;
+        $jobSeekerProfileDao->setUserId($userId);
+        $jobSeekerProfileDao->setProfileCompleteness(0);
+        $jobSeekerProfileDao->setIsPublic(true);
+        $jobSeekerProfileDao->setOpenToOpportunities(true);
 
-        return $obSeekerProfileDAO;
+        return $jobSeekerProfileDao;
     }
 
     public function calculateProfileCompleteness(array $profileData): int

@@ -22,6 +22,8 @@ export const seekerApi = {
   updateEducation: (payload) => axiosClient.post(API.PROFILE.UPDATE_EDUCATION, payload),
   deleteEducation: (payload) => axiosClient.post(API.PROFILE.DELETE_EDUCATION, payload),
 
+  getConversations: () => axiosClient.post(API.APPLICATION.CONVERSATIONS),
+  sendMessage: (payload) => axiosClient.post(API.APPLICATION.SEND_MESSAGE, payload),
   savedJobs: (params) => axiosClient.post(API.SAVED_JOB.LIST, params),
   saveJob: (payload) => axiosClient.post(API.SAVED_JOB.ADD, payload),
   unsaveJob: (payload) => axiosClient.post(API.SAVED_JOB.DELETE, payload),

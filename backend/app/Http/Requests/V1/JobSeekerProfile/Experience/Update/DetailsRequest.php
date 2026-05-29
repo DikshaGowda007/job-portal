@@ -7,7 +7,6 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-
 class DetailsRequest extends FormRequest
 {
     public function authorize(): bool
@@ -18,23 +17,23 @@ class DetailsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'experience_id'   => 'required|integer|exists:job_seeker_experiences,id',
-            'job_title'       => 'nullable|string|max:255',
-            'company_name'    => 'nullable|string|max:255',
+            'experience_id' => 'required|integer|exists:job_seeker_experiences,id',
+            'job_title' => 'nullable|string|max:255',
+            'company_name' => 'nullable|string|max:255',
             'employment_type' => 'nullable|string|in:'.implode(',', JobSeekerProfileConstants::VALID_EMPLOYMENT_TYPES),
-            'location'        => 'nullable|string|max:255',
-            'work_mode'       => 'nullable|string|in:'.implode(',', JobSeekerProfileConstants::VALID_WORK_MODES),
-            'start_date'      => 'nullable|date',
-            'end_date'        => 'nullable|date',
-            'is_current'      => 'nullable|boolean',
-            'description'     => 'nullable|string|max:5000',
+            'location' => 'nullable|string|max:255',
+            'work_mode' => 'nullable|string|in:'.implode(',', JobSeekerProfileConstants::VALID_WORK_MODES),
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'is_current' => 'nullable|boolean',
+            'description' => 'nullable|string|max:5000',
         ];
     }
 
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([
-            'status'  => 'error',
+            'status' => 'error',
             'message' => $validator->errors()->first(),
         ]));
     }

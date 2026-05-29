@@ -10,7 +10,7 @@ class UploadResumeHelper
     public function prepareBo(DetailsRequest $detailsRequest): DetailsBo
     {
         $detailsBo = new DetailsBo;
-        $detailsBo->setUploadedFile($detailsRequest->file('uploaded_file'));
+        $detailsBo->setUploadedFile($detailsRequest->file('resume'));
 
         return $detailsBo;
     }

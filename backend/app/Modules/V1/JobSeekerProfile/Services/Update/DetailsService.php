@@ -18,7 +18,7 @@ class DetailsService
     public function __construct(
         private ProfileHelper $profileHelper,
         private JobSeekerProfileRepository $jobSeekerProfileRepository,
-        private JobSeekerProfileDAO $jobSeekerProfileDAO,
+        private JobSeekerProfileDAO $jobSeekerProfileDao,
         private DetailsBo $detailsBo,
     ) {}
 
@@ -44,39 +44,39 @@ class DetailsService
         return $this->profileHelper->prepareBo($detailsRequest);
     }
 
-    private function fetchProfile(): Collection
+    private function findProfile(): Collection
     {
         return collect($this->jobSeekerProfileRepository->findByUserId($this->detailsBo->getUserId())->first());
     }
 
-    private function fetchProfileWithDetails(): Collection
+    private function findProfileWithDetails(): Collection
     {
         return collect($this->jobSeekerProfileRepository->findByUserIdWithExperiencesAndEducation($this->detailsBo->getUserId())->first());
     }
 
     private function ensureProfileExists(): void
     {
-        $profileDetails = $this->fetchProfile();
+        $profileDetails = $this->findProfile();
 
         if ($profileDetails->isEmpty()) {
-            $jobSeekerProfileDAO = $this->profileHelper->prepareJobSeekerProfileDAO($this->detailsBo->getUserId());
-            $this->jobSeekerProfileRepository->insert($jobSeekerProfileDAO);
+            $jobSeekerProfileDao = $this->profileHelper->prepareJobSeekerProfileDao($this->detailsBo->getUserId());
+            $this->jobSeekerProfileRepository->insert($jobSeekerProfileDao);
         }
     }
 
     private function updateProfile(): void
     {
-        $this->jobSeekerProfileDAO = $this->profileHelper->prepareDAO($this->detailsBo);
-        $this->jobSeekerProfileRepository->updateByUserId($this->detailsBo->getUserId(), $this->jobSeekerProfileDAO);
+        $this->jobSeekerProfileDao = $this->profileHelper->prepareDao($this->detailsBo);
+        $this->jobSeekerProfileRepository->updateByUserId($this->detailsBo->getUserId(), $this->jobSeekerProfileDao);
     }
 
     private function recalculateCompleteness(): void
     {
-        $profileDetails = $this->fetchProfileWithDetails();
+        $profileDetails = $this->findProfileWithDetails();
         $completeness = $this->profileHelper->calculateProfileCompleteness($profileDetails->toArray());
 
-        $completenessDAO = new JobSeekerProfileDAO;
-        $completenessDAO->setProfileCompleteness($completeness);
-        $this->jobSeekerProfileRepository->updateByUserId($this->detailsBo->getUserId(), $completenessDAO);
+        $completenessDao = new JobSeekerProfileDAO;
+        $completenessDao->setProfileCompleteness($completeness);
+        $this->jobSeekerProfileRepository->updateByUserId($this->detailsBo->getUserId(), $completenessDao);
     }
 }
