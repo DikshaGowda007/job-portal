@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 use App\Policies\JobApplicationPolicy;
+use App\Policies\JobCategoryPolicy;
 use App\Policies\JobPolicy;
+use App\Policies\SavedJobPolicy;
+use App\Policies\UserPolicy;
 use Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,9 +34,11 @@ class GateServiceProvider extends ServiceProvider
 
     private function registerJobGates(): void
     {
+        Gate::define('job_add', [JobPolicy::class, 'add']);
         Gate::define('job_publish', [JobPolicy::class, 'publish']);
         Gate::define('job_edit', [JobPolicy::class, 'edit']);
         Gate::define('job_delete', [JobPolicy::class, 'delete']);
+        Gate::define('job_view', [JobPolicy::class, 'view']);
     }
 
     private function registerSavedJobGates(): void
@@ -54,6 +59,7 @@ class GateServiceProvider extends ServiceProvider
     private function registerUserGates(): void
     {
         Gate::define('user_edit', [UserPolicy::class, 'edit']);
+        Gate::define('user_add', [UserPolicy::class, 'add']);
     }
 
     private function registerJobApplicationGates(): void
@@ -62,5 +68,7 @@ class GateServiceProvider extends ServiceProvider
         Gate::define('application_withdraw', [JobApplicationPolicy::class, 'withdraw']);
         Gate::define('application_view', [JobApplicationPolicy::class, 'view']);
         Gate::define('application_update_status', [JobApplicationPolicy::class, 'status_update']);
+        Gate::define('application_shortlist', [JobApplicationPolicy::class, 'shortlist']);
+        Gate::define('application_reject', [JobApplicationPolicy::class, 'reject']);
     }
 }

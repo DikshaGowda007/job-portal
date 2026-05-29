@@ -9,7 +9,7 @@ class UserHelper
 {
     public function prepareUserListBo(UserListDetailsRequest $userListDetailsRequest)
     {
-        $userListDetailsBo = new UserListDetailsBo();
+        $userListDetailsBo = new UserListDetailsBo;
 
         $userListDetailsBo->setRole($userListDetailsRequest->input('role'));
         $userListDetailsBo->setStatus($userListDetailsRequest->input('status'));

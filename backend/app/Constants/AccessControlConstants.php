@@ -10,8 +10,6 @@ class AccessControlConstants
 
     public const JOB_DELETE = 'job_delete';
 
-    public const JOB_ADD = 'job_add';
-
     public const JOB_PUBLISH = 'job_publish';
 
     public const JOB_CLOSE = 'job_close';

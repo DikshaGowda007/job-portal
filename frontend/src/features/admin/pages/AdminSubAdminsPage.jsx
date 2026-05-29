@@ -2,23 +2,12 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminApi } from "@/api/admin.api";
 import { PAGINATION_DEFAULT } from "@/utils/constants";
+import { entityColor } from "@/utils/styles";
 import { formatDate } from "@/utils/formatters";
 import Loader from "@/components/common/Loader";
 import EmptyState from "@/components/common/EmptyState";
 import Pagination from "@/components/common/Pagination";
 import { UserPlus, X, Mail, Calendar, ShieldCheck } from "lucide-react";
-
-const AVATAR_COLORS = [
-  "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400",
-  "bg-violet-100 text-violet-600 dark:bg-violet-900/50 dark:text-violet-400",
-  "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400",
-  "bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400",
-  "bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400",
-];
-
-function avatarColor(name = "") {
-  return AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
-}
 
 export default function AdminSubAdminsPage() {
   const [page, setPage] = useState(PAGINATION_DEFAULT.PAGE);
@@ -95,7 +84,7 @@ export default function AdminSubAdminsPage() {
                   className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`flex size-11 shrink-0 items-center justify-center rounded-xl text-base font-bold ${avatarColor(name)}`}>
+                    <div className={`flex size-11 shrink-0 items-center justify-center rounded-xl text-base font-bold ${entityColor(name)}`}>
                       {initial}
                     </div>
                     <div className="min-w-0 flex-1">

@@ -10,7 +10,7 @@ trait AccessRightsTrait
 {
     private int $loggedInUserId = 0;
 
-    private string $loggedInUserRole = '';
+    private int $loggedInUserRole = 0;
 
     private string $loggedInUserFirstName = '';
 
@@ -18,9 +18,12 @@ trait AccessRightsTrait
 
     private array $loggedInUserAccessDetails;
 
+    private int $loggedInActionByUserId = 0;
+
     public function initializeUserAuthorizationData(): void
     {
         $authService = app(AuthService::class);
+
         $userData = $authService->getData();
         $this->setUserVariables($userData);
     }
@@ -35,6 +38,7 @@ trait AccessRightsTrait
         $this->loggedInUserRole = $userData->get('userRole');
         $this->loggedInUserFirstName = $userData->get('firstName');
         $this->loggedInUserLastName = $userData->get('lastName');
+        $this->loggedInActionByUserId = $this->loggedInUserId;
         $accessRightsService->getAcessRights($userData);
         $userAccessRightsArray = $accessRightsService->getAccess();
         $this->loggedInUserAccessDetails = $userAccessRightsArray['userAccessDetails'];

@@ -46,7 +46,7 @@ class DetailsService
 
     private function findUsers(): Collection
     {
-        return $this->userRepository->findByUserTypeOrStatusOrFirstNameOrLstNameOrEmail($this->prepareFilters())
+        return $this->userRepository->findByUserTypeOrStatusOrFirstNameOrLastNameOrEmail($this->prepareFilters())
             ->filter(fn ($user) => $user['verified'] == CommonConstant::IS_VERIFIED_USER)
             ->values();
     }
