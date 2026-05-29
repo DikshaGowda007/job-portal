@@ -5,17 +5,18 @@ namespace App\Modules\V1\JobSeekerProfile\Services\View;
 use App\Constants\CommonConstant;
 use App\Exceptions\UserNotFoundException;
 use App\Http\Requests\V1\JobSeekerProfile\View\DetailsRequest;
+use App\Modules\V1\JobSeekerProfile\Bo\View\DetailsBo;
 use App\Repositories\V1\JobSeekerProfileRepository;
 use App\Traits\V1\AccessRightsTrait;
 use App\Utils\CommonUtils;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 
 class DetailsService
 {
     use AccessRightsTrait;
 
-    private int $seekerUserId;
+    private DetailsBo $viewDetailsBo;
 
     public function __construct(
         private JobSeekerProfileRepository $jobSeekerProfileRepository,
@@ -23,12 +24,12 @@ class DetailsService
         $this->initializeUserAuthorizationData();
     }
 
-    public function view(DetailsRequest $request): JsonResponse
+    public function view(DetailsBo $detailsBo): JsonResponse
     {
-        $this->seekerUserId = (int) $request->input('user_id');
+        $this->viewDetailsBo = $detailsBo;
 
         try {
-            $profileDetails = $this->fetchProfile();
+            $profileDetails = $this->findProfile();
 
             $data = $this->formatResponse($profileDetails);
 
@@ -42,9 +43,17 @@ class DetailsService
         }
     }
 
-    private function fetchProfile(): Collection
+    public function prepareBo(DetailsRequest $detailsRequest): DetailsBo
     {
-        $profileDetails = collect($this->jobSeekerProfileRepository->findByUserIdWithExperiencesAndEducation($this->seekerUserId)->first());
+        $viewDetailsBo = new DetailsBo;
+        $viewDetailsBo->setUserId((int) $detailsRequest->input('user_id'));
+
+        return $viewDetailsBo;
+    }
+
+    private function findProfile(): Collection
+    {
+        $profileDetails = collect($this->jobSeekerProfileRepository->findByUserIdWithExperiencesAndEducation($this->viewDetailsBo->getUserId())->first());
 
         if ($profileDetails->isEmpty()) {
             throw UserNotFoundException::withMessage('Profile not found');
