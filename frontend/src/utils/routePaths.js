@@ -14,6 +14,7 @@ export const ROUTES = {
   SEEKER_APPLICATION_DETAIL: "/seeker/applications/:id",
   SEEKER_SAVED_JOBS: "/seeker/saved-jobs",
   SEEKER_PROFILE: "/seeker/profile",
+  SEEKER_MESSAGES: "/seeker/messages",
 
   RECRUITER_DASHBOARD: "/recruiter/dashboard",
   RECRUITER_JOBS: "/recruiter/jobs",
@@ -21,6 +22,7 @@ export const ROUTES = {
   RECRUITER_JOB_PUBLISH: "/recruiter/jobs/publish",
   RECRUITER_JOB_EDIT: "/recruiter/jobs/:id/edit",
   RECRUITER_APPLICATIONS: "/recruiter/applications",
+  RECRUITER_MESSAGES: "/recruiter/messages",
 
   ADMIN_DASHBOARD: "/admin/dashboard",
   ADMIN_JOBS: "/admin/jobs",
