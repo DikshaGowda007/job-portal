@@ -2,38 +2,12 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { jobsApi } from "@/api/jobs.api";
 import { PAGINATION_DEFAULT } from "@/utils/constants";
+import { JOB_STATUS_STYLE, WORK_MODE_STYLE, entityColor } from "@/utils/styles";
 import { formatDate, formatSalary, timeAgo } from "@/utils/formatters";
 import Loader from "@/components/common/Loader";
 import EmptyState from "@/components/common/EmptyState";
 import Pagination from "@/components/common/Pagination";
 import { Search, MapPin, Clock, Briefcase, Building2 } from "lucide-react";
-
-const LOGO_COLORS = [
-  "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400",
-  "bg-violet-100 text-violet-600 dark:bg-violet-900/50 dark:text-violet-400",
-  "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400",
-  "bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400",
-  "bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400",
-  "bg-sky-100 text-sky-600 dark:bg-sky-900/50 dark:text-sky-400",
-];
-
-function logoColor(name = "") {
-  return LOGO_COLORS[name.charCodeAt(0) % LOGO_COLORS.length];
-}
-
-const STATUS_STYLE = {
-  PUBLISHED: "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400",
-  OPEN:      "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400",
-  CLOSED:    "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
-  EXPIRED:   "bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400",
-  DRAFT:     "bg-yellow-50 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400",
-};
-
-const WORK_MODE_STYLE = {
-  remote: "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400",
-  onsite: "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400",
-  hybrid: "bg-violet-50 text-violet-700 dark:bg-violet-900/20 dark:text-violet-400",
-};
 
 const STATUS_FILTERS = ["All", "PUBLISHED", "OPEN", "DRAFT", "CLOSED", "EXPIRED"];
 
@@ -117,14 +91,14 @@ export default function AdminJobsPage() {
                 >
                   {/* Top row */}
                   <div className="flex items-start gap-3">
-                    <div className={`flex size-11 shrink-0 items-center justify-center rounded-xl text-base font-bold ${logoColor(job.company_name)}`}>
+                    <div className={`flex size-11 shrink-0 items-center justify-center rounded-xl text-base font-bold ${entityColor(job.company_name)}`}>
                       {initial}
                     </div>
                     <div className="min-w-0 flex-1">
                       <h3 className="truncate font-semibold text-gray-900 dark:text-white">{job.title}</h3>
                       <p className="mt-0.5 truncate text-sm text-gray-500 dark:text-gray-400">{job.company_name}</p>
                     </div>
-                    <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLE[job.status] ?? "bg-gray-100 text-gray-600"}`}>
+                    <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${JOB_STATUS_STYLE[job.status] ?? "bg-gray-100 text-gray-600"}`}>
                       {job.status}
                     </span>
                   </div>
