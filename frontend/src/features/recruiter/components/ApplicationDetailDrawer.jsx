@@ -30,6 +30,13 @@ export default function ApplicationDetailDrawer({
     enabled: !!app?.id,
   });
 
+  const { data: seekerProfile } = useQuery({
+    queryKey: ["seeker-profile", app?.user_id],
+    queryFn: () =>
+      recruiterApi.viewSeekerProfile(app.user_id).then((r) => r.data?.data),
+    enabled: !!app?.user_id,
+  });
+
   const timeline = historyData?.timeline ?? [];
 
   const updateStatus = useMutation({
@@ -47,7 +54,7 @@ export default function ApplicationDetailDrawer({
   const merged = { ...app, ...detail };
   const applicantName =
     merged.applicant_name ?? merged.user?.name ?? "Applicant";
-  const profile = merged.profile ?? detail?.profile ?? null;
+  const profile = seekerProfile ?? merged.profile ?? detail?.profile ?? null;
   const actions = NEXT_ACTIONS[merged.status] ?? [];
 
   return (

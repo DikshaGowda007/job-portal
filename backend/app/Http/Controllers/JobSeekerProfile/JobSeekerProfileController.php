@@ -54,8 +54,9 @@ class JobSeekerProfileController extends Controller
     {
         try {
             $viewDetailsService = app(ViewDetailsService::class);
+            $viewDetailsBo = $viewDetailsService->prepareBo($viewDetailsRequest);
 
-            return $viewDetailsService->view($viewDetailsRequest);
+            return $viewDetailsService->view($viewDetailsBo);
         } catch (Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
         }

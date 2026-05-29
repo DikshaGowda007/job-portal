@@ -96,6 +96,10 @@ Route::prefix('profile')->middleware(['jwt.verify', 'access.role:'.UserConstant:
     Route::post('/education/delete', [JobSeekerProfileController::class, 'deleteEducation'])->name('JobSeekerProfileController.deleteEducation');
 });
 
+Route::prefix('profile')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_RECRUITER.'|'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN])->group(function () {
+    Route::post('/view', [JobSeekerProfileController::class, 'view'])->name('JobSeekerProfileController.view');
+});
+
 // Admin Dashboard Routes
 Route::prefix('admin')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN])->group(function () {
     Route::post('/dashboard', [AdminController::class, 'dashboard'])->name('AdminController.dashboard');
