@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Job\JobController;
 use App\Http\Controllers\JobApplication\JobApplicationController;
 use App\Http\Controllers\JobCategory\JobCategoryController;
+use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\SavedJob\SavedJobController;
 use App\Http\Controllers\User\ProfileController;
 
@@ -98,6 +99,11 @@ Route::prefix('profile')->middleware(['jwt.verify', 'access.role:'.UserConstant:
 
 Route::prefix('profile')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_RECRUITER.'|'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN])->group(function () {
     Route::post('/view', [JobSeekerProfileController::class, 'view'])->name('JobSeekerProfileController.view');
+});
+
+Route::prefix('notification')->middleware(['jwt.verify'])->group(function () {
+    Route::post('/list', [NotificationController::class, 'list'])->name('NotificationController.list');
+    Route::post('/mark-read', [NotificationController::class, 'markRead'])->name('NotificationController.markRead');
 });
 
 // Admin Dashboard Routes

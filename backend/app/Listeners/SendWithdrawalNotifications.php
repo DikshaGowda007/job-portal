@@ -11,9 +11,7 @@ class SendWithdrawalNotifications implements ShouldQueue
 {
     use InteractsWithQueue;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function handle(ApplicationWithdrawn $event): void
     {

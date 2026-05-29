@@ -11,12 +11,11 @@ class ApplicationWithdrawn
     use Dispatchable, SerializesModels;
 
     /**
-     * @param SendEmailDto $sendEmailDto - Contains metadata (to, class, etc.)
-     * @param object $templateDto - Contains the actual content (names, titles, etc.)
+     * @param  SendEmailDto  $sendEmailDto  - Contains metadata (to, class, etc.)
+     * @param  object  $templateDto  - Contains the actual content (names, titles, etc.)
      */
     public function __construct(
         public SendEmailDto $sendEmailDto,
         public object $templateDto
-    ) {
-    }
+    ) {}
 }
