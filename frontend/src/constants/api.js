@@ -58,6 +58,11 @@ export const API = {
     VIEW: `${BASE_URL}/api/v1/profile/view`,
   },
 
+  NOTIFICATION: {
+    LIST: `${BASE_URL}/api/v1/notification/list`,
+    MARK_READ: `${BASE_URL}/api/v1/notification/mark-read`,
+  },
+
   ACCESS_RIGHTS: {
     GET: `${BASE_URL}/api/v1/user/access-rights/get`,
     EDIT: `${BASE_URL}/api/v1/user/access-rights/edit`,
