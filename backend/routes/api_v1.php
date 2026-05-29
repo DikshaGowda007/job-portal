@@ -24,6 +24,8 @@ Route::prefix('auth')->middleware(['jwt.verify'])->group(function () {
 
 Route::prefix('user')->middleware(['jwt.verify'])->group(function () {
     Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('ProfileController.changePassword');
+    Route::post('/access-rights/get', [UserController::class, 'getAccessRights'])->name('UserController.getAccessRights');
+    Route::post('/access-rights/edit', [UserController::class, 'editAccessRights'])->name('UserController.editAccessRights');
 });
 
 Route::prefix('job')->group(function () {

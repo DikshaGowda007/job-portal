@@ -21,4 +21,9 @@ class AllUserAccessRightRepositoryImpl implements AllUserAccessRightRepository
         $allUserAccessRightsDAO->setModifiedDate(Carbon::now()->format('Y-m-d H:i:s'));
         return AllUserAccessRight::create($allUserAccessRightsDAO->toArray());
     }
+
+    public function updateByUserId(int $userId, AllUserAccessRightsDAO $allUserAccessRightsDAO): bool|int
+    {
+        return AllUserAccessRight::updateOrCreate(['user_id' => $userId], $allUserAccessRightsDAO->toArray()) !== null;
+    }
 }

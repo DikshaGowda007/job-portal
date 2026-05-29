@@ -35,6 +35,7 @@ import AdminApplicationsPage from "@/features/admin/pages/AdminApplicationsPage"
 import AdminUsersPage from "@/features/admin/pages/AdminUsersPage";
 import AdminSubAdminsPage from "@/features/admin/pages/AdminSubAdminsPage";
 import AdminCategoriesPage from "@/features/admin/pages/AdminCategoriesPage";
+import AdminAccessRightsPage from "@/features/admin/pages/AdminAccessRightsPage";
 
 import ForgotPasswordPage from "@/features/auth/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/features/auth/pages/ResetPasswordPage";
@@ -108,8 +109,9 @@ const router = createBrowserRouter([
               { path: ROUTES.ADMIN_DASHBOARD,    element: <AdminDashboard /> },
               { path: ROUTES.ADMIN_JOBS,         element: <AdminJobsPage /> },
               { path: ROUTES.ADMIN_APPLICATIONS, element: <AdminApplicationsPage /> },
-              { path: ROUTES.ADMIN_CATEGORIES,   element: <AdminCategoriesPage /> },
-              { path: ROUTES.ADMIN_USERS,        element: <AdminUsersPage /> },
+              { path: ROUTES.ADMIN_CATEGORIES,    element: <AdminCategoriesPage /> },
+              { path: ROUTES.ADMIN_USERS,         element: <AdminUsersPage /> },
+              { path: ROUTES.ADMIN_ACCESS_RIGHTS, element: <AdminAccessRightsPage /> },
             ],
           },
         ],
