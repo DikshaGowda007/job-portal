@@ -14,6 +14,11 @@ class AccessService
         $this->initializeUserAuthorizationData();
     }
 
+    public function hasJobAddAccess()
+    {
+        return Gate::allows('job_add', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
     public function hasJobPublishAccess()
     {
         return Gate::allows('job_publish', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
@@ -47,6 +52,21 @@ class AccessService
     public function hasApplicationUpdateStatusAccess()
     {
         return Gate::allows('application_update_status', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
+    public function hasApplicationShortlistAccess()
+    {
+        return Gate::allows('application_shortlist', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
+    public function hasApplicationRejectAccess()
+    {
+        return Gate::allows('application_reject', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
+    public function hasJobViewAccess()
+    {
+        return Gate::allows('job_view', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
     }
 
     public function hasSavedJobAddAccess()
@@ -87,5 +107,10 @@ class AccessService
     public function hasUserEditAccess()
     {
         return Gate::allows('user_edit', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
+    public function hasUserAddAccess()
+    {
+        return Gate::allows('user_add', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
     }
 }

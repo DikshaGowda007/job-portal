@@ -1,34 +1,15 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { adminApi } from "@/api/admin.api";
-import { PAGINATION_DEFAULT } from "@/utils/constants";
+import { PAGINATION_DEFAULT, ROLE_LABELS } from "@/utils/constants";
+import { ROLE_STYLE, entityColor } from "@/utils/styles";
 import { formatDate } from "@/utils/formatters";
+import { ROUTES } from "@/utils/routePaths";
 import Loader from "@/components/common/Loader";
 import EmptyState from "@/components/common/EmptyState";
 import Pagination from "@/components/common/Pagination";
 import { Search, ShieldCheck, UserCheck, Users, Crown, X, Mail, Phone, Calendar, Clock, BadgeCheck } from "lucide-react";
-
-const ROLE_LABELS = { 1: "Admin", 2: "Sub-Admin", 3: "Recruiter", 4: "Job Seeker" };
-
-const ROLE_STYLE = {
-  1: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-  2: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400",
-  3: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  4: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-};
-
-const AVATAR_COLORS = [
-  "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400",
-  "bg-violet-100 text-violet-600 dark:bg-violet-900/50 dark:text-violet-400",
-  "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400",
-  "bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400",
-  "bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400",
-  "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400",
-];
-
-function avatarColor(name = "") {
-  return AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
-}
 
 const ROLE_FILTERS = [
   { label: "All",        value: "",  icon: Users },
@@ -44,6 +25,7 @@ export default function AdminUsersPage() {
   const [roleFilter, setRoleFilter] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(null);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users", page, search, roleFilter],
@@ -134,7 +116,7 @@ export default function AdminUsersPage() {
                     <tr key={user.id} className="transition hover:bg-gray-50 dark:hover:bg-gray-800/40">
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${avatarColor(name)}`}>
+                          <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${entityColor(name)}`}>
                             {initial}
                           </div>
                           <div>
@@ -163,6 +145,14 @@ export default function AdminUsersPage() {
                           >
                             View
                           </button>
+                          {[2, 3].includes(Number(user.user_type)) && (
+                            <button
+                              onClick={() => navigate(ROUTES.ADMIN_ACCESS_RIGHTS.replace(":userId", user.id))}
+                              className="rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 transition hover:bg-indigo-100 dark:border-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-400 dark:hover:bg-indigo-900/40"
+                            >
+                              Edit
+                            </button>
+                          )}
                           <button
                             onClick={() => toggleMutation.mutate({ user_id: user.id, status: isActive ? "inactive" : "active" })}
                             disabled={toggleMutation.isPending}
