@@ -11,19 +11,31 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { jobsApi } from "@/api/jobs.api";
+import { seekerApi } from "@/api/seeker.api";
 import { useAuth } from "@/context/AuthContext";
+import { ROLES } from "@/utils/roles";
 import { ROUTES } from "@/utils/routePaths";
 import { formatSalary, formatDate } from "@/utils/formatters";
 
 export default function JobDetailModal({ jobId, onClose }) {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, role } = useAuth();
+  const isSeeker = isAuthenticated && role === ROLES.JOB_SEEKER;
 
   const { data: job, isLoading } = useQuery({
     queryKey: ["public-job", jobId],
     queryFn: () => jobsApi.get({ id: Number(jobId) }).then((r) => r.data?.data),
     enabled: !!jobId,
   });
+
+  const { data: myApplications = [] } = useQuery({
+    queryKey: ["my-applications-check"],
+    queryFn: () =>
+      seekerApi.myApplications({ per_page: 100, page: 1 }).then((r) => r.data?.data?.applications ?? []),
+    enabled: isSeeker,
+  });
+
+  const alreadyApplied = isSeeker && myApplications.some((a) => a.job_post_id === Number(jobId));
 
   const handleApply = () => {
     onClose();
@@ -197,17 +209,26 @@ export default function JobDetailModal({ jobId, onClose }) {
 
         {/* Footer */}
         <div className="border-t border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-800 dark:bg-gray-900">
-          <button
-            onClick={handleApply}
-            disabled={isLoading || !job}
-            className="w-full rounded-xl bg-indigo-600 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50 dark:bg-indigo-500 dark:hover:bg-indigo-400"
-          >
-            Apply Now
-          </button>
-          {!isAuthenticated && (
-            <p className="mt-2 text-center text-xs text-gray-400 dark:text-gray-500">
-              You&apos;ll be asked to log in before applying.
-            </p>
+          {alreadyApplied ? (
+            <div className="flex items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 py-2.5 text-sm font-semibold text-green-700 dark:border-green-800 dark:bg-green-950/30 dark:text-green-400">
+              <CheckCircle2 size={16} />
+              Applied
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={handleApply}
+                disabled={isLoading || !job}
+                className="w-full rounded-xl bg-indigo-600 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50 dark:bg-indigo-500 dark:hover:bg-indigo-400"
+              >
+                Apply Now
+              </button>
+              {!isAuthenticated && (
+                <p className="mt-2 text-center text-xs text-gray-400 dark:text-gray-500">
+                  You&apos;ll be asked to log in before applying.
+                </p>
+              )}
+            </>
           )}
         </div>
       </div>

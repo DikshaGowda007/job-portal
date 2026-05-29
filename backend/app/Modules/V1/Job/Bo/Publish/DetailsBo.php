@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Repositories\DAO\V1;
+namespace App\Modules\V1\Job\Bo\Publish;
 
-class JobPostDAO
+class DetailsBo
 {
-    private ?int $id = null;
-
     private ?int $userId = null;
 
-    private ?int $modifiedByUserId = null;
-
+    // Basic job info
     private ?string $companyName = null;
 
     private ?string $title = null;
@@ -18,6 +15,7 @@ class JobPostDAO
 
     private ?string $location = null;
 
+    // Salary
     private ?float $salary = null;
 
     private ?float $salaryMin = null;
@@ -28,14 +26,18 @@ class JobPostDAO
 
     private ?string $salaryType = null;
 
+    // Category
     private ?int $jobCategoryId = null;
 
+    // Job type & work mode
     private ?string $workMode = null;
 
     private ?string $jobType = null;
 
+    // Roles & responsibilities
     private ?string $rolesResponsibility = null;
 
+    // Experience & education
     private ?string $experienceLevel = null;
 
     private ?int $experienceMin = null;
@@ -44,104 +46,116 @@ class JobPostDAO
 
     private ?string $education = null;
 
+    // Skills
     private ?string $skills = null;
 
+    // Job lifecycle
     private ?string $status = null;
 
     private ?string $expiresAt = null;
 
+    // Openings
     private ?int $openingsCount = null;
 
-    private ?string $createdAt = null;
-
-    private ?string $updatedAt = null;
-
-    private ?int $isDeleted = null;
+    private ?int $modifiedByUserId = null;
 
     public function toArray(): array
     {
-        $collection = [];
+        $data = [];
 
         if (isset($this->userId)) {
-            $collection['user_id'] = $this->userId;
-        }
-        if (isset($this->modifiedByUserId)) {
-            $collection['modified_by_user_id'] = $this->modifiedByUserId;
-        }
-        if (isset($this->companyName)) {
-            $collection['company_name'] = $this->companyName;
-        }
-        if (isset($this->title)) {
-            $collection['title'] = $this->title;
-        }
-        if (isset($this->jobDescription)) {
-            $collection['job_description'] = $this->jobDescription;
-        }
-        if (isset($this->location)) {
-            $collection['location'] = $this->location;
-        }
-        if (isset($this->salary)) {
-            $collection['salary'] = $this->salary;
-        }
-        if (isset($this->salaryMin)) {
-            $collection['salary_min'] = $this->salaryMin;
-        }
-        if (isset($this->salaryMax)) {
-            $collection['salary_max'] = $this->salaryMax;
-        }
-        if (isset($this->salaryCurrency)) {
-            $collection['salary_currency'] = $this->salaryCurrency;
-        }
-        if (isset($this->salaryType)) {
-            $collection['salary_type'] = $this->salaryType;
-        }
-        if (isset($this->jobCategoryId)) {
-            $collection['job_category_id'] = $this->jobCategoryId;
-        }
-        if (isset($this->workMode)) {
-            $collection['work_mode'] = $this->workMode;
-        }
-        if (isset($this->jobType)) {
-            $collection['job_type'] = $this->jobType;
-        }
-        if (isset($this->rolesResponsibility)) {
-            $collection['roles_responsibility'] = $this->rolesResponsibility;
-        }
-        if (isset($this->experienceLevel)) {
-            $collection['experience_level'] = $this->experienceLevel;
-        }
-        if (isset($this->experienceMin)) {
-            $collection['experience_min'] = $this->experienceMin;
-        }
-        if (isset($this->experienceMax)) {
-            $collection['experience_max'] = $this->experienceMax;
-        }
-        if (isset($this->education)) {
-            $collection['education'] = $this->education;
-        }
-        if (isset($this->skills)) {
-            $collection['skills'] = $this->skills;
-        }
-        if (isset($this->status)) {
-            $collection['status'] = $this->status;
-        }
-        if (isset($this->expiresAt)) {
-            $collection['expires_at'] = $this->expiresAt;
-        }
-        if (isset($this->openingsCount)) {
-            $collection['openings_count'] = $this->openingsCount;
-        }
-        if (isset($this->createdAt)) {
-            $collection['created_at'] = $this->createdAt;
-        }
-        if (isset($this->updatedAt)) {
-            $collection['updated_at'] = $this->updatedAt;
-        }
-        if (isset($this->isDeleted)) {
-            $collection['is_deleted'] = $this->isDeleted;
+            $data['user_id'] = $this->userId;
         }
 
-        return $collection;
+        if (isset($this->companyName)) {
+            $data['company_name'] = $this->companyName;
+        }
+
+        if (isset($this->title)) {
+            $data['title'] = $this->title;
+        }
+
+        if (isset($this->jobDescription)) {
+            $data['job_description'] = $this->jobDescription;
+        }
+
+        if (isset($this->location)) {
+            $data['location'] = $this->location;
+        }
+
+        if (isset($this->salary)) {
+            $data['salary'] = $this->salary;
+        }
+
+        if (isset($this->salaryMin)) {
+            $data['salary_min'] = $this->salaryMin;
+        }
+
+        if (isset($this->salaryMax)) {
+            $data['salary_max'] = $this->salaryMax;
+        }
+
+        if (isset($this->salaryCurrency)) {
+            $data['salary_currency'] = $this->salaryCurrency;
+        }
+
+        if (isset($this->salaryType)) {
+            $data['salary_type'] = $this->salaryType;
+        }
+
+        if (isset($this->jobCategoryId)) {
+            $data['job_category_id'] = $this->jobCategoryId;
+        }
+
+        if (isset($this->workMode)) {
+            $data['work_mode'] = $this->workMode;
+        }
+
+        if (isset($this->jobType)) {
+            $data['job_type'] = $this->jobType;
+        }
+
+        if (isset($this->rolesResponsibility)) {
+            $data['roles_responsibility'] = $this->rolesResponsibility;
+        }
+
+        if (isset($this->experienceLevel)) {
+            $data['experience_level'] = $this->experienceLevel;
+        }
+
+        if (isset($this->experienceMin)) {
+            $data['experience_min'] = $this->experienceMin;
+        }
+
+        if (isset($this->experienceMax)) {
+            $data['experience_max'] = $this->experienceMax;
+        }
+
+        if (isset($this->education)) {
+            $data['education'] = $this->education;
+        }
+
+        if (isset($this->skills)) {
+            $data['skills'] = $this->skills;
+        }
+
+        if (isset($this->status)) {
+            $data['status'] = $this->status;
+        }
+
+        if (isset($this->expiresAt)) {
+            $data['expires_at'] = $this->expiresAt;
+        }
+
+        if (isset($this->openingsCount)) {
+            $data['openings_count'] = $this->openingsCount;
+        }
+
+        if ($this->modifiedByUserId !== null) {
+            $data['modified_by_user_id'] = $this->modifiedByUserId;
+        }
+
+        return $data;
     }
 
     /**
@@ -155,43 +169,11 @@ class JobPostDAO
     /**
      * Set the value of userId
      */
-    public function setUserId(?int $userId): void
+    public function setUserId(?int $userId): self
     {
         $this->userId = $userId;
-    }
-
-    /**
-     * Get the value of modifiedByUserId
-     */
-    public function getModifiedByUserId(): ?int
-    {
-        return $this->modifiedByUserId;
-    }
-
-    /**
-     * Set the value of modifiedByUserId
-     */
-    public function setModifiedByUserId(?int $modifiedByUserId): self
-    {
-        $this->modifiedByUserId = $modifiedByUserId;
 
         return $this;
-    }
-
-    /**
-     * Get the value of id
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set the value of id
-     */
-    public function setId(?int $id): void
-    {
-        $this->id = $id;
     }
 
     /**
@@ -573,55 +555,19 @@ class JobPostDAO
     }
 
     /**
-     * Get the value of createdAt
+     * Get the value of modifiedByUserId
      */
-    public function getCreatedAt(): ?string
+    public function getModifiedByUserId(): ?int
     {
-        return $this->createdAt;
+        return $this->modifiedByUserId;
     }
 
     /**
-     * Set the value of createdAt
+     * Set the value of modifiedByUserId
      */
-    public function setCreatedAt(?string $createdAt): self
+    public function setModifiedByUserId(?int $modifiedByUserId): self
     {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of updatedAt
-     */
-    public function getUpdatedAt(): ?string
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * Set the value of updatedAt
-     */
-    public function setUpdatedAt(?string $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of isDeleted
-     */
-    public function getIsDeleted(): ?int
-    {
-        return $this->isDeleted;
-    }
-
-    /**
-     * Set the value of isDeleted
-     */
-    public function setIsDeleted(?int $isDeleted): self
-    {
-        $this->isDeleted = $isDeleted;
+        $this->modifiedByUserId = $modifiedByUserId;
 
         return $this;
     }

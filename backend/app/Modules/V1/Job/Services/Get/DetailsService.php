@@ -56,7 +56,7 @@ class DetailsService
             'skills' => json_decode($job->get('skills'), true) ?? [],
             'education' => $job->get('education'),
             'openings_count' => (int) $job->get('openings_count'),
-            'status' => (int) $job->get('status'),
+            'status' => $job->get('status'),
             'expires_at' => $job->get('expires_at'),
             'created_at' => $job->get('created_at'),
             'salary_details' => $this->prepareSalaryDetails($job->get('salary_min'), $job->get('salary_max'), $job->get('salary_type'), $job->get('salary_currency')),

@@ -4,7 +4,7 @@ namespace App\Modules\V1\Job\Services\Add;
 
 use App\Constants\CommonConstant;
 use App\Constants\ErrorResponseConstant;
-use App\Http\Requests\V1\Job\Add\DetailsRequest;
+use App\Http\Requests\V1\Job\Publish\DetailsRequest;
 use App\Modules\V1\Job\Bo\Add\DetailsBo;
 use App\Modules\V1\Job\Helpers\JobHelper;
 use App\Repositories\V1\JobRepository;
@@ -23,9 +23,11 @@ class DetailsService
     {
         try {
             $this->addJobs($detailsBo);
+
             return response()->json(CommonUtils::successResponse('Job added successfully'));
         } catch (\Throwable $e) {
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
+
             return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_INSERT_DATA));
         }
     }
@@ -37,7 +39,8 @@ class DetailsService
 
     private function addJobs(DetailsBo $detailsBo)
     {
-        $dao = $this->jobHelper->prepareDAO($detailsBo);
+        $dao = $this->jobHelper->prepareDao($detailsBo);
+
         return $this->jobRepository->insert($dao);
     }
 }

@@ -8,15 +8,22 @@ class DetailsBo
 
     // Basic job info
     private ?string $companyName = null;
+
     private ?string $title = null;
+
     private ?string $jobDescription = null;
+
     private ?string $location = null;
 
     // Salary
     private ?float $salary = null;
+
     private ?float $salaryMin = null;
+
     private ?float $salaryMax = null;
+
     private ?string $salaryCurrency = null;
+
     private ?string $salaryType = null;
 
     // Category
@@ -24,6 +31,7 @@ class DetailsBo
 
     // Job type & work mode
     private ?string $workMode = null;
+
     private ?string $jobType = null;
 
     // Roles & responsibilities
@@ -31,8 +39,11 @@ class DetailsBo
 
     // Experience & education
     private ?string $experienceLevel = null;
+
     private ?int $experienceMin = null;
+
     private ?int $experienceMax = null;
+
     private ?string $education = null;
 
     // Skills
@@ -40,6 +51,7 @@ class DetailsBo
 
     // Job lifecycle
     private ?string $status = null;
+
     private ?string $expiresAt = null;
 
     // Openings

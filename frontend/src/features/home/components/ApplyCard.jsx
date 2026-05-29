@@ -30,7 +30,7 @@ export default function ApplyCard({ jobId }) {
     queryKey: ["my-applications-check"],
     queryFn: () =>
       seekerApi.myApplications({ per_page: 100, page: 1 })
-        .then((r) => r.data?.data ?? []),
+        .then((r) => r.data?.data?.applications ?? []),
     enabled: isAuthenticated && role === ROLES.JOB_SEEKER,
   });
 
@@ -107,9 +107,17 @@ export default function ApplyCard({ jobId }) {
     onSuccess: () => {
       setAppliedLocally(true);
       setShowForm(false);
+      toast.success("Application submitted successfully!");
     },
     onError: (err) => {
-      setApplyError(err.response?.data?.message ?? err.data?.message ?? "Failed to apply. Please try again.");
+      const msg = err.response?.data?.message ?? err.data?.message ?? "";
+      if (msg.toLowerCase().includes("already applied")) {
+        setAppliedLocally(true);
+        setShowForm(false);
+        queryClient.invalidateQueries({ queryKey: ["my-applications-check"] });
+      } else {
+        setApplyError(msg || "Failed to apply. Please try again.");
+      }
     },
   });
 
@@ -130,7 +138,7 @@ export default function ApplyCard({ jobId }) {
       cover_letter: form.cover_letter || undefined,
       expected_salary: form.expected_salary ? Number(form.expected_salary) : undefined,
       expected_salary_currency: form.expected_salary_currency || undefined,
-      notice_period: form.notice_period || undefined,
+      notice_period: form.notice_period ? Number(form.notice_period) : undefined,
       experience_years: form.experience_years ? Number(form.experience_years) : undefined,
     });
   };
@@ -183,6 +191,7 @@ export default function ApplyCard({ jobId }) {
                   <Bookmark size={15} />
                   Save Job
                 </>
+                
               )}
             </button>
           )}

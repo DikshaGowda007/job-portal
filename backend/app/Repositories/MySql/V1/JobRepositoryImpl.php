@@ -27,6 +27,7 @@ class JobRepositoryImpl implements JobRepository
     public function updateById(int $id, JobPostDAO $jobPostDAO): bool|int
     {
         $jobPostDAO->setUpdatedAt(Carbon::now()->format('Y-m-d H:i:s'));
+
         return JobPost::where('id', $id)
             ->update($jobPostDAO->toArray());
     }
@@ -52,6 +53,73 @@ class JobRepositoryImpl implements JobRepository
                 ->orWhere('skills', 'like', "%$data%")
                 ->orWhere('expires_at', 'like', "%$data%");
         })->get();
+    }
+
+    public function fetchWithFilters(array $filters): Collection
+    {
+        $query = JobPost::where('is_deleted', CommonConstant::IS_DELETED_NO);
+
+        if (! empty($filters['text'])) {
+            $searchText = $filters['text'];
+            $query->where(function ($q) use ($searchText) {
+                $q->where('company_name', 'like', "%$searchText%")
+                    ->orWhere('title', 'like', "%$searchText%")
+                    ->orWhere('location', 'like', "%$searchText%")
+                    ->orWhere('education', 'like', "%$searchText%")
+                    ->orWhere('skills', 'like', "%$searchText%");
+            });
+        }
+
+        if (! empty($filters['work_mode'])) {
+            $workModes = array_map('strtoupper', $filters['work_mode']);
+            $query->whereIn('work_mode', $workModes);
+        }
+
+        if (! empty($filters['job_type'])) {
+            $query->whereIn('job_type', $filters['job_type']);
+        }
+
+        if (! empty($filters['experience_level'])) {
+            $query->whereIn('experience_level', $filters['experience_level']);
+        }
+
+        if (isset($filters['salary_min']) && $filters['salary_min'] !== null) {
+            $query->where('salary_max', '>=', $filters['salary_min']);
+        }
+        if (isset($filters['salary_max']) && $filters['salary_max'] !== null) {
+            $query->where('salary_min', '<=', $filters['salary_max']);
+        }
+
+        if (isset($filters['experience_min']) && $filters['experience_min'] !== null) {
+            $query->where('experience_max', '>=', $filters['experience_min']);
+        }
+        if (isset($filters['experience_max']) && $filters['experience_max'] !== null) {
+            $query->where('experience_min', '<=', $filters['experience_max']);
+        }
+
+        if (! empty($filters['location'])) {
+            $query->where('location', 'like', '%'.$filters['location'].'%');
+        }
+
+        if (! empty($filters['job_category_id'])) {
+            $query->where('job_category_id', $filters['job_category_id']);
+        }
+
+        if (! empty($filters['skills'])) {
+            foreach ($filters['skills'] as $skill) {
+                $query->where('skills', 'like', '%'.$skill.'%');
+            }
+        }
+
+        if (! empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        $sortBy = $filters['sort_by'] ?? 'created_at';
+        $sortOrder = $filters['sort_order'] ?? 'desc';
+        $query->orderBy($sortBy, $sortOrder);
+
+        return $query->get();
     }
 
     public function fetchByRecruiterWithFilters(int $recruiterId, array $filters): Collection
