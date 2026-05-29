@@ -12,18 +12,23 @@ use Illuminate\Support\Collection;
 class AuthService
 {
     private int $userId;
-    private string $userType;
-    private string $userRole;
+
+    private int $userType;
+
+    private int $userRole;
+
     private string $firstName;
+
     private string $lastName;
+
     private string $email;
+
     private string $mobile;
 
     public function __construct(Request $request)
     {
         $this->initializeUserRoles($request);
     }
-
 
     private function initializeUserRoles(Request $request): void
     {
@@ -47,6 +52,7 @@ class AuthService
     private function getAuthToken(Request $request): string
     {
         $authToken = $request->header('Authorization', '');
+
         return str_replace('Bearer ', '', $authToken);
     }
 
@@ -75,7 +81,7 @@ class AuthService
         if (isset($this->mobile)) {
             $fields->put('mobile', $this->mobile);
         }
-        
+
         return $fields;
     }
 }

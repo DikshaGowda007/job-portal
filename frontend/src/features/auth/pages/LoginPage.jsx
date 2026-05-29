@@ -17,6 +17,7 @@ export default function LoginPage() {
     error,
     loading,
     verified,
+    verifiedMessage,
     showPassword,
     setShowPassword,
     handleChange,
@@ -41,7 +42,7 @@ export default function LoginPage() {
         {verified && (
           <div className="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-3.5 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/50 dark:text-green-400">
             <CheckCircle2 size={15} className="mt-0.5 shrink-0" />
-            Email verified! You can now sign in.
+            {verifiedMessage ?? "Email verified! You can now sign in."}
           </div>
         )}
 
@@ -69,7 +70,15 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="password">Password</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Password</Label>
+              <Link
+                to={ROUTES.FORGOT_PASSWORD}
+                className="text-xs font-medium text-indigo-600 hover:underline dark:text-indigo-400"
+              >
+                Forgot password?
+              </Link>
+            </div>
             <div className="relative">
               <Input
                 id="password"

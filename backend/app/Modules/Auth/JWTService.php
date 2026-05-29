@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Modules\Auth;
 
 class JwtService
 {
+    private static string $algo = 'HS256';
 
     private static function getSecretKey(): string
     {
@@ -14,7 +16,6 @@ class JwtService
 
         return $key;
     }
-    private static string $algo = 'HS256';
 
     public static function generateToken(array $payload, int $expiryInSeconds = 3600): string
     {
@@ -24,12 +25,27 @@ class JwtService
         $payload['iat'] = $issuedAt;
         $payload['exp'] = $expireAt;
 
-        $base64Header = base64_encode(json_encode(['alg' => self::$algo, 'typ' => 'JWT']));
-        $base64Payload = base64_encode(json_encode($payload));
+        $base64Header = self::base64UrlEncode(
+            json_encode([
+                'alg' => self::$algo,
+                'typ' => 'JWT',
+            ])
+        );
+
+        $base64Payload = self::base64UrlEncode(
+            json_encode($payload)
+        );
 
         $secretKey = self::getSecretKey();
-        $signature = hash_hmac('sha256', "$base64Header.$base64Payload", $secretKey, true);
-        $base64Signature = base64_encode($signature);
+
+        $signature = hash_hmac(
+            'sha256',
+            "$base64Header.$base64Payload",
+            $secretKey,
+            true
+        );
+
+        $base64Signature = self::base64UrlEncode($signature);
 
         return "$base64Header.$base64Payload.$base64Signature";
     }
@@ -43,19 +59,59 @@ class JwtService
         }
 
         [$header, $payload, $signature] = $parts;
+
         $secretKey = self::getSecretKey();
 
-        $expectedSignature = base64_encode(hash_hmac('sha256', "$header.$payload", $secretKey, true));
+        $expectedSignature = self::base64UrlEncode(
+            hash_hmac(
+                'sha256',
+                "$header.$payload",
+                $secretKey,
+                true
+            )
+        );
 
-        if (!hash_equals($expectedSignature, $signature)) {
+        if (! hash_equals($expectedSignature, $signature)) {
             return null;
         }
 
-        $decodedPayload = json_decode(base64_decode($payload), true);
-        // if (isset($decodedPayload['exp']) && time() > $decodedPayload['exp']) {
-        //     return null; // expired
-        // }
+        $decodedPayload = json_decode(
+            self::base64UrlDecode($payload),
+            true
+        );
+
+        if (! is_array($decodedPayload)) {
+            return null;
+        }
+
+        if (
+            isset($decodedPayload['exp']) &&
+            time() > $decodedPayload['exp']
+        ) {
+            return null;
+        }
 
         return $decodedPayload;
+    }
+
+    private static function base64UrlEncode(string $data): string
+    {
+        return rtrim(
+            strtr(base64_encode($data), '+/', '-_'),
+            '='
+        );
+    }
+
+    private static function base64UrlDecode(string $data): string
+    {
+        $remainder = strlen($data) % 4;
+
+        if ($remainder) {
+            $data .= str_repeat('=', 4 - $remainder);
+        }
+
+        return base64_decode(
+            strtr($data, '-_', '+/')
+        );
     }
 }

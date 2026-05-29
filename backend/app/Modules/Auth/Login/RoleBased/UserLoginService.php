@@ -19,66 +19,52 @@ class UserLoginService
         private JwtService $jwtService,
     ) {}
 
-    public function createToken(Collection $user, string $browserIp, string $userAgent)
+    public function createToken(Collection $userDetails): array
     {
         try {
-            $this->validateLogin($user);
-            $payload = $this->buildJwtPayload($user);
-
+            $this->validateLogin($userDetails);
+            $payload = $this->prepareJwtPayload($userDetails);
             $token = $this->jwtService->generateToken($payload);
+            $this->updateUserLastLoginTime($userDetails->get('id'));
 
-            $data = [
+            return [
                 'request_token' => $token,
                 'page' => 'index',
             ];
-            $this->logUserLoginActivity($user->get('id'), $browserIp, $userAgent);
-
-            return $data;
-
         } catch (\Throwable $e) {
             throw $e;
         }
     }
 
-    private function validateLogin(Collection $user)
+    private function validateLogin(Collection $userDetails): void
     {
-        if ($user->isEmpty()) {
+        if ($userDetails->isEmpty()) {
             throw UserNotFoundException::withMessage();
         }
 
-        return match ($user->get('status')) {
+        match ($userDetails->get('status')) {
             CommonConstant::STATUS_ACTIVE => true,
             CommonConstant::STATUS_INACTIVE => throw AccountInActiveException::withMessage(),
-            default => UserNotFoundException::withMessage(),
+            default => throw UserNotFoundException::withMessage(),
         };
     }
 
-    private function buildJwtPayload(Collection $user)
-    {
-        return $this->basePayload($user);
-    }
-
-    private function basePayload(Collection $user): array
+    private function prepareJwtPayload(Collection $userDetails): array
     {
         return [
             'is_loggedin' => 1,
-            'loggedin_user_type' => CommonUtils::xssClean($user->get('user_type')),
-            'loggedin_user_id' => $user->get('id'),
-            'loggedin_user_first_name' => CommonUtils::xssClean($user->get('first_name')),
-            'loggedin_user_last_name' => CommonUtils::xssClean($user->get('last_name')),
-            'loggedin_user_email' => CommonUtils::xssClean($user->get('email')),
-            'loggedin_user_mobile' => CommonUtils::xssClean($user->get('mobile')),
+            'loggedin_user_type' => CommonUtils::xssClean($userDetails->get('user_type')),
+            'loggedin_user_id' => $userDetails->get('id'),
+            'loggedin_user_first_name' => CommonUtils::xssClean($userDetails->get('first_name')),
+            'loggedin_user_last_name' => CommonUtils::xssClean($userDetails->get('last_name')),
+            'loggedin_user_email' => CommonUtils::xssClean($userDetails->get('email')),
+            'loggedin_user_mobile' => CommonUtils::xssClean($userDetails->get('mobile')),
         ];
-    }
-
-    private function logUserLoginActivity(int $userId, string $browserIp, string $userAgent)
-    {
-        $this->updateUserLastLoginTime($userId);
     }
 
     private function updateUserLastLoginTime(int $userId): void
     {
-        $userDao = new UserDAO();
+        $userDao = new UserDAO;
         $userDao->setLastLogin(Carbon::now()->format('Y-m-d H:i:s'));
 
         $this->userRepository->updateById($userId, $userDao);

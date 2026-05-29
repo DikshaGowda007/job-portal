@@ -21,8 +21,7 @@ export function useOtpForm() {
     setError("");
     setLoading(true);
     try {
-      const a = await authApi.verifyOtp({ user_id: userId, otp });
-      console.log(a);
+      await authApi.verifyOtp({ user_id: userId, otp });
       navigate(ROUTES.LOGIN, { replace: true, state: { verified: true } });
     } catch (err) {
       setError(

@@ -8,8 +8,8 @@ use App\Modules\V1\User\Bo\Add\UserDetailsBo;
 use App\Repositories\DAO\V1\UserDAO;
 use App\Repositories\V1\UserRepository;
 use Exception;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
 
 class SignupService
 {
@@ -28,7 +28,6 @@ class SignupService
 
             return response()->json(['status' => CommonConstant::SUCCESS, 'message' => CommonConstant::OTP_SENT_SUCCESS, 'data' => $data]);
         } catch (\Throwable $e) {
-            dd($e);
             return response()->json(['status' => 'error', 'message' => ErrorResponseConstant::ERROR_MESSAGE_GENERAL]);
         }
     }

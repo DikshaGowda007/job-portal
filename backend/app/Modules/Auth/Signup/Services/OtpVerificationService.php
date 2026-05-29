@@ -14,9 +14,9 @@ use Exception;
 class OtpVerificationService
 {
     public function __construct(
-        private UserOTPVerificationRepository $userOTPVerificationRepository,
+        private UserOTPVerificationRepository $userOtpVerificationRepository,
         private UserRepository $userRepository,
-        private UserDAO $userDAO
+        private UserDAO $userDao
     ) {}
 
     public function verifyOtp(int $userId, string $otp): array
@@ -35,23 +35,21 @@ class OtpVerificationService
 
     private function validateOtp(int $userId, string $otp)
     {
-        // Step 1️⃣ — Check if OTP exists
-        $otpRecord = collect($this->userOTPVerificationRepository->findByUserIdAndOtp($userId, $otp)->first());
+        $otpRecord = collect($this->userOtpVerificationRepository->findByUserIdAndOtp($userId, $otp)->first());
+
         if ($otpRecord->isEmpty()) {
             throw InvalidOTP::withMessage('Incorrect OTP. Please try again.');
         }
 
-        // Step 2️⃣ — Check if OTP is expired
         if ($otpRecord->get('expires_at') < Carbon::now()->format('Y-m-d H:i:s')) {
-
             throw OtpExpired::withMessage();
         }
     }
 
     public function updateUser(int $userId): bool
     {
-        $this->userDAO->setVerified(CommonConstant::IS_VERIFIED_USER);
+        $this->userDao->setVerified(CommonConstant::IS_VERIFIED_USER);
 
-        return $this->userRepository->updateById($userId, $this->userDAO);
+        return $this->userRepository->updateById($userId, $this->userDao);
     }
 }

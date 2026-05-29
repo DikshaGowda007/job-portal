@@ -17,16 +17,16 @@ class ResendOtpService
 {
     public function __construct(
         private UserRepository $userRepository,
-        private UserOTPVerificationRepository $userOTPVerificationRepository,
+        private UserOTPVerificationRepository $userOtpVerificationRepository,
         private OtpService $otpService,
-        private UserOTPVerificationDAO $userOTPVerificationDAO,
+        private UserOTPVerificationDAO $userOtpVerificationDao,
     ) {}
 
     public function resend(string $email): JsonResponse
     {
         try {
-            $user = $this->fetchUser($email);
-            $this->updateUserOTPVerification($user->get('id'));
+            $user = $this->findUser($email);
+            $this->updateUserOtpVerification($user->get('id'));
             $this->otpService->sendOtp($user->get('id'), $email);
 
             return response()->json(CommonUtils::successResponse('OTP sent successfully'));
@@ -37,7 +37,7 @@ class ResendOtpService
         }
     }
 
-    private function fetchUser(string $email): Collection
+    private function findUser(string $email): Collection
     {
         $user = collect($this->userRepository->findByEmail($email)->first());
 
@@ -52,10 +52,9 @@ class ResendOtpService
         return $user;
     }
 
-    private function updateUserOTPVerification(int $userId)
+    private function updateUserOtpVerification(int $userId)
     {
-        $this->userOTPVerificationDAO->setIsDeleted(CommonConstant::IS_DELETED_YES);
-        $this->userOTPVerificationRepository->updateByUserId($userId, $this->userOTPVerificationDAO);
-
+        $this->userOtpVerificationDao->setIsDeleted(CommonConstant::IS_DELETED_YES);
+        $this->userOtpVerificationRepository->updateByUserId($userId, $this->userOtpVerificationDao);
     }
 }
