@@ -37,9 +37,21 @@ class JobPost extends Model
         'openings_count',
         'created_by_user_id',
         'is_deleted',
+        'created_at',
+        'updated_at',
     ];
 
     public $timestamps = false;
+
+    public function recruiter()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(JobApplication::class, 'job_post_id');
+    }
 
     public function getTableName(): string
     {

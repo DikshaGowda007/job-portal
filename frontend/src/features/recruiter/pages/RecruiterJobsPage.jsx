@@ -45,9 +45,9 @@ export default function RecruiterJobsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">
             My Jobs
           </h1>
           <p className="mt-1 text-gray-500 dark:text-gray-400">
@@ -56,7 +56,7 @@ export default function RecruiterJobsPage() {
         </div>
         <Link
           to={ROUTES.RECRUITER_JOB_PUBLISH}
-          className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400"
+          className="flex shrink-0 items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400"
         >
           <Plus size={16} />
           Post a Job

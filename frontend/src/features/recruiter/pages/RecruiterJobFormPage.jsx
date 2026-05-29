@@ -5,6 +5,14 @@ import { toast } from "sonner";
 import { jobsApi } from "@/api/jobs.api";
 import { categoryApi } from "@/api/category.api";
 import { ROUTES } from "@/utils/routePaths";
+import {
+  WORK_MODE_OPTIONS,
+  JOB_TYPE_OPTIONS,
+  EXP_LEVEL_OPTIONS,
+  SALARY_TYPE_OPTIONS,
+  JOB_STATUS_OPTIONS,
+  CURRENCY_OPTIONS,
+} from "@/utils/constants";
 import Loader from "@/components/common/Loader";
 import DatePicker from "@/components/ui/DatePicker";
 import {
@@ -25,37 +33,6 @@ import {
   Save,
 } from "lucide-react";
 
-const WORK_MODES = [
-  { value: "onsite", label: "Onsite" },
-  { value: "remote", label: "Remote" },
-  { value: "hybrid", label: "Hybrid" },
-];
-const JOB_TYPES = [
-  { value: "FULL_TIME", label: "Full Time" },
-  { value: "PART_TIME", label: "Part Time" },
-  { value: "REMOTE", label: "Remote" },
-  { value: "INTERNSHIP", label: "Internship" },
-];
-const EXP_LEVELS = [
-  { value: "FRESHER", label: "Fresher" },
-  { value: "JUNIOR", label: "Junior" },
-  { value: "MID", label: "Mid" },
-  { value: "SENIOR", label: "Senior" },
-  { value: "TEAM_LEAD", label: "Team Lead" },
-];
-const CURRENCIES = [
-  { value: "INR", label: "INR" },
-  { value: "USD", label: "USD" },
-];
-const SALARY_TYPES = [
-  { value: "monthly", label: "Monthly" },
-  { value: "yearly", label: "Yearly" },
-];
-const STATUSES = [
-  { value: "OPEN", label: "Open" },
-  { value: "CLOSED", label: "Closed" },
-  { value: "EXPIRED", label: "Expired" },
-];
 
 const EMPTY_FORM = {
   title: "",
@@ -294,21 +271,21 @@ export default function RecruiterJobFormPage() {
               required
               value={form.work_mode}
               onChange={set("work_mode")}
-              options={WORK_MODES}
+              options={WORK_MODE_OPTIONS}
             />
             <SelectField
               label="Job Type *"
               required
               value={form.job_type}
               onChange={set("job_type")}
-              options={JOB_TYPES}
+              options={JOB_TYPE_OPTIONS}
             />
             <SelectField
               label="Status *"
               required
               value={form.status}
               onChange={set("status")}
-              options={STATUSES}
+              options={JOB_STATUS_OPTIONS}
             />
           </div>
         </Section>
@@ -423,10 +400,10 @@ export default function RecruiterJobFormPage() {
             label="Experience Level"
             value={form.experience_level}
             onChange={set("experience_level")}
-            options={EXP_LEVELS}
+            options={EXP_LEVEL_OPTIONS}
             placeholder="— Select level —"
           />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Min Years">
               <input
                 type="number"
@@ -456,7 +433,7 @@ export default function RecruiterJobFormPage() {
           iconColor="text-amber-600"
           iconBg="bg-amber-50 dark:bg-amber-900/30"
         >
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Min Salary">
               <input
                 type="number"
@@ -481,13 +458,13 @@ export default function RecruiterJobFormPage() {
               label="Currency"
               value={form.salary_currency}
               onChange={set("salary_currency")}
-              options={CURRENCIES}
+              options={CURRENCY_OPTIONS}
             />
             <SelectField
               label="Salary Type"
               value={form.salary_type}
               onChange={set("salary_type")}
-              options={SALARY_TYPES}
+              options={SALARY_TYPE_OPTIONS}
             />
           </div>
         </Section>
@@ -498,7 +475,7 @@ export default function RecruiterJobFormPage() {
           iconColor="text-gray-500"
           iconBg="bg-gray-100 dark:bg-gray-800"
         >
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Openings">
               <input
                 type="number"

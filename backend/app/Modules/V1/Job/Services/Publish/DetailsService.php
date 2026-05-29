@@ -38,7 +38,7 @@ class DetailsService
 
     private function publishJob(DetailsBo $detailsBo)
     {
-        $dao = $this->jobHelper->prepareDAO($detailsBo);
+        $dao = $this->jobHelper->prepareDao($detailsBo);
 
         return $this->jobRepository->insert($dao);
     }

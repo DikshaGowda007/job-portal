@@ -5,30 +5,53 @@ namespace App\Modules\V1\Job\Bo\Edit;
 class DetailsBo
 {
     private ?int $id = null;
+
     private ?int $userId = null;
+
     private ?string $companyName = null;
+
     private ?string $title = null;
+
     private ?string $jobDescription = null;
+
     private ?string $location = null;
+
     private ?float $salary = null;
+
     private ?float $salaryMin = null;
+
     private ?float $salaryMax = null;
+
     private ?string $salaryCurrency = null;
+
     private ?string $salaryType = null;
+
     private ?int $jobCategoryId = null;
+
     private ?string $workMode = null;
+
     private ?string $jobType = null;
+
     private ?string $rolesResponsibility = null;
+
     private ?string $experienceLevel = null;
+
     private ?int $experienceMin = null;
+
     private ?int $experienceMax = null;
+
     private ?string $education = null;
+
     private ?string $skills = null;
+
     private ?string $status = null;
+
     private ?string $expiresAt = null;
+
     private ?int $openingsCount = null;
+
     private ?int $modifiedByUserId = null;
-    
+
     public function toArray(): array
     {
         $data = [];

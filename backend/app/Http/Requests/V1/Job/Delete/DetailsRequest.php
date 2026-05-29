@@ -40,7 +40,7 @@ class DetailsRequest extends FormRequest
         $firstError = $validator->errors()->first();
         throw new HttpResponseException(response()->json([
             'status' => 'error',
-            'message' => $firstError
+            'message' => $firstError,
         ]));
     }
 

@@ -26,11 +26,13 @@ class DetailsService
         try {
             $this->findJob();
             $this->updateJob();
+
             return response()->json(CommonUtils::successResponse('Job updated successfully'));
         } catch (DataNotFoundException $e) {
             return response()->json(CommonUtils::errorResponse($e->getMessage()));
         } catch (\Throwable $e) {
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
+
             return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_UPDATE_DATA));
         }
     }
@@ -42,7 +44,7 @@ class DetailsService
 
     private function findJob(): void
     {
-        $jobDetails = $this->jobRepository->findById($this->detailsBo->getId());
+        $jobDetails = collect($this->jobRepository->findById($this->detailsBo->getId())->first());
         if ($jobDetails->isEmpty()) {
             throw DataNotFoundException::withMessage('Job not found');
         }
@@ -50,7 +52,8 @@ class DetailsService
 
     private function updateJob()
     {
-        $dao = $this->jobHelper->prepareDAO($this->detailsBo);
+        $dao = $this->jobHelper->prepareDao($this->detailsBo);
+
         return $this->jobRepository->updateById($this->detailsBo->getId(), $dao);
     }
 }
