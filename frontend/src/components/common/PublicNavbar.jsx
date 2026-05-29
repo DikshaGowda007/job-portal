@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/utils/routePaths";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 import { ROLES } from "@/utils/roles";
 import {
   FileText,
@@ -10,6 +11,8 @@ import {
   KeyRound,
   LogOut,
   LayoutDashboard,
+  Moon,
+  Sun,
 } from "lucide-react";
 
 const SEEKER_MENU = [
@@ -26,6 +29,7 @@ const ROLE_DASHBOARD = {
 
 export default function PublicNavbar() {
   const { isAuthenticated, role, user, logout } = useAuth();
+  const { theme, toggle } = useTheme();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -68,6 +72,14 @@ export default function PublicNavbar() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={toggle}
+            className="flex size-9 shrink-0 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+
           {isAuthenticated ? (
             isSeeker ? (
               <div className="relative" ref={dropdownRef}>
