@@ -15,4 +15,6 @@ export const adminApi = {
   viewApplication: (payload) => axiosClient.post(API.APPLICATION.VIEW, payload),
   updateApplicationStatus: (payload) =>
     axiosClient.post(API.APPLICATION.UPDATE_STATUS, payload),
+  getApplicationHistory: (payload) =>
+    axiosClient.post(API.APPLICATION.HISTORY, payload),
 };

@@ -4,6 +4,7 @@ import TopTabs from "@/components/common/TopTabs";
 import { ROUTES } from "@/utils/routePaths";
 
 const SEEKER_TABS = [
+  { label: "Browse Jobs", to: ROUTES.SEEKER_JOBS },
   { label: "My Applications", to: ROUTES.SEEKER_APPLICATIONS },
   { label: "Saved Jobs", to: ROUTES.SEEKER_SAVED_JOBS },
   { label: "My Profile", to: ROUTES.SEEKER_PROFILE },

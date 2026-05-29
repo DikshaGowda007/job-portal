@@ -15,13 +15,17 @@ import GuestRoute from "@/routes/GuestRoute";
 import HomePage from "@/features/home/pages/HomePage";
 import JobDetailPage from "@/features/home/pages/JobDetailPage";
 
+import LoginPage from "@/features/auth/pages/LoginPage";
 import SignupPage from "@/features/auth/pages/SignupPage";
+import OtpPage from "@/features/auth/pages/OtpPage";
 
+import SeekerJobsPage from "@/features/seeker/pages/SeekerJobsPage";
 import SeekerApplicationsPage from "@/features/seeker/pages/SeekerApplicationsPage";
 import SeekerApplicationDetailPage from "@/features/seeker/pages/SeekerApplicationDetailPage";
 import SeekerSavedJobsPage from "@/features/seeker/pages/SeekerSavedJobsPage";
 import SeekerProfilePage from "@/features/seeker/pages/SeekerProfilePage";
 import SeekerMessagesPage from "@/features/seeker/pages/SeekerMessagesPage";
+import SeekerJobDetailPage from "@/features/seeker/pages/SeekerJobDetailPage";
 
 import RecruiterDashboard from "@/features/recruiter/pages/RecruiterDashboard";
 import RecruiterJobsPage from "@/features/recruiter/pages/RecruiterJobsPage";
@@ -37,8 +41,11 @@ import AdminSubAdminsPage from "@/features/admin/pages/AdminSubAdminsPage";
 import AdminCategoriesPage from "@/features/admin/pages/AdminCategoriesPage";
 import AdminAccessRightsPage from "@/features/admin/pages/AdminAccessRightsPage";
 
+import UserProfilePage from "@/features/user/pages/UserProfilePage";
 import ForgotPasswordPage from "@/features/auth/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/features/auth/pages/ResetPasswordPage";
+import ChangePasswordPage from "@/features/auth/pages/ChangePasswordPage";
+import MinimalLayout from "@/layouts/MinimalLayout";
 
 const router = createBrowserRouter([
   // Public layout
@@ -49,13 +56,16 @@ const router = createBrowserRouter([
       { path: ROUTES.PUBLIC_JOB_DETAIL, element: <JobDetailPage /> },
     ],
   },
-  
+
+  // Auth pages — redirect logged-in users to their dashboard
   {
     element: <GuestRoute />,
     children: [
+      { path: ROUTES.LOGIN, element: <LoginPage /> },
       { path: ROUTES.SIGNUP, element: <SignupPage /> },
     ],
   },
+  { path: ROUTES.OTP, element: <OtpPage /> },
   { path: ROUTES.FORGOT_PASSWORD, element: <ForgotPasswordPage /> },
   { path: ROUTES.RESET_PASSWORD, element: <ResetPasswordPage /> },
 
@@ -63,6 +73,13 @@ const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,
     children: [
+      {
+        element: <MinimalLayout />,
+        children: [
+          { path: ROUTES.CHANGE_PASSWORD, element: <ChangePasswordPage /> },
+        ],
+      },
+
       // Seeker
       {
         element: <RoleRoute allowedRoles={[ROLES.JOB_SEEKER]} />,
@@ -70,7 +87,9 @@ const router = createBrowserRouter([
           {
             element: <SeekerLayout />,
             children: [
-              { path: ROUTES.SEEKER_APPLICATIONS, element: <SeekerApplicationsPage /> },
+              { path: ROUTES.SEEKER_JOBS,               element: <SeekerJobsPage /> },
+              { path: ROUTES.SEEKER_JOB_DETAIL,         element: <SeekerJobDetailPage /> },
+              { path: ROUTES.SEEKER_APPLICATIONS,       element: <SeekerApplicationsPage /> },
               { path: ROUTES.SEEKER_APPLICATION_DETAIL, element: <SeekerApplicationDetailPage /> },
               { path: ROUTES.SEEKER_SAVED_JOBS,         element: <SeekerSavedJobsPage /> },
               { path: ROUTES.SEEKER_PROFILE,            element: <SeekerProfilePage /> },
@@ -93,7 +112,8 @@ const router = createBrowserRouter([
               { path: ROUTES.RECRUITER_JOB_PUBLISH, element: <RecruiterJobFormPage /> },
               { path: ROUTES.RECRUITER_JOB_EDIT, element: <RecruiterJobFormPage /> },
               { path: ROUTES.RECRUITER_APPLICATIONS, element: <RecruiterApplicationsPage /> },
-              { path: ROUTES.RECRUITER_MESSAGES,     element: <RecruiterMessagesPage /> }
+              { path: ROUTES.RECRUITER_MESSAGES,     element: <RecruiterMessagesPage /> },
+              { path: ROUTES.RECRUITER_PROFILE,      element: <UserProfilePage /> },
             ],
           },
         ],
@@ -112,6 +132,7 @@ const router = createBrowserRouter([
               { path: ROUTES.ADMIN_CATEGORIES,    element: <AdminCategoriesPage /> },
               { path: ROUTES.ADMIN_USERS,         element: <AdminUsersPage /> },
               { path: ROUTES.ADMIN_ACCESS_RIGHTS, element: <AdminAccessRightsPage /> },
+              { path: ROUTES.ADMIN_PROFILE,       element: <UserProfilePage /> },
             ],
           },
         ],
