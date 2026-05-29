@@ -36,6 +36,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(JobSeekerProfileRepository::class, JobSeekerProfileRepositoryImpl::class);
         $this->app->bind(JobSeekerExperienceRepository::class, JobSeekerExperienceRepositoryImpl::class);
         $this->app->bind(JobSeekerEducationRepository::class, JobSeekerEducationRepositoryImpl::class);
+        $this->app->bind(AllUserAccessRightRepository::class, AllUserAccessRightRepositoryImpl::class);
     }
 
     /**

@@ -6,11 +6,11 @@ class AccessControlConstants
 {
     public const JOB_VIEW = 'job_view';
 
-    public const JOB_CREATE = 'job_create';
-
     public const JOB_EDIT = 'job_edit';
 
     public const JOB_DELETE = 'job_delete';
+
+    public const JOB_ADD = 'job_add';
 
     public const JOB_PUBLISH = 'job_publish';
 
@@ -40,8 +40,6 @@ class AccessControlConstants
 
     public const COMPANY_PROFILE_EDIT = 'company_profile_edit';
 
-    public const RECRUITER_MANAGE = 'recruiter_manage';
-
     public const CATEGORY_VIEW = 'category_view';
 
     public const CATEGORY_ADD = 'category_add';
@@ -50,7 +48,9 @@ class AccessControlConstants
 
     public const CATEGORY_DELETE = 'category_delete';
 
-    public const USER_MANAGE = 'user_manage';
+    public const USER_EDIT = 'user_edit';
+
+    public const USER_ADD = 'user_add';
 
     public const ROLE_MANAGE = 'role_manage';
 }

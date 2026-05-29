@@ -10,5 +10,6 @@ interface AllUserAccessRightRepository
     public function findByUserId(int $userId): Collection;
 
     public function insert(AllUserAccessRightsDAO $allUserAccessRightsDAO);
-    
+
+    public function updateByUserId(int $userId, AllUserAccessRightsDAO $allUserAccessRightsDAO): bool|int;
 }

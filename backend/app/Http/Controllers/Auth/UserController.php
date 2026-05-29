@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Constants\ErrorResponseConstant;
+use App\Http\Requests\V1\AccessRights\Edit\DetailsRequest as EditAccessRightDetailsRequest;
+use App\Http\Requests\V1\AccessRights\Get\DetailsRequest as GetAccessRightDetailsRequest;
 use App\Http\Requests\V1\User\Add\ResendOtpRequest;
 use App\Http\Requests\V1\User\Add\UserLoginRequest;
 use App\Http\Requests\V1\User\Add\UserOtpVerificationRequest;
@@ -14,6 +16,8 @@ use App\Modules\Auth\Signup\Services\LoginService;
 use App\Modules\Auth\Signup\Services\SignupService;
 use App\Modules\Auth\Signup\Services\OtpVerificationService;
 use App\Modules\Auth\Signup\Services\ResendOtpService;
+use App\Modules\V1\AccessRights\Services\Edit\DetailsService as EditAccessRightDetailsService;
+use App\Modules\V1\AccessRights\Services\Get\DetailsService as GetAccessRightDetailsService;
 use App\Modules\V1\User\Services\ForgotPassword\DetailsService as ForgotPasswordService;
 use App\Modules\V1\User\Services\ResetPassword\DetailsService as ResetPasswordService;
 use App\Utils\CommonUtils;
@@ -88,6 +92,29 @@ class UserController
             return $logoutService->logout();
         } catch (\Throwable $e) {
             return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_GENERAL));
+        }
+    }
+
+    public function getAccessRights(GetAccessRightDetailsRequest $getAccessRightDetailsRequest): JsonResponse
+    {
+        try {
+            $getAccessRightDetailsService = app(GetAccessRightDetailsService::class);
+
+            return $getAccessRightDetailsService->get((int) $getAccessRightDetailsRequest->input('user_id'));
+        } catch (\Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function editAccessRights(EditAccessRightDetailsRequest $editAccessRightDetailsRequest): JsonResponse
+    {
+        try {
+            $editAccessRightDetailsService = app(EditAccessRightDetailsService::class);
+            $editAccessRightDetailsBo = $editAccessRightDetailsService->prepareBo($editAccessRightDetailsRequest);
+
+            return $editAccessRightDetailsService->edit($editAccessRightDetailsBo);
+        } catch (\Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
 

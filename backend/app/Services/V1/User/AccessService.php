@@ -83,4 +83,9 @@ class AccessService
     {
         return Gate::allows('category_delete', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
     }
+
+    public function hasUserEditAccess()
+    {
+        return Gate::allows('user_edit', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
 }

@@ -57,4 +57,9 @@ export const API = {
 
     VIEW: `${BASE_URL}/api/v1/profile/view`,
   },
+
+  ACCESS_RIGHTS: {
+    GET: `${BASE_URL}/api/v1/user/access-rights/get`,
+    EDIT: `${BASE_URL}/api/v1/user/access-rights/edit`,
+  },
 };

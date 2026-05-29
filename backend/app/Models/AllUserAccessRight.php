@@ -10,35 +10,37 @@ class AllUserAccessRight extends Model
 
     protected $fillable = [
         'user_id',
-
-        // Job Management
         'job_view',
-        'job_create',
         'job_edit',
         'job_delete',
         'job_publish',
         'job_close',
-
-        // Application Management
+        'job_apply',
         'application_view',
+        'application_status_update',
         'application_shortlist',
         'application_reject',
+        'application_withdraw',
         'application_download_resume',
-
-        // Company / Recruiter
         'company_profile_view',
         'company_profile_edit',
-        'recruiter_manage',
-
-        // Admin
-        'category_manage',
-        'user_manage',
+        'category_view',
+        'category_add',
+        'category_edit',
+        'category_delete',
+        'user_edit',
+        'user_add',
         'role_manage',
+        'created_date',
+        'modified_date',
+        'status',
+        'is_deleted',
     ];
 
     public function getTableName(): string
     {
         return $this->table;
     }
+
     public $timestamps = false;
 }

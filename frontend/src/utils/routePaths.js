@@ -30,4 +30,5 @@ export const ROUTES = {
   ADMIN_USERS: "/admin/users",
   ADMIN_SUB_ADMINS: "/admin/sub-admins",
   ADMIN_CATEGORIES: "/admin/categories",
+  ADMIN_ACCESS_RIGHTS: "/admin/access-rights/:userId",
 };
