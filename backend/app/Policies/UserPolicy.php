@@ -10,4 +10,9 @@ class UserPolicy
     {
         return $userAccessDetails[AccessControlConstants::USER_EDIT] === 1;
     }
+
+    public function add(?string $user, array $userAccessDetails, string $role): bool
+    {
+        return $userAccessDetails[AccessControlConstants::USER_ADD] === 1;
+    }
 }

@@ -18,11 +18,17 @@ class UserDAO
 
     private ?string $lastLogin = null;
 
+    private ?string $status = null;
+
+    private ?string $phone = null;
+
+    private ?string $emailVerifiedAt = null;
+
     private ?string $createdAt = null;
 
     private ?string $updatedAt = null;
 
-    public function toArray()
+    public function toArray(): array
     {
         $collection = [];
 
@@ -47,6 +53,15 @@ class UserDAO
         if (isset($this->lastLogin)) {
             $collection['last_login'] = $this->lastLogin;
         }
+        if (isset($this->status)) {
+            $collection['status'] = $this->status;
+        }
+        if (isset($this->phone)) {
+            $collection['phone'] = $this->phone;
+        }
+        if (isset($this->emailVerifiedAt)) {
+            $collection['email_verified_at'] = $this->emailVerifiedAt;
+        }
         if (isset($this->createdAt)) {
             $collection['created_at'] = $this->createdAt;
         }
@@ -60,17 +75,15 @@ class UserDAO
     /**
      * Get the value of firstName
      */
-    public function getFirstName()
+    public function getFirstName(): ?string
     {
         return $this->firstName;
     }
 
     /**
      * Set the value of firstName
-     *
-     * @return self
      */
-    public function setFirstName($firstName)
+    public function setFirstName(?string $firstName): self
     {
         $this->firstName = $firstName;
 
@@ -80,17 +93,15 @@ class UserDAO
     /**
      * Get the value of lastName
      */
-    public function getLastName()
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
 
     /**
      * Set the value of lastName
-     *
-     * @return self
      */
-    public function setLastName($lastName)
+    public function setLastName(?string $lastName): self
     {
         $this->lastName = $lastName;
 
@@ -100,17 +111,15 @@ class UserDAO
     /**
      * Get the value of email
      */
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
     /**
      * Set the value of email
-     *
-     * @return self
      */
-    public function setEmail($email)
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
 
@@ -120,17 +129,15 @@ class UserDAO
     /**
      * Get the value of password
      */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
     /**
      * Set the value of password
-     *
-     * @return self
      */
-    public function setPassword($password)
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
 
@@ -138,19 +145,17 @@ class UserDAO
     }
 
     /**
-     * Get the value of verified
+     * Get the value of userType
      */
-    public function getVerified()
-    {
-        return $this->verified;
-    }
-
-    public function getUserType()
+    public function getUserType(): ?int
     {
         return $this->userType;
     }
 
-    public function setUserType($userType)
+    /**
+     * Set the value of userType
+     */
+    public function setUserType(?int $userType): self
     {
         $this->userType = $userType;
 
@@ -158,11 +163,17 @@ class UserDAO
     }
 
     /**
-     * Set the value of verified
-     *
-     * @return self
+     * Get the value of verified
      */
-    public function setVerified($verified)
+    public function getVerified(): ?int
+    {
+        return $this->verified;
+    }
+
+    /**
+     * Set the value of verified
+     */
+    public function setVerified(?int $verified): self
     {
         $this->verified = $verified;
 
@@ -170,19 +181,89 @@ class UserDAO
     }
 
     /**
+     * Get the value of lastLogin
+     */
+    public function getLastLogin(): ?string
+    {
+        return $this->lastLogin;
+    }
+
+    /**
+     * Set the value of lastLogin
+     */
+    public function setLastLogin(?string $lastLogin): self
+    {
+        $this->lastLogin = $lastLogin;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of status
+     */
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set the value of status
+     */
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of phone
+     */
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    /**
+     * Set the value of phone
+     */
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of emailVerifiedAt
+     */
+    public function getEmailVerifiedAt(): ?string
+    {
+        return $this->emailVerifiedAt;
+    }
+
+    /**
+     * Set the value of emailVerifiedAt
+     */
+    public function setEmailVerifiedAt(?string $emailVerifiedAt): self
+    {
+        $this->emailVerifiedAt = $emailVerifiedAt;
+
+        return $this;
+    }
+
+    /**
      * Get the value of createdAt
      */
-    public function getCreatedAt()
+    public function getCreatedAt(): ?string
     {
         return $this->createdAt;
     }
 
     /**
      * Set the value of createdAt
-     *
-     * @return self
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(?string $createdAt): self
     {
         $this->createdAt = $createdAt;
 
@@ -192,39 +273,17 @@ class UserDAO
     /**
      * Get the value of updatedAt
      */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): ?string
     {
         return $this->updatedAt;
     }
 
     /**
      * Set the value of updatedAt
-     *
-     * @return self
      */
-    public function setUpdatedAt($updatedAt)
+    public function setUpdatedAt(?string $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of lastLogin
-     */
-    public function getLastLogin()
-    {
-        return $this->lastLogin;
-    }
-
-    /**
-     * Set the value of lastLogin
-     *
-     * @return self
-     */
-    public function setLastLogin($lastLogin)
-    {
-        $this->lastLogin = $lastLogin;
 
         return $this;
     }
