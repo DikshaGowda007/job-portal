@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Services\AuthService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Http\Services\AuthService;
 
 class AuthenticateRoles
 {
@@ -22,11 +22,11 @@ class AuthenticateRoles
             $authData = $authService->getData();
             if ($authData['userRole'] && in_array($authData['userRole'], $rolesArray)) {
                 $request->attributes->set('auth_data', $authData);
+
                 return $next($request);
             }
         }
 
-        $request->attributes->set('auth_failed', true);
         return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 401);
     }
 }

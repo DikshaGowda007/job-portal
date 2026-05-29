@@ -19,6 +19,7 @@ class AllUserAccessRightRepositoryImpl implements AllUserAccessRightRepository
     {
         $allUserAccessRightsDAO->setCreatedDate(Carbon::now()->format('Y-m-d H:i:s'));
         $allUserAccessRightsDAO->setModifiedDate(Carbon::now()->format('Y-m-d H:i:s'));
+
         return AllUserAccessRight::create($allUserAccessRightsDAO->toArray());
     }
 

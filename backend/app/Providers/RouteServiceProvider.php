@@ -8,6 +8,7 @@ use Route;
 class RouteServiceProvider extends ServiceProvider
 {
     protected $apiv1Namespace = 'App\Http\Controllers\api\v1';
+
     /**
      * Register services.
      */

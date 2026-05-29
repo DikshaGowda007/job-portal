@@ -19,19 +19,19 @@ class VerifyJwt
 
             $token = $request->bearerToken() ?? $request->cookie('token');
 
-            if (!$token) {
+            if (! $token) {
                 return response()->json([
                     'status' => CommonConstant::ERROR,
-                    'message' => CommonConstant::TOKEN_NOT_PROVIDED
+                    'message' => CommonConstant::TOKEN_NOT_PROVIDED,
                 ], CommonConstant::UNAUTHORIZED_EXCEPTION_CODE);
             }
 
             $decoded = JwtService::decodeToken($token);
 
-            if (!$decoded || !is_array($decoded)) {
+            if (! $decoded || ! is_array($decoded)) {
                 return response()->json([
                     'status' => CommonConstant::ERROR,
-                    'message' => CommonConstant::UNAUTHORIZED_EXCEPTION_MESSAGE
+                    'message' => CommonConstant::UNAUTHORIZED_EXCEPTION_MESSAGE,
                 ], CommonConstant::UNAUTHORIZED_EXCEPTION_CODE);
             }
 
@@ -42,19 +42,17 @@ class VerifyJwt
         } catch (TokenExpiredException $e) {
             return response()->json([
                 'status' => CommonConstant::ERROR,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], $e->getCode());
-
         } catch (InvalidTokenException $e) {
             return response()->json([
                 'status' => CommonConstant::ERROR,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], $e->getCode());
-
         } catch (Exception $e) {
             return response()->json([
                 'status' => CommonConstant::ERROR,
-                'message' => 'Invalid Token'
+                'message' => 'Invalid Token',
             ], 401);
         }
     }
