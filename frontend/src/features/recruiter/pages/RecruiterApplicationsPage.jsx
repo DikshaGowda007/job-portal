@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { recruiterApi } from "@/api/recruiter.api";
 import { APPLICATION_STATUS, PAGINATION_DEFAULT } from "@/utils/constants";
 import { formatDate, timeAgo } from "@/utils/formatters";
@@ -24,7 +24,7 @@ export default function RecruiterApplicationsPage() {
   const [page, setPage] = useState(PAGINATION_DEFAULT.PAGE);
   const [statusFilter, setStatusFilter] = useState("");
   const [selectedApp, setSelectedApp] = useState(null);
-  const queryClient = useQueryClient();
+  const [drawerInitialAction, setDrawerInitialAction] = useState(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["recruiter-applications", page, statusFilter, jobIdFromUrl],
@@ -37,12 +37,6 @@ export default function RecruiterApplicationsPage() {
           job_post_id: jobIdFromUrl ? Number(jobIdFromUrl) : undefined,
         })
         .then((r) => r.data?.data),
-  });
-
-  const updateStatus = useMutation({
-    mutationFn: (payload) => recruiterApi.updateApplicationStatus(payload),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["recruiter-applications"] }),
   });
 
   const applications = data?.applications ?? [];
@@ -79,9 +73,9 @@ export default function RecruiterApplicationsPage() {
               setStatusFilter(s);
               setPage(1);
             }}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium capitalize transition ${statusFilter === s ? "bg-indigo-600 text-white" : "border border-gray-300 bg-white hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"}`}
+            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${statusFilter === s ? "bg-indigo-600 text-white" : "border border-gray-300 bg-white hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"}`}
           >
-            {s}
+            {s.charAt(0) + s.slice(1).toLowerCase()}
           </button>
         ))}
       </div>
@@ -100,11 +94,14 @@ export default function RecruiterApplicationsPage() {
               <ApplicationCard
                 key={app.id}
                 app={app}
-                onStatusChange={(status) =>
-                  updateStatus.mutate({ id: app.id, status })
-                }
-                loading={updateStatus.isPending}
-                onViewDetails={() => setSelectedApp(app)}
+                onActionClick={(action) => {
+                  setSelectedApp(app);
+                  setDrawerInitialAction(action);
+                }}
+                onViewDetails={() => {
+                  setSelectedApp(app);
+                  setDrawerInitialAction(null);
+                }}
               />
             ))}
           </div>
@@ -118,13 +115,14 @@ export default function RecruiterApplicationsPage() {
 
       <ApplicationDetailDrawer
         app={selectedApp}
-        onClose={() => setSelectedApp(null)}
+        initialAction={drawerInitialAction}
+        onClose={() => { setSelectedApp(null); setDrawerInitialAction(null); }}
       />
     </div>
   );
 }
 
-function ApplicationCard({ app, onStatusChange, loading, onViewDetails }) {
+function ApplicationCard({ app, onActionClick, onViewDetails }) {
   const applicantName = app.applicant_name ?? app.user?.name ?? "Applicant";
   const actions = NEXT_ACTIONS[app.status] ?? [];
 
@@ -145,9 +143,9 @@ function ApplicationCard({ app, onStatusChange, loading, onViewDetails }) {
               {applicantName}
             </h3>
             <span
-              className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${STATUS_BADGE[app.status] ?? "bg-gray-100 text-gray-600"}`}
+              className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_BADGE[app.status] ?? "bg-gray-100 text-gray-600"}`}
             >
-              {app.status}
+              {app.status ? app.status.charAt(0) + app.status.slice(1).toLowerCase() : "—"}
             </span>
           </div>
 
@@ -212,9 +210,8 @@ function ApplicationCard({ app, onStatusChange, loading, onViewDetails }) {
         {actions.map(({ label, status, cls }) => (
           <button
             key={status}
-            onClick={() => onStatusChange(status)}
-            disabled={loading}
-            className={`rounded-lg border px-4 py-1.5 text-xs font-medium transition disabled:opacity-60 ${cls}`}
+            onClick={() => onActionClick({ label, status })}
+            className={`rounded-lg border px-4 py-1.5 text-xs font-medium transition ${cls}`}
           >
             {label}
           </button>

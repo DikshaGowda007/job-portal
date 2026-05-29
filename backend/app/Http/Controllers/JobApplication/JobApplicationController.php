@@ -6,27 +6,48 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\JobApplication\Apply\DetailsRequest as ApplyDetailsRequest;
 use App\Http\Requests\V1\JobApplication\Get\DetailsRequest as GetDetailsRequest;
 use App\Http\Requests\V1\JobApplication\History\DetailsRequest as HistoryDetailsRequest;
+use App\Http\Requests\V1\JobApplication\List\DetailsRequest as ListDetailsRequest;
 use App\Http\Requests\V1\JobApplication\MyApplications\DetailsRequest as MyApplicationsDetailsRequest;
 use App\Http\Requests\V1\JobApplication\SendMessage\DetailsRequest as SendMessageDetailsRequest;
 use App\Http\Requests\V1\JobApplication\UpdateStatus\DetailsRequest as UpdateStatusDetailsRequest;
-use App\Http\Requests\V1\JobApplication\Withdraw\DetailsRequest as WithdrawDetailsRequest;
 use App\Http\Requests\V1\JobApplication\View\DetailsRequest as ViewDetailsRequest;
+use App\Http\Requests\V1\JobApplication\Withdraw\DetailsRequest as WithdrawDetailsRequest;
 use App\Modules\V1\JobApplication\Services\Apply\DetailsService as ApplyDetailsService;
 use App\Modules\V1\JobApplication\Services\Conversations\DetailsService as ConversationsDetailsService;
 use App\Modules\V1\JobApplication\Services\Get\DetailsService as GetDetailsService;
 use App\Modules\V1\JobApplication\Services\History\DetailsService as HistoryDetailsService;
 use App\Modules\V1\JobApplication\Services\List\DetailsService as ListDetailsService;
+use App\Modules\V1\JobApplication\Services\MyApplications\DetailsService as MyApplicationsDetailsService;
 use App\Modules\V1\JobApplication\Services\RecruiterConversations\DetailsService as RecruiterConversationsDetailsService;
 use App\Modules\V1\JobApplication\Services\RecruiterSendMessage\DetailsService as RecruiterSendMessageDetailsService;
 use App\Modules\V1\JobApplication\Services\SendMessage\DetailsService as SendMessageDetailsService;
 use App\Modules\V1\JobApplication\Services\UpdateStatus\DetailsService as UpdateStatusDetailsService;
-use App\Modules\V1\JobApplication\Services\Withdraw\DetailsService as WithdrawDetailsService;
 use App\Modules\V1\JobApplication\Services\View\DetailsService as ViewDetailsService;
+use App\Modules\V1\JobApplication\Services\Withdraw\DetailsService as WithdrawDetailsService;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
 class JobApplicationController extends Controller
 {
+    public function list(ListDetailsRequest $listDetailsRequest): JsonResponse
+    {
+        try {
+            $listDetailsService = app(ListDetailsService::class);
+
+            return $listDetailsService->list(
+                (int) $listDetailsRequest->input('page', 1),
+                (int) $listDetailsRequest->input('per_page', 20),
+                $listDetailsRequest->input('status'),
+                $listDetailsRequest->input('text'),
+                $listDetailsRequest->input('job_post_id') !== null
+                ? (int) $listDetailsRequest->input('job_post_id')
+                : null,
+            );
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
+
     public function apply(ApplyDetailsRequest $request): JsonResponse
     {
         try {
@@ -42,13 +63,11 @@ class JobApplicationController extends Controller
     public function myApplications(MyApplicationsDetailsRequest $myApplicationsDetailsRequest): JsonResponse
     {
         try {
-            $listDetailsService = app(ListDetailsService::class);
-            $jobPostId = $myApplicationsDetailsRequest->input('job_post_id');
-            $status = $myApplicationsDetailsRequest->input('status');
+            $myApplicationsDetailsService = app(MyApplicationsDetailsService::class);
             $page = $myApplicationsDetailsRequest->input('page', 1);
             $perPage = $myApplicationsDetailsRequest->input('per_page', 20);
 
-            return $listDetailsService->list($jobPostId, $status, $page, $perPage);
+            return $myApplicationsDetailsService->myApplications($page, $perPage);
         } catch (Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
         }

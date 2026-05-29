@@ -8,6 +8,7 @@ export const recruiterApi = {
   listApplications: (params) => axiosClient.post(API.APPLICATION.LIST, params),
   updateApplicationStatus: (payload) => axiosClient.post(API.APPLICATION.UPDATE_STATUS, payload),
   viewApplication: (payload) => axiosClient.post(API.APPLICATION.VIEW, payload),
+  getApplicationHistory: (payload) => axiosClient.post(API.APPLICATION.HISTORY, payload),
   getConversations: () => axiosClient.post(API.RECRUITER.CONVERSATIONS),
   sendMessage: (payload) => axiosClient.post(API.RECRUITER.SEND_MESSAGE, payload),
   viewSeekerProfile: (userId) => axiosClient.post(API.PROFILE.VIEW, { user_id: userId }),

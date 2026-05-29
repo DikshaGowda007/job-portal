@@ -8,11 +8,13 @@ use App\Http\Requests\V1\JobApplication\UpdateStatus\DetailsRequest as UpdateSta
 use App\Modules\V1\JobApplication\Bo\Apply\DetailsBo as ApplyDetailsBo;
 use App\Modules\V1\JobApplication\Bo\UpdateStatus\DetailsBo as UpdateStatusDetailsBo;
 use App\Repositories\DAO\V1\JobApplicationDAO;
+use App\Repositories\DAO\V1\JobApplicationHistoryDAO;
 use App\Traits\V1\AccessRightsTrait;
 
 class JobApplicationHelper
 {
     use AccessRightsTrait;
+
     public function __construct()
     {
         $this->initializeUserAuthorizationData();
@@ -20,7 +22,7 @@ class JobApplicationHelper
 
     public function prepareJobApplyBo(ApplyDetailsRequest $request): ApplyDetailsBo
     {
-        $applyDetailsBo = new ApplyDetailsBo();
+        $applyDetailsBo = new ApplyDetailsBo;
 
         $applyDetailsBo->setUserId($request->input('user_id'));
         $applyDetailsBo->setJobPostId($request->input('job_post_id'));
@@ -45,20 +47,45 @@ class JobApplicationHelper
         return $updateStatusDetailsBo;
     }
 
-    public function prepareJobApplyDAO(ApplyDetailsBo $applyDetailsBo): JobApplicationDAO
+    public function prepareJobApplyDao(ApplyDetailsBo $applyDetailsBo): JobApplicationDAO
     {
-        $jobApplicationDAO = new JobApplicationDAO();
+        $jobApplicationDao = new JobApplicationDAO;
 
-        $jobApplicationDAO->setUserId($this->loggedInUserId);
-        $jobApplicationDAO->setJobPostId($applyDetailsBo->getJobPostId());
-        $jobApplicationDAO->setResumePath($applyDetailsBo->getResumePath());
-        $jobApplicationDAO->setCoverLetter($applyDetailsBo->getCoverLetter());
-        $jobApplicationDAO->setExpectedSalary($applyDetailsBo->getExpectedSalary());
-        $jobApplicationDAO->setExpectedSalaryCurrency($applyDetailsBo->getExpectedSalaryCurrency());
-        $jobApplicationDAO->setNoticePeriod($applyDetailsBo->getNoticePeriod());
-        $jobApplicationDAO->setExperienceYears($applyDetailsBo->getExperienceYears());
-        $jobApplicationDAO->setStatus(JobApplicationConstants::STATUS_PENDING);
+        $jobApplicationDao->setUserId($this->loggedInUserId);
+        $jobApplicationDao->setJobPostId($applyDetailsBo->getJobPostId());
+        $jobApplicationDao->setResumePath($applyDetailsBo->getResumePath());
+        $jobApplicationDao->setCoverLetter($applyDetailsBo->getCoverLetter());
+        $jobApplicationDao->setExpectedSalary($applyDetailsBo->getExpectedSalary());
+        $jobApplicationDao->setExpectedSalaryCurrency($applyDetailsBo->getExpectedSalaryCurrency());
+        $jobApplicationDao->setNoticePeriod($applyDetailsBo->getNoticePeriod());
+        $jobApplicationDao->setExperienceYears($applyDetailsBo->getExperienceYears());
+        $jobApplicationDao->setStatus(JobApplicationConstants::STATUS_PENDING);
 
-        return $jobApplicationDAO;
+        return $jobApplicationDao;
+    }
+
+    public function prepareUpdateStatusDao(UpdateStatusDetailsBo $updateStatusDetailsBo): JobApplicationDAO
+    {
+        $jobApplicationDao = new JobApplicationDAO;
+
+        $jobApplicationDao->setStatus($updateStatusDetailsBo->getStatus());
+        $jobApplicationDao->setRecruiterNotes($updateStatusDetailsBo->getRecruiterNotes());
+        $jobApplicationDao->setReviewedByUserId($this->loggedInUserId);
+        $jobApplicationDao->setReviewedAt(now()->format('Y-m-d H:i:s'));
+
+        return $jobApplicationDao;
+    }
+
+    public function prepareHistoryDao(int $applicationId, ?string $previousStatus, string $newStatus, int $changedBy, string $notes): JobApplicationHistoryDAO
+    {
+        $historyDao = new JobApplicationHistoryDAO;
+
+        $historyDao->setJobApplicationId($applicationId);
+        $historyDao->setPreviousStatus($previousStatus);
+        $historyDao->setNewStatus($newStatus);
+        $historyDao->setChangedBy($changedBy);
+        $historyDao->setNotes($notes);
+
+        return $historyDao;
     }
 }

@@ -26,4 +26,14 @@ class JobApplicationPolicy
     {
         return $userAccessDetails[AccessControlConstants::APPLICATION_STATUS_UPDATE] === 1;
     }
+
+    public function shortlist(?string $user, array $userAccessDetails, string $role): bool
+    {
+        return $userAccessDetails[AccessControlConstants::APPLICATION_SHORTLIST] === 1;
+    }
+
+    public function reject(?string $user, array $userAccessDetails, string $role): bool
+    {
+        return $userAccessDetails[AccessControlConstants::APPLICATION_REJECT] === 1;
+    }
 }

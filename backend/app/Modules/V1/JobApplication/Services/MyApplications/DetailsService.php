@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Modules\V1\JobApplication\Services\Get;
+namespace App\Modules\V1\JobApplication\Services\MyApplications;
 
-use App\Constants\CommonConstant;
 use App\Constants\ErrorResponseConstant;
 use App\Exceptions\DataNotFoundException;
-use App\Repositories\V1\ApplicationMessageRepository;
 use App\Repositories\V1\JobApplicationRepository;
 use App\Traits\V1\AccessRightsTrait;
 use App\Utils\CommonUtils;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class DetailsService
@@ -18,20 +17,32 @@ class DetailsService
 
     public function __construct(
         private JobApplicationRepository $jobApplicationRepository,
-        private ApplicationMessageRepository $applicationMessageRepository,
     ) {
         $this->initializeUserAuthorizationData();
     }
 
-    public function get(int $applicationId): JsonResponse
+    public function myApplications(int $page = 1, int $perPage = 20): JsonResponse
     {
         try {
-            $jobApplication = $this->findApplication($applicationId);
-            $messages = $this->applicationMessageRepository->fetchByApplicationId($applicationId);
+            $applications = $this->jobApplicationRepository->findByUserIdOrStatus(
+                $this->loggedInUserId
+            );
 
-            $response = $this->formatResponse($jobApplication, $messages);
+            $applications->load(['jobPost']);
+            $applications = $applications->sortByDesc('created_at')->values();
 
-            return response()->json(CommonUtils::successDataResponse($response));
+            $paginated = new LengthAwarePaginator(
+                $applications->forPage($page, $perPage)->values(),
+                $applications->count(),
+                $perPage,
+                $page
+            );
+
+            if ($paginated->isEmpty()) {
+                throw DataNotFoundException::withMessage();
+            }
+
+            return response()->json(CommonUtils::successDataResponse($this->formatResponse($paginated)));
         } catch (DataNotFoundException $e) {
             return response()->json(CommonUtils::errorResponse($e->getMessage()));
         } catch (\Throwable $e) {
@@ -41,30 +52,41 @@ class DetailsService
         }
     }
 
-    private function findApplication($applicationId): Collection
+    private function formatResponse(LengthAwarePaginator $paginated): array
     {
-        $application = collect($this->jobApplicationRepository->findByIdWithJobPostAndUser($applicationId)->first());
-
-        if ($application->isEmpty() || $application->get('user_id') !== $this->loggedInUserId) {
-            throw DataNotFoundException::withMessage('Application not found');
-        }
-
-        return $application;
+        return [
+            'applications' => $this->formatApplications($paginated),
+            'pagination' => [
+                'current_page' => $paginated->currentPage(),
+                'per_page' => $paginated->perPage(),
+                'total' => $paginated->total(),
+                'last_page' => $paginated->lastPage(),
+                'from' => $paginated->firstItem(),
+                'to' => $paginated->lastItem(),
+            ],
+        ];
     }
 
-    private function formatResponse(Collection $application, $messages): array
+    private function formatApplications(LengthAwarePaginator $paginated): array
+    {
+        $result = [];
+        foreach ($paginated->items() as $application) {
+            $this->formatApplication($result, collect($application->toArray()));
+        }
+
+        return $result;
+    }
+
+    private function formatApplication(array &$result, Collection $application): void
     {
         $jobPost = $application->get('job_post') ?? [];
 
-        return [
+        $result[] = [
             'id' => $application->get('id'),
             'user_id' => $application->get('user_id'),
             'job_post_id' => $application->get('job_post_id'),
             'job_title' => $jobPost['title'] ?? null,
             'company_name' => $jobPost['company_name'] ?? null,
-            'location' => $jobPost['location'] ?? null,
-            'work_mode' => $jobPost['work_mode'] ?? null,
-            'job_type' => $jobPost['job_type'] ?? null,
             'resume_path' => $application->get('resume_path'),
             'cover_letter' => $application->get('cover_letter'),
             'expected_salary' => $application->get('expected_salary'),
@@ -77,12 +99,6 @@ class DetailsService
             'reviewed_at' => $application->get('reviewed_at'),
             'created_at' => $application->get('created_at'),
             'updated_at' => $application->get('updated_at'),
-            'messages' => $messages->map(fn ($m) => [
-                'id' => $m->id,
-                'message' => $m->message,
-                'sender' => $m->sender ? trim($m->sender->first_name.' '.$m->sender->last_name) : null,
-                'created_at' => $m->created_at,
-            ])->values()->toArray(),
         ];
     }
 }

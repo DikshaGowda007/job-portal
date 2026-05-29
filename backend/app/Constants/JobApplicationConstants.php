@@ -22,6 +22,12 @@ class JobApplicationConstants
 
     public const VALID_STATUSES = [
         self::STATUS_PENDING,
+        self::STATUS_REVIEWED,
+        self::STATUS_SHORTLISTED,
+        self::STATUS_INTERVIEW,
+        self::STATUS_OFFERED,
+        self::STATUS_HIRED,
+        self::STATUS_REJECTED,
         self::STATUS_WITHDRAWN,
     ];
 

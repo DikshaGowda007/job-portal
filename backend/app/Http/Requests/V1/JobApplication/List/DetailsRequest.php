@@ -32,8 +32,11 @@ class DetailsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'job_post_id' => 'required|integer|exists:job_posts,id',
+            'job_post_id' => 'nullable|integer|exists:job_posts,id',
             'status' => 'nullable|in:'.implode(',', JobApplicationConstants::VALID_STATUSES),
+            'page' => 'nullable|integer|min:1',
+            'per_page' => 'nullable|integer|min:1|max:100',
+            'text' => 'nullable|string|max:255',
         ];
     }
 

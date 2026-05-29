@@ -17,25 +17,26 @@ import {
   CheckCircle2,
   Circle,
   XCircle,
+  MessageSquare,
 } from "lucide-react";
 
-const PIPELINE_STEPS = ["pending", "reviewed", "shortlisted", "hired"];
+const PIPELINE_STEPS = ["pending", "reviewed", "shortlisted", "interview", "offered", "hired"];
 
 const STATUS_BADGE = {
-  pending:
-    "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
-  reviewed: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  shortlisted:
-    "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400",
-  hired: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-  rejected: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-  withdrawn: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+  pending:     "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+  reviewed:    "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+  shortlisted: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400",
+  interview:   "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+  offered:     "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400",
+  hired:       "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+  rejected:    "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+  withdrawn:   "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
 };
 
 function StatusPipeline({ status }) {
   if (
-    status === APPLICATION_STATUS.WITHDRAWN ||
-    status === APPLICATION_STATUS.REJECTED
+    status === APPLICATION_STATUS.WITHDRAWN.toLowerCase() ||
+    status === APPLICATION_STATUS.REJECTED.toLowerCase()
   )
     return null;
   const currentIdx = PIPELINE_STEPS.indexOf(status);
@@ -142,9 +143,9 @@ export default function SeekerApplicationDetailPage() {
 
   const status = data.status?.toLowerCase() ?? "";
   const isTerminal =
-    status === APPLICATION_STATUS.WITHDRAWN ||
-    status === APPLICATION_STATUS.REJECTED;
-  const canWithdraw = !isTerminal && status !== APPLICATION_STATUS.HIRED;
+    status === APPLICATION_STATUS.WITHDRAWN.toLowerCase() ||
+    status === APPLICATION_STATUS.REJECTED.toLowerCase();
+  const canWithdraw = !isTerminal && status !== APPLICATION_STATUS.HIRED.toLowerCase();
   const companyName = data.company_name ?? "";
 
   return (
@@ -195,12 +196,12 @@ export default function SeekerApplicationDetailPage() {
                 STATUS_BADGE[status] ?? "bg-gray-100 text-gray-600"
               }`}
             >
-              {status === APPLICATION_STATUS.REJECTED ? (
+              {status === APPLICATION_STATUS.REJECTED.toLowerCase() ? (
                 <span className="flex items-center gap-1">
                   <XCircle size={11} /> Rejected
                 </span>
               ) : (
-                status
+                status.charAt(0).toUpperCase() + status.slice(1)
               )}
             </span>
             {canWithdraw && (
@@ -224,71 +225,83 @@ export default function SeekerApplicationDetailPage() {
       </div>
 
       {/* Application details */}
+      {(data.expected_salary || data.notice_period || data.experience_years != null || data.cover_letter || data.resume_path) && (
       <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
         <h2 className="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
           Application Details
         </h2>
 
+        {(data.expected_salary || data.notice_period || data.experience_years != null) && (
         <div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-3">
+          {data.expected_salary && (
           <DetailRow
             label="Expected Salary"
-            value={
-              data.expected_salary
-                ? `${data.expected_salary_currency ?? ""} ${data.expected_salary}`.trim()
-                : null
-            }
+            value={`${data.expected_salary_currency ?? ""} ${data.expected_salary}`.trim()}
           />
+          )}
+          {data.notice_period && (
           <DetailRow
             label="Notice Period"
-            value={data.notice_period ? `${data.notice_period} days` : null}
+            value={`${data.notice_period} days`}
           />
+          )}
+          {data.experience_years != null && (
           <DetailRow
             label="Experience"
-            value={
-              data.experience_years != null
-                ? `${data.experience_years} years`
-                : null
-            }
+            value={`${data.experience_years} years`}
           />
-        </div>
-
-        <div className="mt-5">
-          <p className="text-xs text-gray-500 dark:text-gray-400">Cover Letter</p>
-          {data.cover_letter ? (
-            <p className="mt-1 whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300">
-              {data.cover_letter}
-            </p>
-          ) : (
-            <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-white">—</p>
           )}
         </div>
+        )}
 
+        {data.cover_letter && (
+        <div className="mt-5">
+          <p className="text-xs text-gray-500 dark:text-gray-400">Cover Letter</p>
+          <p className="mt-1 whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300">
+            {data.cover_letter}
+          </p>
+        </div>
+        )}
+
+        {data.resume_path && (
         <div className="mt-4">
           <p className="text-xs text-gray-500 dark:text-gray-400">Resume</p>
-          {data.resume_path ? (
-            <a
-              href={data.resume_path}
+          <a
+              href={`${import.meta.env.VITE_API_BASE_URL}/storage/${data.resume_path}`}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-1 inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:underline dark:text-indigo-400"
             >
               View Resume
             </a>
-          ) : (
-            <p className="mt-0.5 text-sm font-medium text-gray-900 dark:text-white">—</p>
-          )}
         </div>
+        )}
       </div>
+      )}
 
-      {/* Recruiter notes */}
-      {data.recruiter_notes && (
+      {/* Messages from recruiter */}
+      {data.messages?.length > 0 && (
         <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-          <h2 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">
-            Recruiter Notes
+          <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white">
+            <MessageSquare size={15} className="text-indigo-500" />
+            Messages from Recruiter
           </h2>
-          <p className="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300">
-            {data.recruiter_notes}
-          </p>
+          <div className="space-y-3">
+            {data.messages.map((msg) => (
+              <div
+                key={msg.id}
+                className="rounded-xl border border-indigo-100 bg-indigo-50 p-4 dark:border-indigo-900/40 dark:bg-indigo-900/20"
+              >
+                <p className="text-sm text-gray-800 dark:text-gray-200">
+                  {msg.message}
+                </p>
+                <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
+                  {msg.sender && <span className="font-medium">{msg.sender} · </span>}
+                  {formatDate(msg.created_at)}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class JobApplication extends Model
 {
@@ -21,8 +22,9 @@ class JobApplication extends Model
         'reviewed_by_user_id',
         'reviewed_at',
         'viewed',
+        'viewed_by_user_id',
         'viewed_at',
-        'viewed_by',
+        'updated_by',
         'is_deleted',
         'created_at',
         'updated_at',
@@ -33,8 +35,6 @@ class JobApplication extends Model
     protected $casts = [
         'expected_salary' => 'decimal:2',
         'reviewed_at' => 'datetime',
-        'viewed' => 'boolean',
-        'viewed_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -55,5 +55,10 @@ class JobApplication extends Model
     public function getTableName(): string
     {
         return $this->table;
+    }
+
+    public function histories(): HasMany
+    {
+        return $this->hasMany(JobApplicationHistory::class, 'job_application_id');
     }
 }
