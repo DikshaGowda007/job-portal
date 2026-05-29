@@ -32,7 +32,7 @@ class DetailsService
     public function __construct(
         private JobApplicationRepository $jobApplicationRepository,
         private JobApplicationHistoryRepository $jobApplicationHistoryRepository,
-        private JobApplicationDAO $jobApplicationDAO
+        private JobApplicationDAO $jobApplicationDao
     ) {
         $this->initializeUserAuthorizationData();
     }
@@ -48,11 +48,8 @@ class DetailsService
 
             return response()->json(CommonUtils::successResponse('Application withdrawn successfully'));
         } catch (DataNotFoundException|InvalidJobException $e) {
-            dd($e);
-
             return response()->json(CommonUtils::errorResponse($e->getMessage()));
         } catch (\Throwable $e) {
-            dd($e);
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
 
             return response()->json(CommonUtils::errorResponse('Failed to withdraw application'));
@@ -85,10 +82,10 @@ class DetailsService
 
     private function withdrawJob(int $applicationId): void
     {
-        $this->jobApplicationDAO->setStatus(JobApplicationConstants::STATUS_WITHDRAWN);
+        $this->jobApplicationDao->setStatus(JobApplicationConstants::STATUS_WITHDRAWN);
 
-        $this->jobApplicationRepository->updateById($applicationId, $this->jobApplicationDAO);
-        $this->logApplicationHistory($applicationId, $this->jobApplicationDAO->getStatus());
+        $this->jobApplicationRepository->updateById($applicationId, $this->jobApplicationDao);
+        $this->logApplicationHistory($applicationId, $this->jobApplicationDao->getStatus());
     }
 
     private function sendWithdrawalNotification(): void
@@ -102,9 +99,9 @@ class DetailsService
             $templateService->initiateEmailProcess($seekerTemplateBo, $seekerEmailDto);
 
             // Send email to recruiter
-            $recruiterTemplateBo = $this->prepareRecruiterTemplateBo();
-            $recruiterEmailDto = $this->prepareRecruiterEmailDto();
-            $templateService->initiateEmailProcess($recruiterTemplateBo, $recruiterEmailDto);
+            // $recruiterTemplateBo = $this->prepareRecruiterTemplateBo();
+            // $recruiterEmailDto = $this->prepareRecruiterEmailDto();
+            // $templateService->initiateEmailProcess($recruiterTemplateBo, $recruiterEmailDto);
         } catch (\Throwable $e) {
             throw $e;
         }
@@ -165,14 +162,14 @@ class DetailsService
 
     private function logApplicationHistory(int $applicationId, string $oldStatus): void
     {
-        $jobApplicationHistoryDAO = new JobApplicationHistoryDAO;
+        $jobApplicationHistoryDao = new JobApplicationHistoryDAO;
 
-        $jobApplicationHistoryDAO->setJobApplicationId($applicationId);
-        $jobApplicationHistoryDAO->setPreviousStatus($oldStatus);
-        $jobApplicationHistoryDAO->setNewStatus(JobApplicationConstants::STATUS_WITHDRAWN);
-        $jobApplicationHistoryDAO->setChangedBy($this->loggedInActionByUserId);
-        $jobApplicationHistoryDAO->setNotes('Application withdrawn by candidate');
+        $jobApplicationHistoryDao->setJobApplicationId($applicationId);
+        $jobApplicationHistoryDao->setPreviousStatus($oldStatus);
+        $jobApplicationHistoryDao->setNewStatus(JobApplicationConstants::STATUS_WITHDRAWN);
+        $jobApplicationHistoryDao->setChangedBy($this->loggedInActionByUserId);
+        $jobApplicationHistoryDao->setNotes('Application withdrawn by candidate');
 
-        $this->jobApplicationHistoryRepository->insert($jobApplicationHistoryDAO);
+        $this->jobApplicationHistoryRepository->insert($jobApplicationHistoryDao);
     }
 }

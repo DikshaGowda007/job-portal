@@ -6,16 +6,18 @@ use App\Constants\CommonConstant;
 use App\Constants\ErrorResponseConstant;
 use App\Constants\JobApplicationConstants;
 use App\Constants\JobConstants;
+use App\Constants\NotificationConstants;
 use App\Exceptions\DataNotFoundException;
 use App\Http\Requests\V1\JobApplication\Apply\DetailsRequest;
 use App\Mail\ApplicationSubmittedMail;
-use App\Models\User;
 use App\Modules\V1\JobApplication\Bo\Apply\DetailsBo;
 use App\Modules\V1\JobApplication\Helpers\JobApplicationHelper;
-use App\Repositories\DAO\V1\JobApplicationHistoryDAO;
+use App\Repositories\DAO\V1\NotificationDAO;
 use App\Repositories\V1\JobApplicationHistoryRepository;
 use App\Repositories\V1\JobApplicationRepository;
 use App\Repositories\V1\JobRepository;
+use App\Repositories\V1\NotificationRepository;
+use App\Repositories\V1\UserRepository;
 use App\Traits\V1\AccessRightsTrait;
 use App\Utils\CommonUtils;
 use Illuminate\Http\JsonResponse;
@@ -25,31 +27,33 @@ class DetailsService
 {
     use AccessRightsTrait;
 
-    public function __construct(
-        private DetailsBo $detailsBo,
-        private JobApplicationHelper $jobApplicationHelper,
-        private JobApplicationRepository $jobApplicationRepository,
-        private JobApplicationHistoryRepository $historyRepository,
-        private JobRepository $jobRepository,
-    ) {
-        $this->initializeUserAuthorizationData();
-    }
+    private DetailsBo $detailsBo;
 
     private int $recruiterId;
 
     private string $jobTitle;
 
+    public function __construct(
+        private JobApplicationHelper $jobApplicationHelper,
+        private JobApplicationRepository $jobApplicationRepository,
+        private JobApplicationHistoryRepository $historyRepository,
+        private JobRepository $jobRepository,
+        private UserRepository $userRepository,
+        private NotificationRepository $notificationRepository,
+    ) {
+        $this->initializeUserAuthorizationData();
+    }
+
     public function apply(DetailsBo $detailsBo): JsonResponse
     {
+        $this->detailsBo = $detailsBo;
         try {
-            $this->detailsBo = $detailsBo;
-
             $this->validateJob();
 
-            $application = $this->applyJob($detailsBo);
-
-            $this->logInitialStatus($application->id, $detailsBo->getUserId());
-            $this->sendApplicationNotification($detailsBo->getUserId(), $application->id);
+            $application = $this->applyJob();
+            $this->logInitialStatus($application->id);
+            $this->notifyRecruiter($application->id);
+            $this->createRecruiterNotification($application->id);
 
             return response()->json(CommonUtils::successResponse('Application submitted successfully'));
         } catch (DataNotFoundException $e) {
@@ -80,55 +84,78 @@ class DetailsService
         $this->recruiterId = $job->get('user_id');
         $this->jobTitle = $job->get('title');
 
-        $jobApplication = $this->jobApplicationRepository->findByUserIdAndJobPostId($this->loggedInUserId, $this->detailsBo->getJobPostId());
+        $jobApplication = collect($this->jobApplicationRepository->findByUserIdAndJobPostId($this->loggedInUserId, $this->detailsBo->getJobPostId())->first());
         if ($jobApplication->isNotEmpty()) {
             throw DataNotFoundException::withMessage('You have already applied for this job');
         }
     }
 
-    private function applyJob(DetailsBo $detailsBo)
+    private function applyJob()
     {
-        $dao = $this->jobApplicationHelper->prepareJobApplyDAO($detailsBo);
+        $dao = $this->jobApplicationHelper->prepareJobApplyDao($this->detailsBo);
 
         return $this->jobApplicationRepository->insert($dao);
     }
 
-    private function sendApplicationNotification(int $applicantId, int $applicationId): void
+    private function logInitialStatus(int $applicationId): void
     {
         try {
-            $recruiter = User::find($this->recruiterId);
-            $applicant = User::find($applicantId);
-
-            if ($recruiter && $recruiter->email && $applicant) {
-                $recruiterName = trim($recruiter->first_name.' '.$recruiter->last_name);
-                $candidateName = trim($applicant->first_name.' '.$applicant->last_name);
-
-                Mail::to($recruiter->email)->send(new ApplicationSubmittedMail(
-                    $recruiterName,
-                    $this->jobTitle,
-                    $candidateName,
-                    $applicant->email,
-                    $applicationId
-                ));
-            }
-        } catch (\Exception $e) {
-            CommonUtils::handleException('Email notification failed: '.$e->getMessage(), $e, CommonConstant::LOG_LEVEL_WARNING);
-        }
-    }
-
-    private function logInitialStatus(int $applicationId, int $userId): void
-    {
-        try {
-            $historyDao = new JobApplicationHistoryDAO;
-            $historyDao->setJobApplicationId($applicationId);
-            $historyDao->setPreviousStatus(null);
-            $historyDao->setNewStatus(JobApplicationConstants::STATUS_PENDING);
-            $historyDao->setChangedBy($userId);
-            $historyDao->setNotes('Application submitted');
-
+            $historyDao = $this->jobApplicationHelper->prepareHistoryDao(
+                $applicationId,
+                null,
+                JobApplicationConstants::STATUS_PENDING,
+                $this->loggedInUserId,
+                'Application submitted'
+            );
             $this->historyRepository->insert($historyDao);
         } catch (\Exception $e) {
             CommonUtils::handleException('Failed to log application history: '.$e->getMessage(), $e, CommonConstant::LOG_LEVEL_WARNING);
+        }
+    }
+
+    private function notifyRecruiter(int $applicationId): void
+    {
+        try {
+            $recruiter = collect($this->userRepository->findById($this->recruiterId)->first());
+            $seeker = collect($this->userRepository->findById($this->loggedInUserId)->first());
+
+            $recruiterEmail = $recruiter->get('email');
+            if (! $recruiterEmail) {
+                return;
+            }
+
+            $recruiterName = trim($recruiter->get('first_name').' '.$recruiter->get('last_name'));
+            $candidateName = trim($seeker->get('first_name').' '.$seeker->get('last_name'));
+            $candidateEmail = $seeker->get('email', '');
+
+            Mail::to($recruiterEmail)->send(new ApplicationSubmittedMail(
+                $recruiterName,
+                $this->jobTitle,
+                $candidateName,
+                $candidateEmail,
+                $applicationId
+            ));
+        } catch (\Exception $e) {
+            CommonUtils::handleException('Failed to send application notification: '.$e->getMessage(), $e, CommonConstant::LOG_LEVEL_WARNING);
+        }
+    }
+
+    private function createRecruiterNotification(int $applicationId): void
+    {
+        try {
+            $seeker = collect($this->userRepository->findById($this->loggedInUserId)->first());
+            $candidateName = trim($seeker->get('first_name').' '.$seeker->get('last_name')) ?: 'A candidate';
+
+            $dao = (new NotificationDAO)
+                ->setUserId($this->recruiterId)
+                ->setType(NotificationConstants::TYPE_APPLICATION_RECEIVED)
+                ->setTitle('New application received')
+                ->setBody("{$candidateName} applied for {$this->jobTitle}")
+                ->setLinkId($applicationId);
+
+            $this->notificationRepository->insert($dao);
+        } catch (\Exception $e) {
+            CommonUtils::handleException('Failed to create recruiter notification: '.$e->getMessage(), $e, CommonConstant::LOG_LEVEL_WARNING);
         }
     }
 }

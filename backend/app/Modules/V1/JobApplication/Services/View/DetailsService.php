@@ -32,7 +32,7 @@ class DetailsService
     public function __construct(
         private JobApplicationRepository $jobApplicationRepository,
         private UserRepository $userRepository,
-        private JobApplicationDAO $jobApplicationDAO
+        private JobApplicationDAO $jobApplicationDao
     ) {
         $this->initializeUserAuthorizationData();
     }
@@ -41,7 +41,7 @@ class DetailsService
     {
         try {
             $this->findApplication($applicationId);
-            $wasAlreadyViewed = $this->checkIfAlreadyViewed();
+            $wasAlreadyViewed = $this->validateIfAlreadyViewed();
             $this->updateApplicationStatus($applicationId, $wasAlreadyViewed);
             $this->sendViewedNotification($wasAlreadyViewed);
 
@@ -57,15 +57,16 @@ class DetailsService
 
     private function findApplication(int $applicationId): void
     {
-        $applicationDetails = $this->jobApplicationRepository->findById($applicationId);
-        if (! $applicationDetails) {
+        $applicationDetails = collect($this->jobApplicationRepository->findByIdWithJobPostAndUser($applicationId)->first());
+
+        if ($applicationDetails->isEmpty()) {
             throw DataNotFoundException::withMessage('Application not found');
         }
 
-        $this->application = collect($applicationDetails);
+        $this->application = $applicationDetails;
     }
 
-    private function checkIfAlreadyViewed(): bool
+    private function validateIfAlreadyViewed(): bool
     {
         $isViewed = $this->application->get('viewed') === CommonConstant::STATUS_ACTIVE;
         $isViewedByRecruiter = $this->isRecruiter($this->application->get('viewed_by_user_id'));
@@ -90,11 +91,11 @@ class DetailsService
     private function updateApplicationStatus(int $applicationId, bool $wasAlreadyViewed): void
     {
         if (! $wasAlreadyViewed && $this->loggedInUserRole == UserConstant::USER_ROLE_RECRUITER) {
-            $this->jobApplicationDAO->setViewed(CommonConstant::STATUS_ACTIVE);
-            $this->jobApplicationDAO->setViewedByUserId($this->loggedInUserId);
-            $this->jobApplicationDAO->setViewedAt(Carbon::now()->format('Y-m-d H:i:s'));
+            $this->jobApplicationDao->setViewed(CommonConstant::STATUS_ACTIVE);
+            $this->jobApplicationDao->setViewedByUserId($this->loggedInUserId);
+            $this->jobApplicationDao->setViewedAt(Carbon::now()->format('Y-m-d H:i:s'));
 
-            $this->jobApplicationRepository->updateById($applicationId, $this->jobApplicationDAO);
+            $this->jobApplicationRepository->updateById($applicationId, $this->jobApplicationDao);
         }
     }
 

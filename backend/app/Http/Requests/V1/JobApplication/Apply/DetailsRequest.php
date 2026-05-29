@@ -41,7 +41,7 @@ class DetailsRequest extends FormRequest
             'cover_letter' => 'nullable|string|max:5000',
             'expected_salary' => 'nullable|numeric|min:0',
             'expected_salary_currency' => 'nullable|in:'.implode(',', JobApplicationConstants::VALID_CURRENCIES),
-            'notice_period' => 'nullable|string|max:100',
+            'notice_period' => 'nullable|integer|min:0|max:365',
             'experience_years' => 'nullable|integer|min:0|max:50',
         ];
     }

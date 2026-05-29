@@ -1,19 +1,30 @@
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { recruiterApi } from "@/api/recruiter.api";
 import { formatDate } from "@/utils/formatters";
 import { STATUS_BADGE, logoColor, NEXT_ACTIONS } from "@/features/recruiter/utils/applicationHelpers";
-import { X, FileText, DollarSign, Timer, Clock, MapPin, Briefcase, GraduationCap, Loader2 } from "lucide-react";
+import { X, FileText, DollarSign, Timer, Clock, MapPin, Briefcase, GraduationCap, Loader2, Send, Link2 } from "lucide-react";
 
 export default function ApplicationDetailDrawer({
   app,
   onClose,
+  initialAction = null,
   viewFn = (payload) => recruiterApi.viewApplication(payload),
   updateStatusFn = (payload) => recruiterApi.updateApplicationStatus(payload),
   historyFn = (payload) => recruiterApi.getApplicationHistory(payload),
   invalidateKey = "recruiter-applications",
 }) {
   const queryClient = useQueryClient();
+  const [pendingAction, setPendingAction] = useState(null);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (app) {
+      setPendingAction(initialAction);
+      setMessage("");
+    }
+  }, [app, initialAction]);
 
   const detailQueryKey = ["application-detail", invalidateKey, app?.id];
 
@@ -45,9 +56,24 @@ export default function ApplicationDetailDrawer({
       queryClient.invalidateQueries({ queryKey: [invalidateKey] });
       queryClient.invalidateQueries({ queryKey: detailQueryKey });
       toast.success(`Application marked as ${status}`);
+      setPendingAction(null);
+      setMessage("");
     },
     onError: () => toast.error("Failed to update status"),
   });
+
+  const handleActionClick = (action) => {
+    setPendingAction(action);
+    setMessage("");
+  };
+
+  const handleConfirm = () => {
+    updateStatus.mutate({
+      application_id: app.id,
+      status: pendingAction.status,
+      ...(message.trim() && { recruiter_notes: message.trim() }),
+    });
+  };
 
   if (!app) return null;
 
@@ -86,9 +112,9 @@ export default function ApplicationDetailDrawer({
           </div>
           <div className="flex items-center gap-3">
             <span
-              className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${STATUS_BADGE[merged.status] ?? "bg-gray-100 text-gray-600"}`}
+              className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_BADGE[merged.status] ?? "bg-gray-100 text-gray-600"}`}
             >
-              {merged.status}
+              {merged.status ? merged.status.charAt(0) + merged.status.slice(1).toLowerCase() : "—"}
             </span>
             <button
               onClick={onClose}
@@ -124,7 +150,7 @@ export default function ApplicationDetailDrawer({
 
             {/* Application details */}
             <Section title="Application Details">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {merged.experience_years != null && (
                   <Detail icon={<Timer size={13} />} label="Experience">
                     {merged.experience_years} yrs
@@ -169,6 +195,32 @@ export default function ApplicationDetailDrawer({
                 </div>
               )}
             </Section>
+
+            {/* Links */}
+            {(profile?.linkedin_url || profile?.github_url || profile?.portfolio_url) && (
+              <Section title="Links">
+                <div className="flex flex-wrap gap-3">
+                  {profile.linkedin_url && (
+                    <a href={profile.linkedin_url} target="_blank" rel="noreferrer"
+                      className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800">
+                      <Link2 size={12} /> LinkedIn
+                    </a>
+                  )}
+                  {profile.github_url && (
+                    <a href={profile.github_url} target="_blank" rel="noreferrer"
+                      className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800">
+                      <Link2 size={12} /> GitHub
+                    </a>
+                  )}
+                  {profile.portfolio_url && (
+                    <a href={profile.portfolio_url} target="_blank" rel="noreferrer"
+                      className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800">
+                      <Link2 size={12} /> Portfolio
+                    </a>
+                  )}
+                </div>
+              </Section>
+            )}
 
             {/* Skills */}
             {profile?.skills?.length > 0 && (
@@ -259,23 +311,28 @@ export default function ApplicationDetailDrawer({
             {timeline.length > 0 && (
               <Section title="Status History">
                 <div className="space-y-3">
-                  {timeline.map((entry) => (
+                  {timeline.map((entry) => {
+                    const isSubmission = !entry.previous_status;
+                    return (
                     <div key={entry.id} className="flex gap-3">
-                      <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
-                        <History
-                          size={13}
-                          className="text-gray-500 dark:text-gray-400"
-                        />
+                      <div className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg ${isSubmission ? "bg-indigo-50 dark:bg-indigo-900/30" : "bg-gray-100 dark:bg-gray-800"}`}>
+                        {isSubmission ? (
+                          <FileText size={13} className="text-indigo-500 dark:text-indigo-400" />
+                        ) : (
+                          <Clock size={13} className="text-gray-500 dark:text-gray-400" />
+                        )}
                       </div>
                       <div className="flex-1">
                         <p className="text-sm text-gray-900 dark:text-white">
-                          <span className="capitalize">
-                            {entry.previous_status}
-                          </span>
-                          <span className="mx-1.5 text-gray-400">→</span>
-                          <span className="font-medium capitalize">
-                            {entry.new_status}
-                          </span>
+                          {isSubmission ? (
+                            <span className="font-medium">Application submitted</span>
+                          ) : (
+                            <>
+                              <span>{entry.previous_status.charAt(0) + entry.previous_status.slice(1).toLowerCase()}</span>
+                              <span className="mx-1.5 text-gray-400">→</span>
+                              <span className="font-medium">{entry.new_status.charAt(0) + entry.new_status.slice(1).toLowerCase()}</span>
+                            </>
+                          )}
                         </p>
                         <div className="mt-0.5 flex flex-wrap gap-2 text-xs text-gray-400 dark:text-gray-500">
                           <span className="flex items-center gap-1">
@@ -290,26 +347,61 @@ export default function ApplicationDetailDrawer({
                         </div>
                       </div>
                     </div>
-                  ))}
+                  );
+                  })}
                 </div>
               </Section>
             )}
           </div>
         )}
 
-        {/* Sticky footer with action buttons */}
+        {/* Sticky footer */}
         {actions.length > 0 && (
-          <div className="sticky bottom-0 flex gap-2 border-t border-gray-200 bg-white px-6 py-4 dark:border-gray-800 dark:bg-gray-900">
-            {actions.map(({ label, status, cls }) => (
-              <button
-                key={status}
-                onClick={() => updateStatus.mutate({ id: app.id, status })}
-                disabled={updateStatus.isPending}
-                className={`rounded-xl border px-5 py-2 text-sm font-medium transition disabled:opacity-60 ${cls}`}
-              >
-                {label}
-              </button>
-            ))}
+          <div className="sticky bottom-0 border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+            {pendingAction ? (
+              <div className="space-y-3 px-6 py-4">
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Message to candidate{" "}
+                  <span className="font-normal">(optional)</span>
+                </p>
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder={`e.g. Please come to 3rd Floor, Tower A on Monday at 10am for the ${pendingAction.label.toLowerCase()} round.`}
+                  rows={3}
+                  className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800 outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleConfirm}
+                    disabled={updateStatus.isPending}
+                    className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
+                  >
+                    <Send size={13} />
+                    Confirm &amp; {pendingAction.label}
+                  </button>
+                  <button
+                    onClick={() => setPendingAction(null)}
+                    disabled={updateStatus.isPending}
+                    className="rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2 px-6 py-4">
+                {actions.map(({ label, status, cls }) => (
+                  <button
+                    key={status}
+                    onClick={() => handleActionClick({ label, status })}
+                    className={`rounded-xl border px-5 py-2 text-sm font-medium transition ${cls}`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

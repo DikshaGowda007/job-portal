@@ -1,28 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { seekerApi } from "@/api/seeker.api";
-import { APPLICATION_STATUS, PAGINATION_DEFAULT } from "@/utils/constants";
+import { APPLICATION_STATUS, PAGINATION_DEFAULT, PIPELINE_STEPS } from "@/utils/constants";
+import { APPLICATION_STATUS_BADGE as STATUS_BADGE } from "@/utils/styles";
 import { ROUTES } from "@/utils/routePaths";
 import { formatDate, timeAgo } from "@/utils/formatters";
 import Loader from "@/components/common/Loader";
 import EmptyState from "@/components/common/EmptyState";
 import Pagination from "@/components/common/Pagination";
 import CompanyLogo from "@/components/common/CompanyLogo";
+import ConfirmModal from "@/components/modals/ConfirmModal";
 import { Clock, CheckCircle2, Circle, XCircle } from "lucide-react";
-
-const PIPELINE_STEPS = ["pending", "reviewed", "shortlisted", "hired"];
-
-const STATUS_BADGE = {
-  pending:
-    "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
-  reviewed: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  shortlisted:
-    "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400",
-  hired: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-  rejected: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-  withdrawn: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
-};
 
 function StatusPipeline({ status }) {
   if (
@@ -56,9 +46,9 @@ function StatusPipeline({ status }) {
                 />
               )}
               <span
-                className={`text-[10px] capitalize ${active ? "font-semibold text-indigo-600 dark:text-indigo-400" : done ? "text-gray-500" : "text-gray-300 dark:text-gray-600"}`}
+                className={`text-[10px] ${active ? "font-semibold text-indigo-600 dark:text-indigo-400" : done ? "text-gray-500" : "text-gray-300 dark:text-gray-600"}`}
               >
-                {step}
+                {step.charAt(0) + step.slice(1).toLowerCase()}
               </span>
             </div>
             {i < PIPELINE_STEPS.length - 1 && (
@@ -75,6 +65,7 @@ function StatusPipeline({ status }) {
 
 export default function SeekerApplicationsPage() {
   const [page, setPage] = useState(PAGINATION_DEFAULT.PAGE);
+  const [confirmAppId, setConfirmAppId] = useState(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -87,13 +78,20 @@ export default function SeekerApplicationsPage() {
   });
 
   const withdrawMutation = useMutation({
-    mutationFn: (id) => seekerApi.withdraw({ id }),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["seeker-applications"] }),
+    mutationFn: (id) => seekerApi.withdraw(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["seeker-applications"] });
+      toast.success("Application withdrawn successfully");
+      setConfirmAppId(null);
+    },
+    onError: (err) => {
+      toast.error(err?.data?.message ?? "Failed to withdraw application");
+      setConfirmAppId(null);
+    },
   });
 
-  const applications = data?.data ?? [];
-  const totalPages = data?.pagination?.last_page ?? 1;
+  const applications = data?.data?.applications ?? [];
+  const totalPages = data?.data?.pagination?.last_page ?? 1;
 
   return (
     <div>
@@ -120,7 +118,7 @@ export default function SeekerApplicationsPage() {
               const companyName =
                 app.company_name ?? app.job?.company_name ?? "";
               const jobTitle = app.job_title ?? app.job?.title ?? "Job";
-              const status = app.status?.toLowerCase() ?? "";
+              const status = app.status ?? "";
               const isTerminal =
                 status === APPLICATION_STATUS.WITHDRAWN ||
                 status === APPLICATION_STATUS.REJECTED;
@@ -160,15 +158,14 @@ export default function SeekerApplicationsPage() {
                             <XCircle size={11} /> Rejected
                           </span>
                         ) : (
-                          status
+                          status.charAt(0) + status.slice(1).toLowerCase()
                         )}
                       </span>
                       {canWithdraw && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (confirm("Withdraw this application?"))
-                              withdrawMutation.mutate(app.id);
+                            setConfirmAppId(app.id);
                           }}
                           disabled={withdrawMutation.isPending}
                           className="text-xs text-red-500 hover:text-red-700 disabled:opacity-60 dark:text-red-400"
@@ -197,6 +194,17 @@ export default function SeekerApplicationsPage() {
           />
         </>
       )}
+
+      <ConfirmModal
+        open={!!confirmAppId}
+        onClose={() => setConfirmAppId(null)}
+        onConfirm={() => withdrawMutation.mutate(confirmAppId)}
+        title="Withdraw Application"
+        description="Are you sure you want to withdraw this application? This action cannot be undone."
+        confirmText="Withdraw"
+        loading={withdrawMutation.isPending}
+        danger
+      />
     </div>
   );
 }

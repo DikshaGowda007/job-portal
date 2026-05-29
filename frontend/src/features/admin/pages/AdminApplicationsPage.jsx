@@ -2,44 +2,13 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { adminApi } from "@/api/admin.api";
 import { APPLICATION_STATUS, PAGINATION_DEFAULT } from "@/utils/constants";
+import { APPLICATION_STATUS_BADGE, APPLICATION_STATUS_DOT, entityColor } from "@/utils/styles";
 import { formatDate, timeAgo } from "@/utils/formatters";
 import Loader from "@/components/common/Loader";
 import EmptyState from "@/components/common/EmptyState";
 import Pagination from "@/components/common/Pagination";
 import ApplicationDetailDrawer from "@/features/recruiter/components/ApplicationDetailDrawer";
-import { Search, Clock, DollarSign, Timer, FileText } from "lucide-react";
-
-const STATUS_BADGE = {
-  pending:     "bg-yellow-50 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400",
-  reviewed:    "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400",
-  shortlisted: "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400",
-  hired:       "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400",
-  rejected:    "bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400",
-  withdrawn:   "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
-};
-
-const STATUS_DOT = {
-  pending:     "bg-yellow-400",
-  reviewed:    "bg-blue-400",
-  shortlisted: "bg-indigo-500",
-  hired:       "bg-emerald-500",
-  rejected:    "bg-red-400",
-  withdrawn:   "bg-gray-400",
-};
-
-const AVATAR_COLORS = [
-  "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400",
-  "bg-violet-100 text-violet-600 dark:bg-violet-900/50 dark:text-violet-400",
-  "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400",
-  "bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400",
-  "bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400",
-  "bg-sky-100 text-sky-600 dark:bg-sky-900/50 dark:text-sky-400",
-];
-
-function avatarColor(name = "") {
-  const code = name.charCodeAt(0);
-  return AVATAR_COLORS[(isNaN(code) ? 0 : code) % AVATAR_COLORS.length];
-}
+import { Search, Clock, DollarSign, Timer, FileText, UserCheck } from "lucide-react";
 
 const ALL_STATUSES = Object.values(APPLICATION_STATUS);
 
@@ -100,9 +69,9 @@ export default function AdminApplicationsPage() {
             <button
               key={s}
               onClick={() => { setStatusFilter(s); setPage(1); }}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-medium capitalize transition ${statusFilter === s ? "bg-indigo-600 text-white" : "border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800"}`}
+              className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition ${statusFilter === s ? "bg-indigo-600 text-white" : "border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800"}`}
             >
-              {s}
+              {s.charAt(0) + s.slice(1).toLowerCase()}
             </button>
           ))}
         </div>
@@ -125,7 +94,7 @@ export default function AdminApplicationsPage() {
                   className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white px-5 py-4 shadow-sm transition hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-800"
                 >
                   {/* Avatar */}
-                  <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${avatarColor(applicantName)}`}>
+                  <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${entityColor(applicantName)}`}>
                     {applicantName.charAt(0).toUpperCase()}
                   </div>
 
@@ -133,12 +102,26 @@ export default function AdminApplicationsPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-semibold text-gray-900 dark:text-white">{applicantName}</span>
-                      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${STATUS_BADGE[app.status] ?? "bg-gray-100 text-gray-600"}`}>
-                        <span className={`size-1.5 rounded-full ${STATUS_DOT[app.status] ?? "bg-gray-400"}`} />
-                        {app.status}
+                      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${APPLICATION_STATUS_BADGE[app.status] ?? "bg-gray-100 text-gray-600"}`}>
+                        <span className={`size-1.5 rounded-full ${APPLICATION_STATUS_DOT[app.status] ?? "bg-gray-400"}`} />
+                        {app.status ? app.status.charAt(0) + app.status.slice(1).toLowerCase() : "—"}
                       </span>
                     </div>
-                    <p className="mt-0.5 truncate text-sm text-gray-500 dark:text-gray-400">{jobTitle}</p>
+                    <p className="mt-0.5 truncate text-sm text-gray-500 dark:text-gray-400">
+                      {jobTitle}
+                      {app.company_name && (
+                        <span className="text-gray-400 dark:text-gray-500"> · {app.company_name}</span>
+                      )}
+                    </p>
+                    {app.recruiter_name && (
+                      <p className="mt-0.5 flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400">
+                        <UserCheck size={11} className="shrink-0" />
+                        {app.recruiter_name}
+                        {app.recruiter_email && (
+                          <span className="text-gray-400 dark:text-gray-500">· {app.recruiter_email}</span>
+                        )}
+                      </p>
+                    )}
                     <div className="mt-1.5 flex flex-wrap gap-3 text-xs text-gray-400 dark:text-gray-500">
                       <span className="flex items-center gap-1">
                         <Clock size={11} /> {formatDate(app.created_at)} · {timeAgo(app.created_at)}

@@ -17,8 +17,8 @@ class DetailsService
     use AccessRightsTrait;
 
     public function __construct(
-        private JobApplicationRepository $applicationRepository,
-        private JobApplicationHistoryRepository $historyRepository,
+        private JobApplicationRepository $jobApplicationRepository,
+        private JobApplicationHistoryRepository $jobApplicationHistoryRepository,
     ) {
         $this->initializeUserAuthorizationData();
     }
@@ -27,7 +27,7 @@ class DetailsService
     {
         try {
             $application = $this->findApplication($applicationId);
-            $histories = $this->historyRepository->fetchByApplicationId($applicationId);
+            $histories = $this->jobApplicationHistoryRepository->fetchByApplicationId($applicationId);
             $response = $this->formatResponse($applicationId, $application, $histories);
 
             return response()->json(CommonUtils::successDataResponse($response));
@@ -42,7 +42,7 @@ class DetailsService
 
     private function findApplication(int $applicationId): Collection
     {
-        $application = collect($this->applicationRepository->findByIdWithJobPostAndUser($applicationId)->first());
+        $application = collect($this->jobApplicationRepository->findByIdWithJobPostAndUser($applicationId)->first());
 
         if ($application->isEmpty()) {
             throw DataNotFoundException::withMessage('Application not found');

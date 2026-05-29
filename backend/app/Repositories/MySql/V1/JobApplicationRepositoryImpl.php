@@ -171,15 +171,20 @@ class JobApplicationRepositoryImpl implements JobApplicationRepository
     public function findAllWithFilters(array $filters): Collection
     {
         $query = JobApplication::join('job_posts', 'job_applications.job_post_id', '=', 'job_posts.id')
-            ->join('users', 'job_applications.user_id', '=', 'users.id')
+            ->join('users as applicants', 'job_applications.user_id', '=', 'applicants.id')
+            ->leftJoin('users as recruiters', 'job_posts.user_id', '=', 'recruiters.id')
             ->where('job_applications.is_deleted', CommonConstant::IS_DELETED_NO)
             ->select(
                 'job_applications.*',
-                'users.first_name',
-                'users.last_name',
-                'users.email',
+                'applicants.first_name',
+                'applicants.last_name',
+                'applicants.email',
                 'job_posts.title as job_title',
-                'job_posts.company_name'
+                'job_posts.company_name',
+                'job_posts.user_id as recruiter_user_id',
+                'recruiters.first_name as recruiter_first_name',
+                'recruiters.last_name as recruiter_last_name',
+                'recruiters.email as recruiter_email',
             );
 
         if (! empty($filters['text'])) {
