@@ -7,13 +7,18 @@ use App\Http\Requests\V1\JobApplication\Apply\DetailsRequest as ApplyDetailsRequ
 use App\Http\Requests\V1\JobApplication\Get\DetailsRequest as GetDetailsRequest;
 use App\Http\Requests\V1\JobApplication\History\DetailsRequest as HistoryDetailsRequest;
 use App\Http\Requests\V1\JobApplication\MyApplications\DetailsRequest as MyApplicationsDetailsRequest;
+use App\Http\Requests\V1\JobApplication\SendMessage\DetailsRequest as SendMessageDetailsRequest;
 use App\Http\Requests\V1\JobApplication\UpdateStatus\DetailsRequest as UpdateStatusDetailsRequest;
 use App\Http\Requests\V1\JobApplication\Withdraw\DetailsRequest as WithdrawDetailsRequest;
 use App\Http\Requests\V1\JobApplication\View\DetailsRequest as ViewDetailsRequest;
 use App\Modules\V1\JobApplication\Services\Apply\DetailsService as ApplyDetailsService;
+use App\Modules\V1\JobApplication\Services\Conversations\DetailsService as ConversationsDetailsService;
 use App\Modules\V1\JobApplication\Services\Get\DetailsService as GetDetailsService;
 use App\Modules\V1\JobApplication\Services\History\DetailsService as HistoryDetailsService;
 use App\Modules\V1\JobApplication\Services\List\DetailsService as ListDetailsService;
+use App\Modules\V1\JobApplication\Services\RecruiterConversations\DetailsService as RecruiterConversationsDetailsService;
+use App\Modules\V1\JobApplication\Services\RecruiterSendMessage\DetailsService as RecruiterSendMessageDetailsService;
+use App\Modules\V1\JobApplication\Services\SendMessage\DetailsService as SendMessageDetailsService;
 use App\Modules\V1\JobApplication\Services\UpdateStatus\DetailsService as UpdateStatusDetailsService;
 use App\Modules\V1\JobApplication\Services\Withdraw\DetailsService as WithdrawDetailsService;
 use App\Modules\V1\JobApplication\Services\View\DetailsService as ViewDetailsService;
@@ -104,6 +109,54 @@ class JobApplicationController extends Controller
             $updateStatusDetailsBo = $updateStatusDetailsService->prepareBo($updateStatusDetailsRequest);
 
             return $updateStatusDetailsService->updateStatus($updateStatusDetailsBo);
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
+
+    public function conversations(): JsonResponse
+    {
+        try {
+            $conversationsDetailsService = app(ConversationsDetailsService::class);
+
+            return $conversationsDetailsService->get();
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
+
+    public function sendMessage(SendMessageDetailsRequest $sendMessageDetailsRequest): JsonResponse
+    {
+        try {
+            $applicationId = (int) $sendMessageDetailsRequest->input('application_id');
+            $message = $sendMessageDetailsRequest->input('message');
+            $sendMessageDetailsService = app(SendMessageDetailsService::class);
+
+            return $sendMessageDetailsService->send($applicationId, $message);
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
+
+    public function recruiterConversations(): JsonResponse
+    {
+        try {
+            $service = app(RecruiterConversationsDetailsService::class);
+
+            return $service->get();
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
+
+    public function recruiterSendMessage(SendMessageDetailsRequest $sendMessageDetailsRequest): JsonResponse
+    {
+        try {
+            $applicationId = (int) $sendMessageDetailsRequest->input('application_id');
+            $message = $sendMessageDetailsRequest->input('message');
+            $service = app(RecruiterSendMessageDetailsService::class);
+
+            return $service->send($applicationId, $message);
         } catch (Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
         }

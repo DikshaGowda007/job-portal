@@ -23,6 +23,8 @@ export const API = {
     LIST: `${BASE_URL}/api/v1/application/list`,
     VIEW: `${BASE_URL}/api/v1/application/view`,
     WITHDRAW: `${BASE_URL}/api/v1/application/withdraw`,
+    CONVERSATIONS: `${BASE_URL}/api/v1/application/conversations`,
+    SEND_MESSAGE: `${BASE_URL}/api/v1/application/send-message`,
   },
 
 
@@ -30,6 +32,8 @@ export const API = {
     DASHBOARD: `${BASE_URL}/api/v1/recruiter/dashboard`,
     MY_JOBS: `${BASE_URL}/api/v1/recruiter/my-jobs`,
     MY_APPLICATIONS: `${BASE_URL}/api/v1/recruiter/my-applications`,
+    CONVERSATIONS: `${BASE_URL}/api/v1/recruiter/conversations`,
+    SEND_MESSAGE: `${BASE_URL}/api/v1/recruiter/send-message`,
   },
 
   SAVED_JOB: {

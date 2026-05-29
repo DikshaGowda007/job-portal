@@ -21,11 +21,13 @@ import SeekerApplicationsPage from "@/features/seeker/pages/SeekerApplicationsPa
 import SeekerApplicationDetailPage from "@/features/seeker/pages/SeekerApplicationDetailPage";
 import SeekerSavedJobsPage from "@/features/seeker/pages/SeekerSavedJobsPage";
 import SeekerProfilePage from "@/features/seeker/pages/SeekerProfilePage";
+import SeekerMessagesPage from "@/features/seeker/pages/SeekerMessagesPage";
 
 import RecruiterDashboard from "@/features/recruiter/pages/RecruiterDashboard";
 import RecruiterJobsPage from "@/features/recruiter/pages/RecruiterJobsPage";
 import RecruiterJobFormPage from "@/features/recruiter/pages/RecruiterJobFormPage";
 import RecruiterApplicationsPage from "@/features/recruiter/pages/RecruiterApplicationsPage";
+import RecruiterMessagesPage from "@/features/recruiter/pages/RecruiterMessagesPage";
 
 import AdminDashboard from "@/features/admin/pages/AdminDashboard";
 import AdminJobsPage from "@/features/admin/pages/AdminJobsPage";
@@ -71,6 +73,7 @@ const router = createBrowserRouter([
               { path: ROUTES.SEEKER_APPLICATION_DETAIL, element: <SeekerApplicationDetailPage /> },
               { path: ROUTES.SEEKER_SAVED_JOBS,         element: <SeekerSavedJobsPage /> },
               { path: ROUTES.SEEKER_PROFILE,            element: <SeekerProfilePage /> },
+              { path: ROUTES.SEEKER_MESSAGES,           element: <SeekerMessagesPage /> },
             ],
           },
         ],
@@ -89,6 +92,7 @@ const router = createBrowserRouter([
               { path: ROUTES.RECRUITER_JOB_PUBLISH, element: <RecruiterJobFormPage /> },
               { path: ROUTES.RECRUITER_JOB_EDIT, element: <RecruiterJobFormPage /> },
               { path: ROUTES.RECRUITER_APPLICATIONS, element: <RecruiterApplicationsPage /> },
+              { path: ROUTES.RECRUITER_MESSAGES,     element: <RecruiterMessagesPage /> }
             ],
           },
         ],

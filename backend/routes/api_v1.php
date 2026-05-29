@@ -53,12 +53,16 @@ Route::prefix('application')->middleware(['jwt.verify', 'access.role:'.UserConst
     Route::post('/my-applications', [JobApplicationController::class, 'myApplications'])->name('JobApplicationController.myApplications');
     Route::post('/get', [JobApplicationController::class, 'get'])->name('JobApplicationController.get');
     Route::post('/withdraw', [JobApplicationController::class, 'withdraw'])->name('JobApplicationController.withdraw');
+    Route::post('/conversations', [JobApplicationController::class, 'conversations'])->name('JobApplicationController.conversations');
+    Route::post('/send-message', [JobApplicationController::class, 'sendMessage'])->name('JobApplicationController.sendMessage');
 });
 
 Route::prefix('recruiter')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_RECRUITER.'|'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN])->group(function () {
     Route::post('/dashboard', [RecruiterController::class, 'dashboard'])->name('RecruiterController.dashboard');
     Route::post('/my-jobs', [RecruiterController::class, 'myJobs'])->name('RecruiterController.myJobs');
     Route::post('/my-applications', [RecruiterController::class, 'myApplications'])->name('RecruiterController.myApplications');
+    Route::post('/conversations', [JobApplicationController::class, 'recruiterConversations'])->name('JobApplicationController.recruiterConversations');
+    Route::post('/send-message', [JobApplicationController::class, 'recruiterSendMessage'])->name('JobApplicationController.recruiterSendMessage');
 });
 
 Route::prefix('category')->middleware(['jwt.verify'])->group(function () {
