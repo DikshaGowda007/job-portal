@@ -11,38 +11,44 @@ use App\Http\Requests\V1\User\Add\UserOtpVerificationRequest;
 use App\Http\Requests\V1\User\Add\UserRequest;
 use App\Http\Requests\V1\User\ForgotPassword\DetailsRequest as ForgotPasswordRequest;
 use App\Http\Requests\V1\User\ResetPassword\DetailsRequest as ResetPasswordRequest;
+use App\Modules\Auth\Helpers\UserHelper;
+use App\Modules\Auth\Login\Services\LoginService;
 use App\Modules\Auth\Services\LogoutService;
-use App\Modules\Auth\Signup\Services\LoginService;
-use App\Modules\Auth\Signup\Services\SignupService;
+use App\Modules\Auth\Services\RefreshTokenService;
 use App\Modules\Auth\Signup\Services\OtpVerificationService;
 use App\Modules\Auth\Signup\Services\ResendOtpService;
+use App\Modules\Auth\Signup\Services\SignupService;
 use App\Modules\V1\AccessRights\Services\Edit\DetailsService as EditAccessRightDetailsService;
 use App\Modules\V1\AccessRights\Services\Get\DetailsService as GetAccessRightDetailsService;
 use App\Modules\V1\User\Services\ForgotPassword\DetailsService as ForgotPasswordService;
 use App\Modules\V1\User\Services\ResetPassword\DetailsService as ResetPasswordService;
 use App\Utils\CommonUtils;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class UserController
 {
-    public function signup(UserRequest $userRequest)
+    public function signup(UserRequest $userRequest): JsonResponse
     {
         try {
+            $userHelper = app(UserHelper::class);
             $signupService = app(SignupService::class);
-            $userDetailsBO = $signupService->prepareBo($userRequest);
-            return $signupService->add($userDetailsBO);
+            $userDetailsBo = $userHelper->prepareBo($userRequest);
+
+            return $signupService->add($userDetailsBo);
         } catch (\Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
         }
     }
 
-    public function verifyOtp(UserOtpVerificationRequest $userOTPVerificationRequest)
+    public function verifyOtp(UserOtpVerificationRequest $userOtpVerificationRequest): JsonResponse
     {
-        $email = $userOTPVerificationRequest->input('email');
-        $otp = $userOTPVerificationRequest->input('otp');
         try {
+            $userId = (int) $userOtpVerificationRequest->input('user_id');
+            $otp = $userOtpVerificationRequest->input('otp');
             $otpVerificationService = app(OtpVerificationService::class);
-            return response()->json($otpVerificationService->verifyOtp($email, $otp));
+
+            return response()->json($otpVerificationService->verifyOtp($userId, $otp));
         } catch (\Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
         }
@@ -55,6 +61,17 @@ class UserController
             $resendOtpService = app(ResendOtpService::class);
 
             return $resendOtpService->resend($email);
+        } catch (\Throwable $e) {
+            return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_GENERAL));
+        }
+    }
+
+    public function refresh(): JsonResponse
+    {
+        try {
+            $refreshTokenService = app(RefreshTokenService::class);
+
+            return $refreshTokenService->refresh();
         } catch (\Throwable $e) {
             return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_GENERAL));
         }
@@ -84,12 +101,12 @@ class UserController
         }
     }
 
-    public function logout(): JsonResponse
+    public function logout(Request $request): JsonResponse
     {
         try {
             $logoutService = app(LogoutService::class);
 
-            return $logoutService->logout();
+            return $logoutService->logout($request);
         } catch (\Throwable $e) {
             return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_GENERAL));
         }
@@ -121,13 +138,14 @@ class UserController
     public function login(UserLoginRequest $userLoginRequest): JsonResponse
     {
         try {
+            $loginService = app(LoginService::class);
             $email = $userLoginRequest->input('email');
             $password = $userLoginRequest->input('password');
-            $browserIp = $userLoginRequest->header('x-client-ip') ?? $userLoginRequest->ip();
-            $userAgent = $userLoginRequest->header('x-client-user-agent') ?? $userLoginRequest->userAgent();
-            $loginService = app(LoginService::class);
-            return response()->json($loginService->add($email, $password, $browserIp, $userAgent));
+
+            return response()->json($loginService->add($email, $password));
         } catch (\Throwable $e) {
+            \Log::error('Login error: '.$e->getMessage().' | '.$e->getFile().':'.$e->getLine());
+
             return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_GENERAL));
         }
     }

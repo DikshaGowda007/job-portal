@@ -15,8 +15,8 @@ use Mail;
 class OtpService
 {
     public function __construct(
-        private UserOTPVerificationDAO $userOTPVerificationDAO,
-        private UserOTPVerificationRepository $userOTPVerificationRepository
+        private UserOTPVerificationDAO $userOtpVerificationDao,
+        private UserOTPVerificationRepository $userOtpVerificationRepository
     ) {}
 
     public function sendOtp(int $userId, string $email)
@@ -28,9 +28,11 @@ class OtpService
             return ['status' => CommonConstant::OTP_SENT_SUCCESS, 'user_id' => $userId];
         } catch (Exception $e) {
             \Log::error('OTP Send Error: '.$e->getMessage());
+
             return ['status' => CommonConstant::ERROR, 'message' => CommonConstant::OTP_SENT_FAIL];
         } catch (\Throwable $e) {
             \Log::error('OTP Send Error: '.$e->getMessage());
+
             return ['status' => CommonConstant::ERROR, 'message' => CommonConstant::OTP_SENT_FAIL];
         }
     }
@@ -40,33 +42,32 @@ class OtpService
         $otp = rand(100000, 999999);
         $expiresAt = Carbon::now()->addMinutes(10);
 
-        $this->prepareUserVerificationDAO($userId, $otp, $expiresAt);
+        $this->prepareUserVerificationDao($userId, $otp, $expiresAt);
 
-        $insertedId = $this->userOTPVerificationRepository->insert($this->userOTPVerificationDAO);
+        $insertedId = $this->userOtpVerificationRepository->insert($this->userOtpVerificationDao);
 
         return ! $insertedId ? throw DataInsertFailed::withMessage() : $insertedId;
     }
 
-    private function prepareUserVerificationDAO(int $userId, string $otp, string $expiresAt): UserOTPVerificationDAO
+    private function prepareUserVerificationDao(int $userId, string $otp, string $expiresAt): UserOTPVerificationDAO
     {
-        $this->userOTPVerificationDAO->setUserId($userId);
-        $this->userOTPVerificationDAO->setOtp($otp);
-        $this->userOTPVerificationDAO->setExpiresAt($expiresAt);
+        $this->userOtpVerificationDao->setUserId($userId);
+        $this->userOtpVerificationDao->setOtp($otp);
+        $this->userOtpVerificationDao->setExpiresAt($expiresAt);
 
-        return $this->userOTPVerificationDAO;
+        return $this->userOtpVerificationDao;
     }
 
     private function sendMail(string $email): void
     {
         try {
-            $otp = $this->userOTPVerificationDAO->getOtp();
+            $otp = $this->userOtpVerificationDao->getOtp();
 
             if (empty($otp)) {
                 throw DataNotFoundException::withMessage("OTP not found while sending email to {$email}");
             }
 
             Mail::to($email)->send(new SendOtpMail($otp));
-
         } catch (Exception $e) {
             throw $e;
         }

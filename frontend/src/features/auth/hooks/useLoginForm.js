@@ -20,6 +20,7 @@ export function useLoginForm() {
 
   const from = location.state?.from ?? null;
   const verified = location.state?.verified ?? false;
+  const verifiedMessage = location.state?.message ?? null;
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -41,7 +42,7 @@ export function useLoginForm() {
       const payload = tokenService.decode(request_token);
       const user = {
         name,
-        role: payload?.loggedin_user_type,
+        role: USER_TYPE_TO_ROLE[payload?.loggedin_user_type] ?? null,
         id: payload?.loggedin_user_id,
         email: payload?.loggedin_user_email,
       };
@@ -75,6 +76,7 @@ export function useLoginForm() {
     error,
     loading,
     verified,
+    verifiedMessage,
     showPassword,
     setShowPassword,
     handleChange,

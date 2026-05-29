@@ -33,7 +33,7 @@ class LoginService
 
             return [
                 'status' => CommonConstant::SUCCESS,
-                'data'   => ['name' => $user->get('first_name') . ' ' . $user->get('last_name'), ...$token],
+                'data' => ['name' => $user->get('first_name').' '.$user->get('last_name'), ...$token],
             ];
         } catch (UserNotFoundException $e) {
             return CommonUtils::errorResponse($e->getMessage());
