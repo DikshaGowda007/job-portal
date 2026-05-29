@@ -11,6 +11,7 @@ class CommonConstant
     public const UNAUTHORIZED_EXCEPTION_MESSAGE = 'Unauthorized.';
 
     public const IS_VERIFIED_USER = 1;
+
     public const OTP_SENT_SUCCESS = 'OTP Sent successfully';
 
     public const OTP_SENT_FAIL = 'Failed to send OTP';
@@ -44,6 +45,6 @@ class CommonConstant
     public const STATUS_BLOCKED = 2;
 
     public const IS_DELETED_YES = 1;
-    
+
     public const IS_DELETED_NO = 0;
 }

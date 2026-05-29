@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -17,6 +18,7 @@ return new class extends Migration {
             $table->string('otp');
             $table->timestamp('expires_at')->nullable();
             $table->timestamp('created_at')->nullable();
+            $table->unsignedTinyInteger('is_deleted')->default(0)->comment('1 - Yes, 0 - No');
 
             $table->index('user_id');
         });

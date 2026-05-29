@@ -43,7 +43,6 @@ class CustomException extends Exception
         }
     }
 
-
     private function formatException(Throwable $e)
     {
         return [

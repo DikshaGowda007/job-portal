@@ -10,5 +10,4 @@ interface AllUserAccessRightRepository
     public function findByUserId(int $userId): Collection;
 
     public function insert(AllUserAccessRightsDAO $allUserAccessRightsDAO);
-    
 }

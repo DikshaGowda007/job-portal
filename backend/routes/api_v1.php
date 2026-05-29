@@ -6,45 +6,52 @@ use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Job\JobController;
 use App\Http\Controllers\JobApplication\JobApplicationController;
 use App\Http\Controllers\JobCategory\JobCategoryController;
+use App\Http\Controllers\JobSeekerProfile\JobSeekerProfileController;
 use App\Http\Controllers\Notification\NotificationController;
+use App\Http\Controllers\Recruiter\RecruiterController;
 use App\Http\Controllers\SavedJob\SavedJobController;
 use App\Http\Controllers\User\ProfileController;
 
 Route::prefix('auth')->group(function () {
-    Route::post('/signup', [UserController::class, 'signup'])->name('UserController.signup');
-    Route::post('/login', [UserController::class, 'login'])->name('UserController.login');
-    Route::post('/verifyOtp', [UserController::class, 'verifyOtp'])->name('verifyOtp');
+    Route::post('/signup', [UserController::class, 'signup'])->name('UserController.signup')->middleware('throttle:10,1');
+    Route::post('/login', [UserController::class, 'login'])->name('UserController.login')->middleware('throttle:5,1');
+    Route::post('/verifyOtp', [UserController::class, 'verifyOtp'])->name('verifyOtp')->middleware('throttle:10,1');
     Route::post('/resend-otp', [UserController::class, 'resendOtp'])->name('UserController.resendOtp')->middleware('throttle:3,1');
     Route::post('/forgot-password', [UserController::class, 'forgotPassword'])->name('UserController.forgotPassword')->middleware('throttle:5,1');
     Route::post('/reset-password', [UserController::class, 'resetPassword'])->name('UserController.resetPassword')->middleware('throttle:5,1');
 });
 
 Route::prefix('auth')->middleware(['jwt.verify'])->group(function () {
+    Route::post('/refresh', [UserController::class, 'refresh'])->name('UserController.refresh');
     Route::post('/logout', [UserController::class, 'logout'])->name('UserController.logout');
 });
 
+// User profile routes (authenticated)
 Route::prefix('user')->middleware(['jwt.verify'])->group(function () {
+    Route::post('/me', [ProfileController::class, 'me'])->name('ProfileController.me');
+    Route::post('/update-profile', [ProfileController::class, 'updateProfile'])->name('ProfileController.updateProfile');
     Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('ProfileController.changePassword');
     Route::post('/access-rights/get', [UserController::class, 'getAccessRights'])->name('UserController.getAccessRights');
     Route::post('/access-rights/edit', [UserController::class, 'editAccessRights'])->name('UserController.editAccessRights');
 });
 
+// Public — no token required
 Route::prefix('job')->group(function () {
+    Route::post('/list', [JobController::class, 'list'])->name('JobController.list');
     Route::post('/get', [JobController::class, 'get'])->name('JobController.get');
 });
 
+// Authenticated job write operations
 Route::prefix('job')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN.'|'.UserConstant::USER_ROLE_RECRUITER.'|'.UserConstant::USER_ROLE_JOB_SEEKER])->group(function () {
     Route::post('/add', [JobController::class, 'add'])->name('JobController.add');
     Route::post('/publish', [JobController::class, 'publish'])->name('JobController.publish');
     Route::post('/edit', [JobController::class, 'edit'])->name('JobController.edit');
     Route::post('/delete', [JobController::class, 'delete'])->name('JobController.delete');
-    Route::post('/list', [JobController::class, 'list'])->name('JobController.list');
-    Route::post('/get', [JobController::class, 'get'])->name('JobController.get');
 });
 
+// Recruiter + Admin: view and manage all applications
 Route::prefix('application')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN.'|'.UserConstant::USER_ROLE_RECRUITER])->group(function () {
     Route::post('/list', [JobApplicationController::class, 'list'])->name('JobApplicationController.list');
-    Route::post('/my-applications', [JobApplicationController::class, 'myApplications'])->name('JobApplicationController.myApplications');
     Route::post('/view', [JobApplicationController::class, 'view'])->name('JobApplicationController.view');
     Route::post('/history', [JobApplicationController::class, 'history'])->name('JobApplicationController.history');
     Route::post('/update-status', [JobApplicationController::class, 'updateStatus'])->name('JobApplicationController.updateStatus');
@@ -85,6 +92,7 @@ Route::prefix('saved-job')->middleware(['jwt.verify', 'access.role:'.UserConstan
     Route::post('/delete', [SavedJobController::class, 'delete'])->name('SavedJobController.delete');
 });
 
+// Job Seeker Profile
 Route::prefix('profile')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_JOB_SEEKER])->group(function () {
     Route::post('/get', [JobSeekerProfileController::class, 'get'])->name('JobSeekerProfileController.get');
     Route::post('/update', [JobSeekerProfileController::class, 'update'])->name('JobSeekerProfileController.update');
