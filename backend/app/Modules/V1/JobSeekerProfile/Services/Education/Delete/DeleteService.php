@@ -5,6 +5,7 @@ namespace App\Modules\V1\JobSeekerProfile\Services\Education\Delete;
 use App\Constants\CommonConstant;
 use App\Constants\ErrorResponseConstant;
 use App\Exceptions\DataNotFoundException;
+use App\Repositories\DAO\V1\JobSeekerEducationDAO;
 use App\Repositories\V1\JobSeekerEducationRepository;
 use App\Repositories\V1\JobSeekerProfileRepository;
 use App\Traits\V1\AccessRightsTrait;
@@ -19,6 +20,7 @@ class DeleteService
     public function __construct(
         private JobSeekerProfileRepository $jobSeekerProfileRepository,
         private JobSeekerEducationRepository $jobSeekerEducationRepository,
+        private JobSeekerEducationDAO $jobSeekerEducationDao,
     ) {
         $this->initializeUserAuthorizationData();
     }
@@ -39,12 +41,12 @@ class DeleteService
         }
     }
 
-    private function fetchProfile(): Collection
+    private function findProfile(): Collection
     {
         return $this->jobSeekerProfileRepository->findByUserId($this->loggedInUserId);
     }
 
-    private function fetchEducation(int $educationId): Collection
+    private function findEducation(int $educationId): Collection
     {
         $educationModel = $this->jobSeekerEducationRepository->findById($educationId);
 
@@ -53,13 +55,13 @@ class DeleteService
 
     private function validateOwnership(int $educationId): void
     {
-        $profileDetails = $this->fetchProfile();
+        $profileDetails = $this->findProfile();
 
         if ($profileDetails->isEmpty()) {
             throw DataNotFoundException::withMessage('Profile not found');
         }
 
-        $educationDetails = $this->fetchEducation($educationId);
+        $educationDetails = $this->findEducation($educationId);
 
         if ($educationDetails->isEmpty() || $educationDetails->get('job_seeker_profile_id') !== $profileDetails->first()->id) {
             throw DataNotFoundException::withMessage('Education not found');
@@ -68,6 +70,7 @@ class DeleteService
 
     private function deleteEducation(int $educationId): void
     {
-        $this->jobSeekerEducationRepository->deleteById($educationId);
+        $this->jobSeekerEducationDao->setIsDeleted(CommonConstant::IS_DELETED_YES);
+        $this->jobSeekerEducationRepository->updateById($educationId, $this->jobSeekerEducationDao);
     }
 }

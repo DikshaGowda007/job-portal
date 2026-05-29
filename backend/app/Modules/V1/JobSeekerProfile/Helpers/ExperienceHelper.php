@@ -49,38 +49,38 @@ class ExperienceHelper
         return $detailsBo;
     }
 
-    public function prepareDAO(AddDetailsBo|UpdateDetailsBo $detailsBo): JobSeekerExperienceDAO
+    public function prepareDao(AddDetailsBo|UpdateDetailsBo $detailsBo): JobSeekerExperienceDAO
     {
-        $jobSeekerExperienceDAO = new JobSeekerExperienceDAO;
+        $jobSeekerExperienceDao = new JobSeekerExperienceDAO;
 
         if (! is_null($detailsBo->getJobTitle())) {
-            $jobSeekerExperienceDAO->setJobTitle($detailsBo->getJobTitle());
+            $jobSeekerExperienceDao->setJobTitle($detailsBo->getJobTitle());
         }
         if (! is_null($detailsBo->getCompanyName())) {
-            $jobSeekerExperienceDAO->setCompanyName($detailsBo->getCompanyName());
+            $jobSeekerExperienceDao->setCompanyName($detailsBo->getCompanyName());
         }
         if (! is_null($detailsBo->getEmploymentType())) {
-            $jobSeekerExperienceDAO->setEmploymentType($detailsBo->getEmploymentType());
+            $jobSeekerExperienceDao->setEmploymentType($detailsBo->getEmploymentType());
         }
         if (! is_null($detailsBo->getLocation())) {
-            $jobSeekerExperienceDAO->setLocation($detailsBo->getLocation());
+            $jobSeekerExperienceDao->setLocation($detailsBo->getLocation());
         }
         if (! is_null($detailsBo->getWorkMode())) {
-            $jobSeekerExperienceDAO->setWorkMode($detailsBo->getWorkMode());
+            $jobSeekerExperienceDao->setWorkMode($detailsBo->getWorkMode());
         }
         if (! is_null($detailsBo->getStartDate())) {
-            $jobSeekerExperienceDAO->setStartDate($detailsBo->getStartDate());
+            $jobSeekerExperienceDao->setStartDate($detailsBo->getStartDate());
         }
         if (! is_null($detailsBo->getEndDate())) {
-            $jobSeekerExperienceDAO->setEndDate($detailsBo->getEndDate());
+            $jobSeekerExperienceDao->setEndDate($detailsBo->getEndDate());
         }
         if (! is_null($detailsBo->getIsCurrent())) {
-            $jobSeekerExperienceDAO->setIsCurrent($detailsBo->getIsCurrent());
+            $jobSeekerExperienceDao->setIsCurrent($detailsBo->getIsCurrent());
         }
         if (! is_null($detailsBo->getDescription())) {
-            $jobSeekerExperienceDAO->setDescription($detailsBo->getDescription());
+            $jobSeekerExperienceDao->setDescription($detailsBo->getDescription());
         }
 
-        return $jobSeekerExperienceDAO;
+        return $jobSeekerExperienceDao;
     }
 }

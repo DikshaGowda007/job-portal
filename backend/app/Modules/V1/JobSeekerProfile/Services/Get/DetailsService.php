@@ -23,7 +23,7 @@ class DetailsService
     public function get(): JsonResponse
     {
         try {
-            $profileDetails = $this->fetchProfile();
+            $profileDetails = $this->findProfile();
 
             $data = $this->formatResponse($profileDetails);
 
@@ -37,7 +37,7 @@ class DetailsService
         }
     }
 
-    private function fetchProfile(): Collection
+    private function findProfile(): Collection
     {
         $profileDetails = collect($this->jobSeekerProfileRepository->findByUserIdWithExperiencesAndEducation($this->loggedInUserId)->first());
 

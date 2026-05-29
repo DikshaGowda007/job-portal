@@ -47,12 +47,12 @@ class DetailsService
         }
     }
 
-    public function prepareBo(DetailsRequest $updateExperienceDetailsRequest): DetailsBo
+    public function prepareBo(DetailsRequest $request): DetailsBo
     {
-        return $this->experienceHelper->prepareBo($updateExperienceDetailsRequest);
+        return $this->experienceHelper->prepareBo($request);
     }
 
-    private function fetchProfile(): Collection
+    private function findProfile(): Collection
     {
         $profileDetails = collect($this->jobSeekerProfileRepository->findByUserId($this->loggedInUserId)->first());
 
@@ -63,18 +63,16 @@ class DetailsService
         return $profileDetails;
     }
 
-    private function fetchExperience(): Collection
+    private function findExperience(): Collection
     {
-        $model = $this->jobSeekerExperienceRepository->findById($this->detailsBo->getExperienceId())->first();
-
-        return $model ? collect($model->toArray()) : collect();
+        return collect($this->jobSeekerExperienceRepository->findById($this->detailsBo->getExperienceId())->first());
     }
 
     private function validateOwnership(): void
     {
-        $profileDetails = $this->fetchProfile();
+        $profileDetails = $this->findProfile();
 
-        $experienceDetails = $this->fetchExperience();
+        $experienceDetails = $this->findExperience();
 
         if ($experienceDetails->isEmpty() || $experienceDetails->get('job_seeker_profile_id') !== $profileDetails->get('id')) {
             throw DataNotFoundException::withMessage('Experience not found');
@@ -83,7 +81,7 @@ class DetailsService
 
     private function updateExperience(): void
     {
-        $jobSeekerExperienceDAO = $this->experienceHelper->prepareDAO($this->detailsBo);
-        $this->jobSeekerExperienceRepository->updateById($this->detailsBo->getExperienceId(), $jobSeekerExperienceDAO);
+        $jobSeekerExperienceDao = $this->experienceHelper->prepareDao($this->detailsBo);
+        $this->jobSeekerExperienceRepository->updateById($this->detailsBo->getExperienceId(), $jobSeekerExperienceDao);
     }
 }

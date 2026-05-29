@@ -29,9 +29,9 @@ class DetailsService
         $this->initializeUserAuthorizationData();
     }
 
-    public function prepareBo(DetailsRequest $updateEducationDetailsRequest): DetailsBo
+    public function prepareBo(DetailsRequest $request): DetailsBo
     {
-        return $this->educationHelper->prepareBo($updateEducationDetailsRequest);
+        return $this->educationHelper->prepareBo($request);
     }
 
     public function update(DetailsBo $detailsBo): JsonResponse
@@ -52,12 +52,12 @@ class DetailsService
         }
     }
 
-    private function fetchProfile(): Collection
+    private function findProfile(): Collection
     {
         return $this->jobSeekerProfileRepository->findByUserId($this->loggedInUserId);
     }
 
-    private function fetchEducation(): Collection
+    private function findEducation(): Collection
     {
         $educationModel = $this->jobSeekerEducationRepository->findById($this->detailsBo->getEducationId());
 
@@ -66,13 +66,13 @@ class DetailsService
 
     private function validateOwnership(): void
     {
-        $profileDetails = $this->fetchProfile();
+        $profileDetails = $this->findProfile();
 
         if ($profileDetails->isEmpty()) {
             throw DataNotFoundException::withMessage('Profile not found');
         }
 
-        $educationDetails = $this->fetchEducation();
+        $educationDetails = $this->findEducation();
 
         if ($educationDetails->isEmpty() || $educationDetails->get('job_seeker_profile_id') !== $profileDetails->first()->id) {
             throw DataNotFoundException::withMessage('Education not found');
@@ -81,7 +81,7 @@ class DetailsService
 
     private function updateEducation(): void
     {
-        $jobSeekerEducationDAO = $this->educationHelper->prepareDAO($this->detailsBo);
-        $this->jobSeekerEducationRepository->updateById($this->detailsBo->getEducationId(), $jobSeekerEducationDAO);
+        $jobSeekerEducationDao = $this->educationHelper->prepareDao($this->detailsBo);
+        $this->jobSeekerEducationRepository->updateById($this->detailsBo->getEducationId(), $jobSeekerEducationDao);
     }
 }

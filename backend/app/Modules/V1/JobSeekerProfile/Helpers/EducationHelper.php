@@ -46,35 +46,35 @@ class EducationHelper
         return $detailsBo;
     }
 
-    public function prepareDAO(AddDetailsBo|UpdateDetailsBo $detailsBo): JobSeekerEducationDAO
+    public function prepareDao(AddDetailsBo|UpdateDetailsBo $detailsBo): JobSeekerEducationDAO
     {
-        $jobSeekerEducationDAO = new JobSeekerEducationDAO;
+        $jobSeekerEducationDao = new JobSeekerEducationDAO;
 
         if (! is_null($detailsBo->getDegree())) {
-            $jobSeekerEducationDAO->setDegree($detailsBo->getDegree());
+            $jobSeekerEducationDao->setDegree($detailsBo->getDegree());
         }
         if (! is_null($detailsBo->getInstitution())) {
-            $jobSeekerEducationDAO->setInstitution($detailsBo->getInstitution());
+            $jobSeekerEducationDao->setInstitution($detailsBo->getInstitution());
         }
         if (! is_null($detailsBo->getFieldOfStudy())) {
-            $jobSeekerEducationDAO->setFieldOfStudy($detailsBo->getFieldOfStudy());
+            $jobSeekerEducationDao->setFieldOfStudy($detailsBo->getFieldOfStudy());
         }
         if (! is_null($detailsBo->getLocation())) {
-            $jobSeekerEducationDAO->setLocation($detailsBo->getLocation());
+            $jobSeekerEducationDao->setLocation($detailsBo->getLocation());
         }
         if (! is_null($detailsBo->getStartYear())) {
-            $jobSeekerEducationDAO->setStartYear($detailsBo->getStartYear());
+            $jobSeekerEducationDao->setStartYear($detailsBo->getStartYear());
         }
         if (! is_null($detailsBo->getEndYear())) {
-            $jobSeekerEducationDAO->setEndYear($detailsBo->getEndYear());
+            $jobSeekerEducationDao->setEndYear($detailsBo->getEndYear());
         }
         if (! is_null($detailsBo->getIsCurrent())) {
-            $jobSeekerEducationDAO->setIsCurrent($detailsBo->getIsCurrent());
+            $jobSeekerEducationDao->setIsCurrent($detailsBo->getIsCurrent());
         }
         if (! is_null($detailsBo->getDescription())) {
-            $jobSeekerEducationDAO->setDescription($detailsBo->getDescription());
+            $jobSeekerEducationDao->setDescription($detailsBo->getDescription());
         }
 
-        return $jobSeekerEducationDAO;
+        return $jobSeekerEducationDao;
     }
 }

@@ -20,7 +20,7 @@ class DeleteService
     public function __construct(
         private JobSeekerProfileRepository $jobSeekerProfileRepository,
         private JobSeekerExperienceRepository $jobSeekerExperienceRepository,
-        private JobSeekerExperienceDAO $jobSeekerExperienceDAO,
+        private JobSeekerExperienceDAO $jobSeekerExperienceDao,
     ) {
         $this->initializeUserAuthorizationData();
     }
@@ -29,8 +29,8 @@ class DeleteService
     {
         try {
 
-            $profileId = $this->fetchProfile();
-            $experienceDetails = $this->fetchExperience($experienceId);
+            $profileId = $this->findProfile();
+            $experienceDetails = $this->findExperience($experienceId);
             $this->validateOwnership($experienceDetails, $profileId);
             $this->deleteExperience($experienceDetails->get('id'));
 
@@ -45,7 +45,7 @@ class DeleteService
         }
     }
 
-    private function fetchProfile(): int
+    private function findProfile(): int
     {
         $profileDetails = collect($this->jobSeekerProfileRepository->findByUserId($this->loggedInUserId)->first());
 
@@ -56,7 +56,7 @@ class DeleteService
         return $profileDetails->get('id');
     }
 
-    private function fetchExperience(int $experienceId): Collection
+    private function findExperience(int $experienceId): Collection
     {
         $experienceDetails = collect($this->jobSeekerExperienceRepository->findById($experienceId)->first());
 
@@ -72,7 +72,7 @@ class DeleteService
 
     private function deleteExperience(int $experienceId): void
     {
-        $this->jobSeekerExperienceDAO->setIsDeleted(CommonConstant::IS_DELETED_YES);
-        $this->jobSeekerExperienceRepository->updateById($experienceId, $this->jobSeekerExperienceDAO);
+        $this->jobSeekerExperienceDao->setIsDeleted(CommonConstant::IS_DELETED_YES);
+        $this->jobSeekerExperienceRepository->updateById($experienceId, $this->jobSeekerExperienceDao);
     }
 }

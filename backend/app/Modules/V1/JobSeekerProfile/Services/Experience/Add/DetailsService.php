@@ -28,9 +28,9 @@ class DetailsService
         $this->initializeUserAuthorizationData();
     }
 
-    public function prepareBo(DetailsRequest $addExperienceDetailsRequest): DetailsBo
+    public function prepareBo(DetailsRequest $request): DetailsBo
     {
-        return $this->experienceHelper->prepareBo($addExperienceDetailsRequest);
+        return $this->experienceHelper->prepareBo($request);
     }
 
     public function add(DetailsBo $detailsBo): JsonResponse
@@ -38,7 +38,7 @@ class DetailsService
         $this->detailsBo = $detailsBo;
 
         try {
-            $profileId = $this->fetchProfile();
+            $profileId = $this->findProfile();
             $this->addExperience($profileId);
 
             return response()->json(CommonUtils::successResponse('Experience added successfully'));
@@ -51,7 +51,7 @@ class DetailsService
         }
     }
 
-    private function fetchProfile(): int
+    private function findProfile(): int
     {
         $profileDetails = collect($this->jobSeekerProfileRepository->findByUserId($this->loggedInUserId)->first());
 
@@ -64,9 +64,9 @@ class DetailsService
 
     private function addExperience(int $id)
     {
-        $jobSeekerExperienceDAO = $this->experienceHelper->prepareDAO($this->detailsBo);
-        $jobSeekerExperienceDAO->setJobSeekerProfileId($id);
+        $jobSeekerExperienceDao = $this->experienceHelper->prepareDao($this->detailsBo);
+        $jobSeekerExperienceDao->setJobSeekerProfileId($id);
 
-        return $this->jobSeekerExperienceRepository->insert($jobSeekerExperienceDAO);
+        return $this->jobSeekerExperienceRepository->insert($jobSeekerExperienceDao);
     }
 }

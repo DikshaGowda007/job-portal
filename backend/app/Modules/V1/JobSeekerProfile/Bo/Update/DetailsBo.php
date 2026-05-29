@@ -409,4 +409,99 @@ class DetailsBo
 
         return $this;
     }
+
+    public function toArray(): array
+    {
+        $collection = [];
+
+        if (isset($this->userId)) {
+            $collection['user_id'] = $this->userId;
+        }
+        if (isset($this->headline)) {
+            $collection['headline'] = $this->headline;
+        }
+        if (isset($this->summary)) {
+            $collection['summary'] = $this->summary;
+        }
+        if (isset($this->phone)) {
+            $collection['phone'] = $this->phone;
+        }
+        if (isset($this->dateOfBirth)) {
+            $collection['date_of_birth'] = $this->dateOfBirth;
+        }
+        if (isset($this->gender)) {
+            $collection['gender'] = $this->gender;
+        }
+        if (isset($this->city)) {
+            $collection['city'] = $this->city;
+        }
+        if (isset($this->state)) {
+            $collection['state'] = $this->state;
+        }
+        if (isset($this->country)) {
+            $collection['country'] = $this->country;
+        }
+        if (isset($this->pincode)) {
+            $collection['pincode'] = $this->pincode;
+        }
+        if (isset($this->currentJobTitle)) {
+            $collection['current_job_title'] = $this->currentJobTitle;
+        }
+        if (isset($this->currentCompany)) {
+            $collection['current_company'] = $this->currentCompany;
+        }
+        if (isset($this->totalExperienceYears)) {
+            $collection['total_experience_years'] = $this->totalExperienceYears;
+        }
+        if (isset($this->totalExperienceMonths)) {
+            $collection['total_experience_months'] = $this->totalExperienceMonths;
+        }
+        if (isset($this->expectedSalary)) {
+            $collection['expected_salary'] = $this->expectedSalary;
+        }
+        if (isset($this->expectedSalaryCurrency)) {
+            $collection['expected_salary_currency'] = $this->expectedSalaryCurrency;
+        }
+        if (isset($this->currentSalary)) {
+            $collection['current_salary'] = $this->currentSalary;
+        }
+        if (isset($this->currentSalaryCurrency)) {
+            $collection['current_salary_currency'] = $this->currentSalaryCurrency;
+        }
+        if (isset($this->preferredJobTypes)) {
+            $collection['preferred_job_types'] = $this->preferredJobTypes;
+        }
+        if (isset($this->preferredWorkModes)) {
+            $collection['preferred_work_modes'] = $this->preferredWorkModes;
+        }
+        if (isset($this->preferredLocations)) {
+            $collection['preferred_locations'] = $this->preferredLocations;
+        }
+        if (isset($this->noticePeriod)) {
+            $collection['notice_period'] = $this->noticePeriod;
+        }
+        if (isset($this->immediateJoiner)) {
+            $collection['immediate_joiner'] = $this->immediateJoiner;
+        }
+        if (isset($this->skills)) {
+            $collection['skills'] = $this->skills;
+        }
+        if (isset($this->linkedinUrl)) {
+            $collection['linkedin_url'] = $this->linkedinUrl;
+        }
+        if (isset($this->githubUrl)) {
+            $collection['github_url'] = $this->githubUrl;
+        }
+        if (isset($this->portfolioUrl)) {
+            $collection['portfolio_url'] = $this->portfolioUrl;
+        }
+        if (isset($this->isPublic)) {
+            $collection['is_public'] = $this->isPublic;
+        }
+        if (isset($this->openToOpportunities)) {
+            $collection['open_to_opportunities'] = $this->openToOpportunities;
+        }
+
+        return $collection;
+    }
 }
