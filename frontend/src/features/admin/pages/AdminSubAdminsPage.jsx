@@ -62,7 +62,7 @@ export default function AdminSubAdminsPage() {
           onSubmit={(p) => createMutation.mutate(p)}
           onCancel={() => setShowForm(false)}
           loading={createMutation.isPending}
-          error={createMutation.error?.response?.data?.message ?? ""}
+          error={createMutation.error?.message ?? ""}
         />
       )}
 
