@@ -1,31 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>Withdrawal Confirmation</title>
-    <style>
-        /* Keeping consistency with your brand colors */
-        .email-container { background-image: linear-gradient(135deg, #6953f7, #cd4ff7); padding: 20px; }
-        .content-container { background: #302d43; padding: 30px; border-radius: 40px; max-width: 500px; margin: 30px auto; font-family: Arial, sans-serif; color: #eee; }
-        .info-box { background: #3d3a52; padding: 15px; border-radius: 10px; margin: 15px 0; }
-        p { font-size: 16px; line-height: 1.5; margin-bottom: 1.2rem; }
-        .highlight { color: #50fa7b; font-weight: bold; } /* Green for success/confirmation */
-    </style>
-</head>
-<body class="email-container">
-    <div class="content-container">
-        <h2>Application Withdrawn</h2>
-        <p>Hi {{ $candidateName }},</p>
-        <p>This is a confirmation that you have successfully withdrawn your application for:</p>
+@include('emails.partials.header', [
+    'icon'     => '✅',
+    'title'    => 'Withdrawal Confirmed',
+    'subtitle' => 'Your application has been successfully withdrawn',
+])
 
-        <div class="info-box">
-            <p><strong>Position:</strong> <span class="highlight">{{ $jobTitle }}</span></p>
-            <p><strong>Company:</strong> {{ $applicationId }}</p>
-            <p><strong>Reference:</strong> #{{ $applicationId }}</p>
-        </div>
+<p style="margin:0 0 20px;font-size:15px;color:#374151;">Hi {{ $candidateName }},</p>
+<p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.6;">
+    This is a confirmation that you have successfully withdrawn your application for:
+</p>
 
-        <p>We have notified the recruiter. We're sorry this role wasn't the right fit, and we wish you the best in your continued job search!</p>
-        <p>Best regards,<br>The  Team</p>
-    </div>
-</body>
-</html>
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:24px;">
+    <tr>
+        <td style="padding:16px 20px;">
+            <p style="margin:0 0 12px;font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;">Application Details</p>
+            <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td style="padding:5px 0;font-size:14px;color:#6b7280;width:130px;">Position</td>
+                    <td style="padding:5px 0;font-size:14px;font-weight:600;color:#111827;">{{ $jobTitle }}</td>
+                </tr>
+                <tr>
+                    <td style="padding:5px 0;font-size:14px;color:#6b7280;">Reference</td>
+                    <td style="padding:5px 0;font-size:14px;color:#374151;">#{{ $applicationId }}</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+<p style="margin:0;font-size:14px;color:#6b7280;line-height:1.6;">
+    We have notified the recruiter. We're sorry this role wasn't the right fit — we wish you the best in your continued job search!
+</p>
+
+@include('emails.partials.footer')
