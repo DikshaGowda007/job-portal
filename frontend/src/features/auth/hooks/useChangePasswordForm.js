@@ -33,7 +33,7 @@ export function useChangePasswordForm() {
       setForm({ current_password: "", new_password: "", new_password_confirmation: "" });
     } catch (err) {
       setError(
-        err.response?.data?.message ?? "Failed to change password. Try again.",
+        err.message,
       );
     } finally {
       setLoading(false);

@@ -40,7 +40,7 @@ export default function UserProfilePage() {
       queryClient.invalidateQueries({ queryKey: ["user-me"] });
     },
     onError: (err) => {
-      setError(err.response?.data?.message ?? "Failed to update profile");
+      setError(err.message);
     },
   });
 

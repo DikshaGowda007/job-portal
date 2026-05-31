@@ -50,7 +50,7 @@ export default function AdminAccessRightsPage() {
   const mutation = useMutation({
     mutationFn: (access_details) => accessRightsApi.edit({ user_id: Number(userId), access_details }),
     onSuccess: () => toast.success("Access rights updated"),
-    onError: (err) => toast.error(err.response?.data?.message ?? "Failed to update"),
+    onError: (err) => toast.error(err.message),
   });
 
   const toggle = (key) => setAccessMap((prev) => ({ ...prev, [key]: !prev[key] }));

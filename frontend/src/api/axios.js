@@ -24,7 +24,7 @@ axiosClient.interceptors.response.use(
   (response) => {
     if (response.data?.status === "error") {
       if (response.data?.message === "Access Forbidden.") return handleForbidden();
-      return Promise.reject(response);
+      return Promise.reject(response.data);
     }
     return response;
   },
@@ -34,7 +34,7 @@ axiosClient.interceptors.response.use(
       window.location.href = ROUTES.LOGIN;
     }
     if (error.response?.status === 403) return handleForbidden();
-    return Promise.reject(error);
+    return Promise.reject(error.response?.data ?? error);
   }
 );
 

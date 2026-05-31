@@ -43,9 +43,7 @@ export function useSignupForm() {
       navigate(ROUTES.OTP, { state: { email: form.email, user_id: userId } });
     } catch (err) {
       setError(
-        err.data?.message ??
-          err.response?.data?.message ??
-          "Signup failed. Please try again.",
+        err.message,
       );
     } finally {
       setLoading(false);
