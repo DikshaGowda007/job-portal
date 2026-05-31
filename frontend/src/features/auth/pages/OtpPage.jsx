@@ -10,6 +10,7 @@ export default function OtpPage() {
     email,
     otp,
     setOtp,
+    notice,
     error,
     loading,
     resending,
@@ -35,6 +36,13 @@ export default function OtpPage() {
             </span>
           </p>
         </div>
+
+        {notice && (
+          <div className="mb-4 flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-400">
+            <AlertCircle size={15} className="mt-0.5 shrink-0" />
+            {notice}
+          </div>
+        )}
 
         {error && (
           <div className="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/50 dark:text-red-400">
