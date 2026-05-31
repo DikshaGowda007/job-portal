@@ -54,15 +54,12 @@ export function useLoginForm() {
         navigate(ROLE_REDIRECT[user?.role] ?? ROUTES.HOME, { replace: true });
       }
     } catch (err) {
-      const msg =
-        err.data?.message ??
-        err.response?.data?.message ??
-        "Login failed. Please try again.";
+      const msg = err.message;
       if (
         msg?.toLowerCase().includes("otp") ||
         msg?.toLowerCase().includes("verify")
       ) {
-        navigate(ROUTES.OTP, { state: { email: form.email } });
+        navigate(ROUTES.OTP, { state: { email: form.email, notice: "Please verify your account before signing in." } });
       } else {
         setError(msg);
       }
