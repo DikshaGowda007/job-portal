@@ -55,7 +55,7 @@ export default function RecruiterJobsPage() {
           </p>
         </div>
         <Link
-          to={ROUTES.RECRUITER_JOB_PUBLISH}
+          to={ROUTES.RECRUITER_JOB_ADD}
           className="flex shrink-0 items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400"
         >
           <Plus size={16} />
