@@ -73,7 +73,7 @@ class DetailsRequest extends FormRequest
             'skills.*' => 'string|max:100',
 
             // Job lifecycle
-            'status' => 'required|in:OPEN,CLOSED,EXPIRED',
+            'status' => 'nullable|in:OPEN,CLOSED,EXPIRED,DRAFT',
             'expires_at' => 'nullable|date|after:today',
 
             // Openings

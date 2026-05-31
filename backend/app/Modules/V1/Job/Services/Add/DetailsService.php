@@ -4,6 +4,7 @@ namespace App\Modules\V1\Job\Services\Add;
 
 use App\Constants\CommonConstant;
 use App\Constants\ErrorResponseConstant;
+use App\Constants\JobConstants;
 use App\Http\Requests\V1\Job\Publish\DetailsRequest;
 use App\Modules\V1\Job\Bo\Add\DetailsBo;
 use App\Modules\V1\Job\Helpers\JobHelper;
@@ -40,6 +41,7 @@ class DetailsService
     private function addJobs(DetailsBo $detailsBo)
     {
         $dao = $this->jobHelper->prepareDao($detailsBo);
+        $dao->setStatus(JobConstants::STATUS_DRAFT);
 
         return $this->jobRepository->insert($dao);
     }

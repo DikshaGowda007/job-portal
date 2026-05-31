@@ -52,7 +52,7 @@ class DetailsRequest extends FormRequest
             'education' => 'sometimes|nullable|string|max:255',
             'skills' => 'sometimes|nullable|array',
             'skills.*' => 'string|max:100',
-            'status' => 'sometimes|required|in:OPEN,CLOSED,EXPIRED',
+            'status' => 'sometimes|required|in:OPEN,CLOSED,EXPIRED,DRAFT',
             'expires_at' => 'sometimes|nullable|date|after:today',
             'openings_count' => 'sometimes|nullable|integer|min:1',
         ];

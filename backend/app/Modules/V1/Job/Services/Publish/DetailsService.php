@@ -4,9 +4,11 @@ namespace App\Modules\V1\Job\Services\Publish;
 
 use App\Constants\CommonConstant;
 use App\Constants\ErrorResponseConstant;
+use App\Constants\JobConstants;
 use App\Http\Requests\V1\Job\Publish\DetailsRequest;
 use App\Modules\V1\Job\Bo\Publish\DetailsBo;
 use App\Modules\V1\Job\Helpers\JobHelper;
+use App\Repositories\DAO\V1\JobPostDAO;
 use App\Repositories\V1\JobRepository;
 use App\Utils\CommonUtils;
 use Illuminate\Http\JsonResponse;
@@ -16,12 +18,17 @@ class DetailsService
     public function __construct(
         private JobHelper $jobHelper,
         private JobRepository $jobRepository,
+        private JobPostDAO $jobPostDao,
     ) {}
 
     public function publish(DetailsBo $detailsBo): JsonResponse
     {
         try {
-            $this->publishJob($detailsBo);
+            if ($detailsBo->getId()) {
+                $this->publishExisting($detailsBo->getId());
+            } else {
+                $this->publishNew($detailsBo);
+            }
 
             return response()->json(CommonUtils::successResponse('Job published successfully'));
         } catch (\Throwable $e) {
@@ -36,10 +43,17 @@ class DetailsService
         return $this->jobHelper->prepareBo($detailsRequest);
     }
 
-    private function publishJob(DetailsBo $detailsBo)
+    private function publishExisting(int $id): void
+    {
+        $this->jobPostDao->setStatus(JobConstants::STATUS_OPEN);
+        $this->jobPostDao->setModifiedByUserId(auth()->id());
+        $this->jobRepository->updateById($id, $this->jobPostDao);
+    }
+
+    private function publishNew(DetailsBo $detailsBo): void
     {
         $dao = $this->jobHelper->prepareDao($detailsBo);
-
-        return $this->jobRepository->insert($dao);
+        $dao->setStatus(JobConstants::STATUS_OPEN);
+        $this->jobRepository->insert($dao);
     }
 }

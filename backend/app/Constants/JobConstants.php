@@ -10,6 +10,8 @@ class JobConstants
 
     public const STATUS_EXPIRED = 'EXPIRED';
 
+    public const STATUS_DRAFT = 'DRAFT';
+
     public const WORK_MODE_ONSITE = 'ONSITE';
 
     public const WORK_MODE_REMOTE = 'REMOTE';

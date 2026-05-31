@@ -36,11 +36,14 @@ class DetailsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Basic job info
-            'company_name' => 'required|string|max:255',
-            'title' => 'required|string|max:255',
-            'job_description' => 'required|string',
-            'location' => 'required|string|max:255',
+            // ID-based publish (publish existing draft by id only)
+            'id' => 'nullable|integer|exists:job_posts,id',
+
+            // Basic job info — required only when creating a new published job (no id)
+            'company_name' => 'required_without:id|nullable|string|max:255',
+            'title' => 'required_without:id|nullable|string|max:255',
+            'job_description' => 'required_without:id|nullable|string',
+            'location' => 'required_without:id|nullable|string|max:255',
 
             // Salary
             'salary' => 'nullable|numeric|min:0',
@@ -52,9 +55,9 @@ class DetailsRequest extends FormRequest
             // Category
             'job_category_id' => 'nullable|integer|exists:job_categories,id',
 
-            // Job type & work mode
-            'work_mode' => 'required|in:onsite,remote,hybrid',
-            'job_type' => 'required|in:FULL_TIME,PART_TIME,REMOTE,INTERNSHIP',
+            // Job type & work mode — required only when creating
+            'work_mode' => 'required_without:id|nullable|in:onsite,remote,hybrid',
+            'job_type' => 'required_without:id|nullable|in:FULL_TIME,PART_TIME,REMOTE,INTERNSHIP',
 
             // Roles & responsibilities
             'roles_responsibility' => 'nullable|array',
@@ -72,8 +75,7 @@ class DetailsRequest extends FormRequest
             'skills' => 'nullable|array',
             'skills.*' => 'string|max:100',
 
-            // Job lifecycle
-            'status' => 'required|in:OPEN,CLOSED,EXPIRED',
+            // Job lifecycle — status is always forced to OPEN by the service
             'expires_at' => 'nullable|date|after:today',
 
             // Openings

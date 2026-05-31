@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -10,7 +10,6 @@ import {
   JOB_TYPE_OPTIONS,
   EXP_LEVEL_OPTIONS,
   SALARY_TYPE_OPTIONS,
-  JOB_STATUS_OPTIONS,
   CURRENCY_OPTIONS,
 } from "@/utils/constants";
 import Loader from "@/components/common/Loader";
@@ -31,6 +30,7 @@ import {
   Settings,
   X,
   Save,
+  Send,
 } from "lucide-react";
 
 
@@ -40,7 +40,7 @@ const EMPTY_FORM = {
   location: "",
   work_mode: "onsite",
   job_type: "FULL_TIME",
-  status: "OPEN",
+  status: "DRAFT",
   job_category_id: "",
   job_description: "",
   roles_responsibility: "",
@@ -61,9 +61,8 @@ export default function RecruiterJobFormPage() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const isPublish = pathname === ROUTES.RECRUITER_JOB_PUBLISH;
   const queryClient = useQueryClient();
+  const actionRef = useRef("draft");
 
   const [form, setForm] = useState(EMPTY_FORM);
   const [skillInput, setSkillInput] = useState("");
@@ -108,21 +107,22 @@ export default function RecruiterJobFormPage() {
     });
   }, [jobData]);
 
+  const isDraft = !isEdit || form.status === "DRAFT";
+
   const mutation = useMutation({
     mutationFn: (payload) => {
       if (isEdit) return jobsApi.edit(payload);
-      if (isPublish) return jobsApi.publish(payload);
-      return jobsApi.add(payload);
+      return actionRef.current === "publish" ? jobsApi.publish(payload) : jobsApi.add(payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recruiter-jobs"] });
-      toast.success(
-        isEdit ? "Job updated" : isPublish ? "Job published" : "Job saved",
-      );
+      const action = isEdit
+        ? (actionRef.current === "publish" ? "Job published" : "Job updated")
+        : (actionRef.current === "publish" ? "Job published" : "Job saved as draft");
+      toast.success(action);
       navigate(ROUTES.RECRUITER_JOBS);
     },
-    onError: (err) =>
-      toast.error(err.response?.data?.message ?? "Something went wrong."),
+    onError: (err) => toast.error(err.message),
   });
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -162,17 +162,16 @@ export default function RecruiterJobFormPage() {
             .filter(Boolean)
         : [],
     };
-    if (isEdit) payload.id = Number(id);
+    if (isEdit) {
+      payload.id = Number(id);
+      if (actionRef.current === "publish") payload.status = "OPEN";
+    }
     mutation.mutate(payload);
   };
 
   if (isEdit && jobLoading) return <Loader />;
 
-  const pageTitle = isEdit
-    ? "Edit Job"
-    : isPublish
-      ? "Publish a Job"
-      : "Save as Draft";
+  const pageTitle = isEdit ? "Edit Job" : "New Job Posting";
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -264,8 +263,8 @@ export default function RecruiterJobFormPage() {
             </Field>
           </div>
 
-          <GroupLabel>Type & Status</GroupLabel>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <GroupLabel>Type</GroupLabel>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <SelectField
               label="Work Mode *"
               required
@@ -279,13 +278,6 @@ export default function RecruiterJobFormPage() {
               value={form.job_type}
               onChange={set("job_type")}
               options={JOB_TYPE_OPTIONS}
-            />
-            <SelectField
-              label="Status *"
-              required
-              value={form.status}
-              onChange={set("status")}
-              options={JOB_STATUS_OPTIONS}
             />
           </div>
         </Section>
@@ -496,21 +488,39 @@ export default function RecruiterJobFormPage() {
           </div>
         </Section>
 
-        <div className="flex gap-3 pb-6">
-          <button
-            type="submit"
-            disabled={mutation.isPending}
-            className="flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60 dark:bg-indigo-500 dark:hover:bg-indigo-400"
-          >
-            <Save size={14} />
-            {mutation.isPending
-              ? "Saving…"
-              : isEdit
-                ? "Save Changes"
-                : isPublish
-                  ? "Publish Job"
-                  : "Save Draft"}
-          </button>
+        <div className="flex flex-wrap gap-3 pb-6">
+          {isDraft ? (
+            <>
+              <button
+                type="submit"
+                onClick={() => { actionRef.current = "draft"; }}
+                disabled={mutation.isPending}
+                className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
+              >
+                <Save size={14} />
+                {mutation.isPending && actionRef.current === "draft" ? "Saving…" : "Save Draft"}
+              </button>
+              <button
+                type="submit"
+                onClick={() => { actionRef.current = "publish"; }}
+                disabled={mutation.isPending}
+                className="flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60 dark:bg-indigo-500 dark:hover:bg-indigo-400"
+              >
+                <Send size={14} />
+                {mutation.isPending && actionRef.current === "publish" ? "Publishing…" : "Publish Job"}
+              </button>
+            </>
+          ) : (
+            <button
+              type="submit"
+              onClick={() => { actionRef.current = "save"; }}
+              disabled={mutation.isPending}
+              className="flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60 dark:bg-indigo-500 dark:hover:bg-indigo-400"
+            >
+              <Save size={14} />
+              {mutation.isPending ? "Saving…" : "Save Changes"}
+            </button>
+          )}
           <button
             type="button"
             onClick={() => navigate(ROUTES.RECRUITER_JOBS)}
