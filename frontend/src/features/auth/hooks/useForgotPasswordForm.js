@@ -22,9 +22,7 @@ export function useForgotPasswordForm() {
         navigate(ROUTES.RESET_PASSWORD, { state: { email } });
       }, 1500);
     } catch (err) {
-      setError(
-        err.response?.data?.message ?? "Failed to send reset OTP. Try again.",
-      );
+      setError(err.message);
     } finally {
       setLoading(false);
     }

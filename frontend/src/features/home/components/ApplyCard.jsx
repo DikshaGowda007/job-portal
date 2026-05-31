@@ -110,7 +110,7 @@ export default function ApplyCard({ jobId }) {
       toast.success("Application submitted successfully!");
     },
     onError: (err) => {
-      const msg = err.response?.data?.message ?? err.data?.message ?? "";
+      const msg = err.message;
       if (msg.toLowerCase().includes("already applied")) {
         setAppliedLocally(true);
         setShowForm(false);

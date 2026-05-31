@@ -46,7 +46,7 @@ export function useResetPasswordForm() {
         },
       });
     } catch (err) {
-      setError(err.data?.message ?? "Invalid or expired OTP. Try again.");
+      setError(err.message);
     } finally {
       setLoading(false);
     }
