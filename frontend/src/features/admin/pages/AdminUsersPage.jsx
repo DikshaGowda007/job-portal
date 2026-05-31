@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { adminApi } from "@/api/admin.api";
 import { PAGINATION_DEFAULT, ROLE_LABELS } from "@/utils/constants";
 import { ROLE_STYLE, entityColor } from "@/utils/styles";
-import { formatDate } from "@/utils/formatters";
+import { formatDate, formatDateTime } from "@/utils/formatters";
 import { ROUTES } from "@/utils/routePaths";
 import Loader from "@/components/common/Loader";
 import EmptyState from "@/components/common/EmptyState";
@@ -130,7 +130,7 @@ export default function AdminUsersPage() {
                           {ROLE_LABELS[user.user_type] ?? "Unknown"}
                         </span>
                       </td>
-                      <td className="px-5 py-4 text-sm text-gray-500 dark:text-gray-400">{formatDate(user.created_at)}</td>
+                      <td className="px-5 py-4 text-sm text-gray-500 dark:text-gray-400">{formatDateTime(user.created_at)}</td>
                       <td className="px-5 py-4">
                         <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${isActive ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400" : "bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400"}`}>
                           <span className={`size-1.5 rounded-full ${isActive ? "bg-emerald-500" : "bg-red-500"}`} />
@@ -235,8 +235,8 @@ function UserDetailDrawer({ userId, onClose }) {
                 <Row icon={<Mail size={14} />} label="Email" value={data.email || "—"} />
                 {data.phone && <Row icon={<Phone size={14} />} label="Phone" value={data.phone} />}
                 <Row icon={<BadgeCheck size={14} />} label="Verified" value={data.verified ? "Yes" : "No"} />
-                <Row icon={<Calendar size={14} />} label="Joined" value={formatDate(data.created_at)} />
-                <Row icon={<Clock size={14} />} label="Last Login" value={data.last_login ? formatDate(data.last_login) : "Never"} />
+                <Row icon={<Calendar size={14} />} label="Joined" value={formatDateTime(data.created_at)} />
+                <Row icon={<Clock size={14} />} label="Last Login" value={data.last_login ? formatDateTime(data.last_login) : "Never"} />
               </div>
             </div>
           ) : (

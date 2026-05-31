@@ -7,6 +7,18 @@ export function formatDate(dateStr) {
   });
 }
 
+export function formatDateTime(dateStr) {
+  if (!dateStr) return "—";
+  return new Date(dateStr).toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
 export function formatSalary(min, max, currency = "INR", salaryType) {
   if (salaryType === "lpa") {
     const toLakh = (n) => (n / 100000).toFixed(n % 100000 === 0 ? 0 : 1);

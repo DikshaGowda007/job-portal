@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { jobsApi } from "@/api/jobs.api";
 import { PAGINATION_DEFAULT } from "@/utils/constants";
 import { JOB_STATUS_STYLE, WORK_MODE_STYLE, entityColor } from "@/utils/styles";
@@ -7,7 +7,8 @@ import { formatDate, formatSalary, timeAgo } from "@/utils/formatters";
 import Loader from "@/components/common/Loader";
 import EmptyState from "@/components/common/EmptyState";
 import Pagination from "@/components/common/Pagination";
-import { Search, MapPin, Clock, Briefcase, Building2 } from "lucide-react";
+import ConfirmModal from "@/components/modals/ConfirmModal";
+import { Search, MapPin, Clock, Briefcase, Trash2 } from "lucide-react";
 
 const STATUS_FILTERS = ["All", "PUBLISHED", "OPEN", "DRAFT", "CLOSED", "EXPIRED"];
 
@@ -15,6 +16,16 @@ export default function AdminJobsPage() {
   const [page, setPage] = useState(PAGINATION_DEFAULT.PAGE);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => jobsApi.delete({ id }),
+    onSuccess: () => {
+      setDeleteTarget(null);
+      queryClient.invalidateQueries({ queryKey: ["admin-jobs"] });
+    },
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-jobs", page, search, statusFilter],
@@ -130,7 +141,12 @@ export default function AdminJobsPage() {
                   {/* Footer */}
                   <div className="flex items-center justify-between border-t border-gray-100 pt-3 text-xs text-gray-400 dark:border-gray-800 dark:text-gray-500">
                     <span className="flex items-center gap-1"><Clock size={11} />{timeAgo(job.created_at)}</span>
-                    <span>Posted {formatDate(job.created_at)}</span>
+                    <button
+                      onClick={() => setDeleteTarget(job)}
+                      className="flex items-center gap-1 rounded-lg px-2 py-1 text-red-500 transition hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20"
+                    >
+                      <Trash2 size={12} /> Delete
+                    </button>
                   </div>
                 </div>
               );
@@ -140,6 +156,17 @@ export default function AdminJobsPage() {
           <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </>
       )}
+
+      <ConfirmModal
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => deleteMutation.mutate(deleteTarget?.job_id)}
+        title="Delete Job"
+        description={`Are you sure you want to delete "${deleteTarget?.title}"? This cannot be undone.`}
+        confirmText="Delete"
+        loading={deleteMutation.isPending}
+        danger
+      />
     </div>
   );
 }
