@@ -25,7 +25,7 @@ return new class extends Migration
             $table->text('cover_letter')->nullable();
             $table->decimal('expected_salary', 10, 2)->nullable();
             $table->enum('expected_salary_currency', ['INR', 'USD', 'EUR', 'GBP'])->default('INR');
-            $table->string('notice_period')->nullable();
+            $table->integer('notice_period')->nullable();
             $table->integer('experience_years')->nullable();
 
             // Application status
@@ -36,6 +36,11 @@ return new class extends Migration
             $table->text('recruiter_notes')->nullable();
             $table->integer('reviewed_by_user_id')->nullable();
             $table->timestamp('reviewed_at')->nullable();
+
+            // Viewd By User
+            $table->tinyInteger('viewed')->default(0)->comment('1 - Yes, 0 - No');
+            $table->unsignedBigInteger('viewed_by_user_id')->nullable();
+            $table->timestamp('viewed_at')->nullable();
 
             // Prevent duplicate applications
             $table->unique(['user_id', 'job_post_id']);
