@@ -7,6 +7,7 @@ use App\Constants\ErrorResponseConstant;
 use App\Modules\V1\User\Bo\Add\UserDetailsBo;
 use App\Repositories\DAO\V1\UserDAO;
 use App\Repositories\V1\UserRepository;
+use App\Utils\CommonUtils;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -28,7 +29,9 @@ class SignupService
 
             return response()->json(['status' => CommonConstant::SUCCESS, 'message' => CommonConstant::OTP_SENT_SUCCESS, 'data' => $data]);
         } catch (\Throwable $e) {
-            return response()->json(['status' => 'error', 'message' => ErrorResponseConstant::ERROR_MESSAGE_GENERAL]);
+            CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
+
+            return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_GENERAL));
         }
     }
 

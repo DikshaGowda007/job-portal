@@ -8,6 +8,7 @@ use App\Exceptions\DataNotFoundException;
 use App\Mail\SendOtpMail;
 use App\Repositories\DAO\V1\UserOTPVerificationDAO;
 use App\Repositories\V1\UserOTPVerificationRepository;
+use App\Utils\CommonUtils;
 use Carbon\Carbon;
 use Exception;
 use Mail;
@@ -31,7 +32,8 @@ class OtpService
 
             return ['status' => CommonConstant::ERROR, 'message' => CommonConstant::OTP_SENT_FAIL];
         } catch (\Throwable $e) {
-            \Log::error('OTP Send Error: '.$e->getMessage());
+
+            CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
 
             return ['status' => CommonConstant::ERROR, 'message' => CommonConstant::OTP_SENT_FAIL];
         }

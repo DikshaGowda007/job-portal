@@ -20,27 +20,20 @@ class CustomException extends Exception
         parent::__construct($errorMessage, 0, $previous);
     }
 
-    public function report()
+    public function report(): void
     {
-        if ($this->logType == CommonConstant::LOG_LEVEL_ERROR) {
-            Log::channel(env('DEFAULT_LOG_CHANNEL'))->error($this->errorMessage, ['exception' => $this->formatException($this)]);
-        } elseif ($this->logType == CommonConstant::LOG_LEVEL_INFO) {
-            Log::channel(env('DEFAULT_LOG_CHANNEL'))->info($this->errorMessage, ['exception' => $this->formatException($this)]);
-        } elseif ($this->logType == CommonConstant::LOG_LEVEL_WARNING) {
-            Log::channel(env('DEFAULT_LOG_CHANNEL'))->warning($this->errorMessage, ['exception' => $this->formatException($this)]);
-        } elseif ($this->logType == CommonConstant::LOG_LEVEL_DEBUG) {
-            Log::channel(env('DEFAULT_LOG_CHANNEL'))->debug($this->errorMessage, ['exception' => $this->formatException($this)]);
-        } elseif ($this->logType == CommonConstant::LOG_LEVEL_EMERGENCY) {
-            Log::channel(env('DEFAULT_LOG_CHANNEL'))->emergency($this->errorMessage, ['exception' => $this->formatException($this)]);
-        } elseif ($this->logType == CommonConstant::LOG_LEVEL_CRITICAL) {
-            Log::channel(env('DEFAULT_LOG_CHANNEL'))->critical($this->errorMessage, ['exception' => $this->formatException($this)]);
-        } elseif ($this->logType == CommonConstant::LOG_LEVEL_NOTICE) {
-            Log::channel(env('DEFAULT_LOG_CHANNEL'))->notice($this->errorMessage, ['exception' => $this->formatException($this)]);
-        } elseif ($this->logType == CommonConstant::LOG_LEVEL_ALERT) {
-            Log::channel(env('DEFAULT_LOG_CHANNEL'))->alert($this->errorMessage, ['exception' => $this->formatException($this)]);
-        } else {
-            Log::channel(env('DEFAULT_LOG_CHANNEL'))->error($this->errorMessage, ['exception' => $this->formatException($this)]);
-        }
+        $logData = ['exception' => $this->formatException($this)];
+
+        match ($this->logType) {
+            CommonConstant::LOG_LEVEL_INFO => Log::info($this->errorMessage, $logData),
+            CommonConstant::LOG_LEVEL_WARNING => Log::warning($this->errorMessage, $logData),
+            CommonConstant::LOG_LEVEL_DEBUG => Log::debug($this->errorMessage, $logData),
+            CommonConstant::LOG_LEVEL_EMERGENCY => Log::emergency($this->errorMessage, $logData),
+            CommonConstant::LOG_LEVEL_CRITICAL => Log::critical($this->errorMessage, $logData),
+            CommonConstant::LOG_LEVEL_NOTICE => Log::notice($this->errorMessage, $logData),
+            CommonConstant::LOG_LEVEL_ALERT => Log::alert($this->errorMessage, $logData),
+            default => Log::error($this->errorMessage, $logData),
+        };
     }
 
     private function formatException(Throwable $e)
