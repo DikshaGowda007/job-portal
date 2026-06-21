@@ -24,15 +24,17 @@ class CustomException extends Exception
     {
         $logData = ['exception' => $this->formatException($this)];
 
+        $channel = Log::channel('stderr');
+
         match ($this->logType) {
-            CommonConstant::LOG_LEVEL_INFO => Log::info($this->errorMessage, $logData),
-            CommonConstant::LOG_LEVEL_WARNING => Log::warning($this->errorMessage, $logData),
-            CommonConstant::LOG_LEVEL_DEBUG => Log::debug($this->errorMessage, $logData),
-            CommonConstant::LOG_LEVEL_EMERGENCY => Log::emergency($this->errorMessage, $logData),
-            CommonConstant::LOG_LEVEL_CRITICAL => Log::critical($this->errorMessage, $logData),
-            CommonConstant::LOG_LEVEL_NOTICE => Log::notice($this->errorMessage, $logData),
-            CommonConstant::LOG_LEVEL_ALERT => Log::alert($this->errorMessage, $logData),
-            default => Log::error($this->errorMessage, $logData),
+            CommonConstant::LOG_LEVEL_INFO => $channel->info($this->errorMessage, $logData),
+            CommonConstant::LOG_LEVEL_WARNING => $channel->warning($this->errorMessage, $logData),
+            CommonConstant::LOG_LEVEL_DEBUG => $channel->debug($this->errorMessage, $logData),
+            CommonConstant::LOG_LEVEL_EMERGENCY => $channel->emergency($this->errorMessage, $logData),
+            CommonConstant::LOG_LEVEL_CRITICAL => $channel->critical($this->errorMessage, $logData),
+            CommonConstant::LOG_LEVEL_NOTICE => $channel->notice($this->errorMessage, $logData),
+            CommonConstant::LOG_LEVEL_ALERT => $channel->alert($this->errorMessage, $logData),
+            default => $channel->error($this->errorMessage, $logData),
         };
     }
 
