@@ -1,5 +1,7 @@
 # Job-Portal
 
+🔗 **Live Demo:** https://job-portal-126.pages.dev/
+
 A full-stack Job Portal built with a headless Laravel REST API and a React frontend. The platform supports four distinct user roles — Admin, Sub-Admin, Recruiter, and Job Seeker — each with scoped access enforced through custom middleware. The backend features a custom JWT implementation (HMAC-SHA256, no third-party library), OTP-based email verification, a three-layer Service → Repository → DAO architecture for clean separation of concerns, and Laravel Events and Listeners for decoupled side effects. The frontend is built with React, TanStack Query, Tailwind CSS, and shadcn/ui.
 
 ## Architecture
