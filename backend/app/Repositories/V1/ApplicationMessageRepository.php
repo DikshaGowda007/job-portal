@@ -13,4 +13,8 @@ interface ApplicationMessageRepository
     public function fetchByUserIdWithJobPostsAndSenderId(int $userId): Collection;
 
     public function fetchByRecruiterIdWithJobPostsAndSenderId(int $recruiterId): Collection;
+
+    public function fetchByApplicationIdAndSenderId(int $applicationId, int $senderUserId): Collection;
+
+    public function updateReadAtByIds(array $ids, ApplicationMessageDAO $applicationMessageDAO);
 }

@@ -11,5 +11,7 @@ export const recruiterApi = {
   getApplicationHistory: (payload) => axiosClient.post(API.APPLICATION.HISTORY, payload),
   getConversations: () => axiosClient.post(API.RECRUITER.CONVERSATIONS),
   sendMessage: (payload) => axiosClient.post(API.RECRUITER.SEND_MESSAGE, payload),
+  markRead: (payload) => axiosClient.post(API.RECRUITER.MARK_READ, payload),
+  sendTyping: (payload) => axiosClient.post(API.RECRUITER.TYPING, payload),
   viewSeekerProfile: (userId) => axiosClient.post(API.PROFILE.VIEW, { user_id: userId }),
 };

@@ -42,7 +42,7 @@ const Sidebar = ({ navItems = [], open, onClose }) => {
         </button>
 
         <nav className="flex-1 space-y-2">
-          {navItems.map(({ label, icon: Icon, to }) => (
+          {navItems.map(({ label, icon: Icon, to, badge }) => (
             <NavLink
               key={to}
               to={to}
@@ -52,8 +52,19 @@ const Sidebar = ({ navItems = [], open, onClose }) => {
                   : "flex cursor-pointer items-center gap-3 rounded-xl p-3 transition hover:bg-gray-100 dark:hover:bg-gray-800"
               }
             >
-              <Icon size={20} />
-              <span>{label}</span>
+              {({ isActive }) => (
+                <>
+                  <Icon size={20} />
+                  <span className="flex-1">{label}</span>
+                  {badge > 0 && (
+                    <span className={`inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold ${
+                      isActive ? "bg-white text-indigo-600" : "bg-indigo-600 text-white"
+                    }`}>
+                      {badge > 9 ? "9+" : badge}
+                    </span>
+                  )}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>

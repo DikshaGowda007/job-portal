@@ -47,6 +47,16 @@ export function capitalize(str = "") {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
+export function chatTime(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  const time = d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
+  const days = Math.floor((Date.now() - d.getTime()) / 86400000);
+  if (days === 0) return `Today, ${time}`;
+  if (days === 1) return `Yesterday, ${time}`;
+  return `${d.toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}, ${time}`;
+}
+
 export function timeAgo(dateStr) {
   if (!dateStr) return "";
   const days = Math.floor(

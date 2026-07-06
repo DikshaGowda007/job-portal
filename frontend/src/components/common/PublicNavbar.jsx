@@ -19,6 +19,7 @@ const SEEKER_MENU = [
   { label: "My Applications", icon: FileText, to: ROUTES.SEEKER_APPLICATIONS },
   { label: "Saved Jobs", icon: Bookmark, to: ROUTES.SEEKER_SAVED_JOBS },
   { label: "My Profile", icon: User, to: ROUTES.SEEKER_PROFILE },
+  { label: "Messages", icon: User, to: ROUTES.SEEKER_MESSAGES },
 ];
 
 const ROLE_DASHBOARD = {

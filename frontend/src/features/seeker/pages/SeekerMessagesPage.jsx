@@ -4,22 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { seekerApi } from "@/api/seeker.api";
 import { useAuth } from "@/context/AuthContext";
+import { useChat } from "@/hooks/useChat";
 import { ROUTES } from "@/utils/routePaths";
-import { timeAgo } from "@/utils/formatters";
-
-function chatTime(dateStr) {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  const time = d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
-  const days = Math.floor((Date.now() - d.getTime()) / 86400000);
-  if (days === 0) return `Today, ${time}`;
-  if (days === 1) return `Yesterday, ${time}`;
-  const date = d.toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
-  return `${date}, ${time}`;
-}
+import { timeAgo, chatTime } from "@/utils/formatters";
 import Loader from "@/components/common/Loader";
 import CompanyLogo from "@/components/common/CompanyLogo";
-import { MessageSquare, Send, ArrowLeft } from "lucide-react";
+import { MessageSquare, Send, ArrowLeft, Check, CheckCheck } from "lucide-react";
 
 export default function SeekerMessagesPage() {
   const navigate = useNavigate();
@@ -34,18 +24,17 @@ export default function SeekerMessagesPage() {
     queryFn: () => seekerApi.getConversations().then((r) => r.data?.data ?? []),
   });
 
-  // Keep selected in sync with refreshed data
-  useEffect(() => {
-    if (selected) {
-      const updated = conversations.find((c) => c.application_id === selected.application_id);
-      if (updated) setSelected(updated);
-    }
-  }, [conversations]);
+  const { messages: chatMessages, typingUser, isOtherOnline, onTyping, addMessage } = useChat({
+    applicationId: selected?.application_id ?? null,
+    initialMessages: selected?.messages ?? [],
+    markReadFn: seekerApi.markRead,
+    typingFn: seekerApi.sendTyping,
+  });
 
-  // Auto-scroll to latest message
+  // Auto-scroll to latest message whenever the thread updates
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [selected?.messages]);
+  }, [chatMessages, typingUser]);
 
   const sendMutation = useMutation({
     mutationFn: ({ application_id, message }) =>
@@ -54,28 +43,26 @@ export default function SeekerMessagesPage() {
       const newMsg = res.data?.data;
       if (!newMsg) return;
 
-      // Optimistically update the selected conversation in cache
+      // Add to the hook's local state for immediate display in the thread
+      addMessage({
+        id: newMsg.id,
+        application_id: selected.application_id,
+        sender_id: newMsg.sender_id,
+        sender: user ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() : "You",
+        message: newMsg.message,
+        read_at: newMsg.read_at ?? null,
+        created_at: newMsg.created_at,
+      });
+
+      // Update sidebar preview (last message + timestamp)
       queryClient.setQueryData(["seeker-conversations"], (prev = []) =>
         prev.map((conv) =>
           conv.application_id === selected.application_id
-            ? {
-                ...conv,
-                last_message: message,
-                last_message_at: newMsg.created_at,
-                messages: [
-                  ...conv.messages,
-                  {
-                    id: newMsg.id,
-                    message: newMsg.message,
-                    sender_id: newMsg.sender_id,
-                    sender: user ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() : "You",
-                    created_at: newMsg.created_at,
-                  },
-                ],
-              }
+            ? { ...conv, last_message: message, last_message_at: newMsg.created_at }
             : conv
         )
       );
+
       setText("");
     },
     onError: () => toast.error("Failed to send message"),
@@ -123,13 +110,20 @@ export default function SeekerMessagesPage() {
           </p>
         </div>
 
-        <div className="flex-1 divide-y divide-gray-100 overflow-y-auto dark:divide-gray-800">
+        <div className="scrollbar-thin flex-1 divide-y divide-gray-100 overflow-y-auto dark:divide-gray-800">
           {conversations.map((conv) => {
             const isActive = selected?.application_id === conv.application_id;
             return (
               <button
                 key={conv.application_id}
-                onClick={() => setSelected(conv)}
+                onClick={() => {
+                  setSelected(conv);
+                  queryClient.setQueryData(["seeker-conversations"], (prev = []) =>
+                    prev.map((c) =>
+                      c.application_id === conv.application_id ? { ...c, unread_count: 0 } : c
+                    )
+                  );
+                }}
                 className={`w-full px-4 py-3.5 text-left transition ${
                   isActive
                     ? "bg-indigo-50 dark:bg-indigo-900/20"
@@ -148,9 +142,16 @@ export default function SeekerMessagesPage() {
                       </span>
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">{conv.company_name}</p>
-                    <p className="mt-1 truncate text-xs text-gray-400 dark:text-gray-500">
-                      {conv.last_message}
-                    </p>
+                    <div className="mt-1 flex items-center justify-between gap-1">
+                      <p className="truncate text-xs text-gray-400 dark:text-gray-500">
+                        {conv.last_message}
+                      </p>
+                      {conv.unread_count > 0 && (
+                        <span className="ml-1 flex size-5 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white">
+                          {conv.unread_count > 9 ? "9+" : conv.unread_count}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </button>
@@ -188,7 +189,16 @@ export default function SeekerMessagesPage() {
                   <p className="font-semibold text-gray-900 dark:text-white">
                     {selected.job_title ?? "Job"}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{selected.company_name}</p>
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className={`size-2 rounded-full ${
+                        isOtherOnline ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"
+                      }`}
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {isOtherOnline ? "Online" : selected.company_name}
+                    </p>
+                  </div>
                 </div>
               </div>
               <button
@@ -202,9 +212,15 @@ export default function SeekerMessagesPage() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">
-              {selected.messages.map((msg) => {
+            <div className="scrollbar-thin flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">
+              {chatMessages.map((msg) => {
                 const isMine = msg.sender_id === user?.id;
+                const senderLabel = typeof msg.sender === "string"
+                  ? msg.sender
+                  : msg.sender
+                    ? `${msg.sender.first_name} ${msg.sender.last_name}`.trim()
+                    : "Recruiter";
+
                 return (
                   <div
                     key={msg.id}
@@ -212,7 +228,7 @@ export default function SeekerMessagesPage() {
                   >
                     {!isMine && (
                       <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400">
-                        {msg.sender?.charAt(0)?.toUpperCase() ?? "R"}
+                        {senderLabel.charAt(0).toUpperCase()}
                       </div>
                     )}
                     <div className={`max-w-[70%] ${isMine ? "items-end" : "items-start"} flex flex-col`}>
@@ -231,13 +247,36 @@ export default function SeekerMessagesPage() {
                           {msg.message}
                         </p>
                       </div>
-                      <p className="mt-1 text-[11px] text-gray-400 dark:text-gray-500">
-                        {isMine ? "You" : msg.sender ?? "Recruiter"} · {chatTime(msg.created_at)}
-                      </p>
+                      <div className="mt-1 flex items-center gap-1">
+                        <p className="text-[11px] text-gray-400 dark:text-gray-500">
+                          {isMine ? "You" : senderLabel} · {chatTime(msg.created_at)}
+                        </p>
+                        {/* Read receipt: double tick when read, single tick when sent */}
+                        {isMine && (
+                          msg.read_at
+                            ? <CheckCheck size={12} className="text-indigo-400" />
+                            : <Check size={12} className="text-gray-400" />
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
               })}
+
+              {/* Typing indicator */}
+              {typingUser && (
+                <div className="flex items-end gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400">
+                    {typingUser.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="rounded-2xl rounded-bl-none bg-gray-100 px-4 py-2.5 dark:bg-gray-800">
+                    <p className="text-xs italic text-gray-400 dark:text-gray-500">
+                      {typingUser} is typing…
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <div ref={messagesEndRef} />
             </div>
 
@@ -247,7 +286,10 @@ export default function SeekerMessagesPage() {
                 <textarea
                   rows={1}
                   value={text}
-                  onChange={(e) => setText(e.target.value)}
+                  onChange={(e) => {
+                    setText(e.target.value);
+                    onTyping();
+                  }}
                   onKeyDown={handleKeyDown}
                   placeholder="Type a message… (Enter to send)"
                   className="flex-1 resize-none rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-700 dark:bg-gray-900 dark:focus:border-indigo-500"

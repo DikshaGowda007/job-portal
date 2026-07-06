@@ -14,11 +14,24 @@ class ApplicationMessage extends Model
         'application_id',
         'sender_id',
         'message',
+        'read_at',
         'created_at',
+        'updated_at',
+        'is_deleted',
+    ];
+
+    protected $casts = [
+        'read_at' => 'datetime',
+        'created_at' => 'datetime',
     ];
 
     public function sender()
     {
         return $this->belongsTo(User::class, 'sender_id');
+    }
+
+    public function application()
+    {
+        return $this->belongsTo(JobApplication::class, 'application_id');
     }
 }

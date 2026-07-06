@@ -220,6 +220,26 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #e5e7eb transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #e5e7eb;
+    border-radius: 9999px;
+  }
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #374151;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -3,8 +3,10 @@
 namespace App\Modules\V1\JobApplication\Services\RecruiterSendMessage;
 
 use App\Constants\CommonConstant;
+use App\Events\MessageSent;
 use App\Exceptions\AccessForbiddenException;
 use App\Exceptions\DataNotFoundException;
+use App\Models\ApplicationMessage;
 use App\Repositories\DAO\V1\ApplicationMessageDAO;
 use App\Repositories\V1\ApplicationMessageRepository;
 use App\Repositories\V1\JobApplicationRepository;
@@ -31,10 +33,14 @@ class DetailsService
 
             $savedMessage = $this->saveMessage($applicationId, $message);
 
+            // Broadcast to the other participant via WebSocket after DB save succeeds
+            event(new MessageSent($savedMessage));
+
             $response = $this->formatResponse(collect($savedMessage));
 
             return response()->json(CommonUtils::successDataResponse($response));
         } catch (\Throwable $e) {
+            dd($e);
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
 
             return response()->json(CommonUtils::errorResponse('Failed to send message'));
@@ -54,10 +60,9 @@ class DetailsService
         }
     }
 
-    private function saveMessage(int $applicationId, string $message)
+    private function saveMessage(int $applicationId, string $message): ApplicationMessage
     {
         $applicationMessageDAO = new ApplicationMessageDAO;
-
         $applicationMessageDAO->setApplicationId($applicationId);
         $applicationMessageDAO->setSenderId($this->loggedInUserId);
         $applicationMessageDAO->setMessage($message);
@@ -71,6 +76,7 @@ class DetailsService
             'id' => $savedMessage->get('id'),
             'message' => $savedMessage->get('message'),
             'sender_id' => $savedMessage->get('sender_id'),
+            'read_at' => $savedMessage->get('read_at'),
             'created_at' => $savedMessage->get('created_at'),
         ];
     }

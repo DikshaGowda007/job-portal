@@ -62,6 +62,7 @@ class DetailsService
             'company_name' => $first->company_name,
             'last_message' => $last->message,
             'last_message_at' => $last->created_at,
+            'unread_count' => $msgs->filter(fn ($m) => $m->sender_id !== $this->loggedInUserId && is_null($m->read_at))->count(),
             'messages' => $this->formatMessages($msgs),
         ];
     }
@@ -76,6 +77,7 @@ class DetailsService
                 'message' => $mssg->message,
                 'sender_id' => $mssg->sender_id,
                 'sender' => $mssg->sender ? trim($mssg->sender->first_name.' '.$mssg->sender->last_name) : null,
+                'read_at' => $mssg->read_at,
                 'created_at' => $mssg->created_at,
             ];
         }

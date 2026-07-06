@@ -39,6 +39,8 @@ export const API = {
     WITHDRAW: `${BASE_URL}/api/v1/application/withdraw`,
     CONVERSATIONS: `${BASE_URL}/api/v1/application/conversations`,
     SEND_MESSAGE: `${BASE_URL}/api/v1/application/send-message`,
+    MARK_READ: `${BASE_URL}/api/v1/application/mark-read`,
+    TYPING: `${BASE_URL}/api/v1/application/typing`,
   },
 
   CATEGORY: {
@@ -55,6 +57,8 @@ export const API = {
     MY_APPLICATIONS: `${BASE_URL}/api/v1/recruiter/my-applications`,
     CONVERSATIONS: `${BASE_URL}/api/v1/recruiter/conversations`,
     SEND_MESSAGE: `${BASE_URL}/api/v1/recruiter/send-message`,
+    MARK_READ: `${BASE_URL}/api/v1/recruiter/mark-read`,
+    TYPING: `${BASE_URL}/api/v1/recruiter/typing`,
   },
 
   SAVED_JOB: {

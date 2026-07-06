@@ -30,6 +30,7 @@ class ApplicationMessageRepositoryImpl implements ApplicationMessageRepository
                 'application_messages.application_id',
                 'application_messages.sender_id',
                 'application_messages.message',
+                'application_messages.read_at',
                 'application_messages.created_at',
                 'job_posts.title as job_title',
                 'job_posts.company_name'
@@ -50,6 +51,7 @@ class ApplicationMessageRepositoryImpl implements ApplicationMessageRepository
                 'application_messages.application_id',
                 'application_messages.sender_id',
                 'application_messages.message',
+                'application_messages.read_at',
                 'application_messages.created_at',
                 'job_posts.title as job_title',
                 'job_posts.company_name',
@@ -58,5 +60,18 @@ class ApplicationMessageRepositoryImpl implements ApplicationMessageRepository
             )
             ->with(['sender:id,first_name,last_name'])
             ->get();
+    }
+
+    public function fetchByApplicationIdAndSenderId(int $applicationId, int $senderUserId): Collection
+    {
+        return ApplicationMessage::where('application_id', $applicationId)
+            ->where('sender_id', '!=', $senderUserId)
+            ->whereNull('read_at')
+            ->get();
+    }
+
+    public function updateReadAtByIds(array $ids, ApplicationMessageDAO $applicationMessageDAO)
+    {
+        return ApplicationMessage::whereIn('id', $ids)->update($applicationMessageDAO->toArray());
     }
 }

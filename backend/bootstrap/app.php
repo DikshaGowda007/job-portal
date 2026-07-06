@@ -1,9 +1,13 @@
 <?php
 
 use App\Exceptions\AccessForbiddenException;
+use App\Http\Middleware\AuthenticateForBroadcast;
+use App\Http\Middleware\AuthenticateRoles;
+use App\Http\Middleware\VerifyJwt;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\HandleCors;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,10 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->prepend(\Illuminate\Http\Middleware\HandleCors::class);
+        $middleware->prepend(HandleCors::class);
         $middleware->alias([
-            'access.role' => \App\Http\Middleware\AuthenticateRoles::class,
-            'jwt.verify' => \App\Http\Middleware\VerifyJwt::class,
+            'access.role' => AuthenticateRoles::class,
+            'jwt.verify' => VerifyJwt::class,
+            'auth.broadcast' => AuthenticateForBroadcast::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -15,6 +15,7 @@ export default defineConfig({
       "/api": "http://localhost:8080",
       "/sanctum": "http://localhost:8080",
       "/storage": "http://localhost:8080",
+      "/broadcasting": "http://localhost:8080",
     },
   },
 });
