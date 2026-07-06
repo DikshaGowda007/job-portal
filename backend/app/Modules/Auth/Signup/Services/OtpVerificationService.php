@@ -5,6 +5,7 @@ namespace App\Modules\Auth\Signup\Services;
 use App\Constants\CommonConstant;
 use App\Exceptions\InvalidOTP;
 use App\Exceptions\OtpExpired;
+use App\Utils\CommonUtils;
 use App\Repositories\DAO\V1\UserDAO;
 use App\Repositories\V1\UserOTPVerificationRepository;
 use App\Repositories\V1\UserRepository;
@@ -26,9 +27,11 @@ class OtpVerificationService
             $this->updateUser($userId);
 
             return ['status' => CommonConstant::SUCCESS, 'message' => 'OTP verified successfully'];
-        } catch (Exception|InvalidOTP $e) {
+        } catch (Exception|InvalidOTP|OtpExpired $e) {
             return ['status' => CommonConstant::ERROR, 'message' => $e->getMessage()];
         } catch (\Throwable $e) {
+            CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
+
             return ['status' => CommonConstant::ERROR, 'message' => 'Failed to verify OTP'];
         }
     }

@@ -39,8 +39,9 @@ class DetailsService
             $response = $this->formatResponse(collect($savedMessage));
 
             return response()->json(CommonUtils::successDataResponse($response));
+        } catch (AccessForbiddenException|DataNotFoundException $e) {
+            return response()->json(CommonUtils::errorResponse($e->getMessage()));
         } catch (\Throwable $e) {
-            dd($e);
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
 
             return response()->json(CommonUtils::errorResponse('Failed to send message'));

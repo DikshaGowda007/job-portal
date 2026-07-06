@@ -28,7 +28,6 @@ class DetailsService
 
             return response()->json(CommonUtils::successDataResponse($response));
         } catch (\Throwable $e) {
-            dd($e);
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
 
             return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_FETCH_DATA));

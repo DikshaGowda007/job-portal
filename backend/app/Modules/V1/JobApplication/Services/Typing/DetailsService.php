@@ -38,7 +38,6 @@ class DetailsService
         } catch (AccessForbiddenException|DataNotFoundException $e) {
             return response()->json(CommonUtils::errorResponse($e->getMessage()));
         } catch (\Throwable $e) {
-            dd($e);
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
 
             return response()->json(CommonUtils::errorResponse('Failed to broadcast typing status'));

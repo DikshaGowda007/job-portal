@@ -12,6 +12,8 @@ use App\Http\Requests\V1\JobApplication\UpdateStatus\DetailsRequest;
 use App\Mail\ApplicationStatusChangedMail;
 use App\Modules\V1\JobApplication\Bo\UpdateStatus\DetailsBo;
 use App\Modules\V1\JobApplication\Helpers\JobApplicationHelper;
+use App\Repositories\DAO\V1\ApplicationMessageDAO;
+use App\Repositories\DAO\V1\MessageLogDAO;
 use App\Repositories\DAO\V1\NotificationDAO;
 use App\Repositories\V1\ApplicationMessageRepository;
 use App\Repositories\V1\JobApplicationHistoryRepository;
@@ -56,6 +58,8 @@ class DetailsService
             $this->createSeekerNotification($seekerUserId, $applicationId, $application, $detailsBo->getStatus());
 
             return response()->json(CommonUtils::successResponse('Application status updated successfully'));
+        } catch (AccessForbiddenException|InvalidDataException $e) {
+            return response()->json(CommonUtils::errorResponse($e->getMessage()));
         } catch (\Throwable $e) {
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
 
@@ -153,13 +157,13 @@ class DetailsService
         }
 
         try {
-            $msgDao = new \App\Repositories\DAO\V1\ApplicationMessageDAO;
+            $msgDao = new ApplicationMessageDAO;
             $msgDao->setApplicationId($applicationId);
             $msgDao->setSenderId($this->loggedInUserId);
             $msgDao->setMessage($message);
             $this->applicationMessageRepository->insert($msgDao);
 
-            $logDao = new \App\Repositories\DAO\V1\MessageLogDAO;
+            $logDao = new MessageLogDAO;
             $logDao->setApplicationId($applicationId);
             $logDao->setSenderId($this->loggedInUserId);
             $logDao->setReceiverId($receiverId);

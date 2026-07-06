@@ -30,6 +30,8 @@ class ResendOtpService
             $this->otpService->sendOtp($user->get('id'), $email);
 
             return response()->json(CommonUtils::successResponse('OTP sent successfully'));
+        } catch (UserNotFoundException|InvalidDataException $e) {
+            return response()->json(CommonUtils::errorResponse($e->getMessage()));
         } catch (\Throwable $e) {
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
 
