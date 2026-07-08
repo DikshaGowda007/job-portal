@@ -15,8 +15,7 @@ return new class extends Migration
             $table->text('content')->nullable();
             $table->boolean('status')->default(1);
             $table->boolean('is_deleted')->default(0);
-            $table->dateTime('created_at')->nullable()->useCurrent();
-            $table->dateTime('updated_at')->nullable()->useCurrent()->useCurrentOnUpdate();
+            $table->timestamps();
         });
     }
 
