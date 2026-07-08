@@ -1,17 +1,22 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("ALTER TABLE job_posts MODIFY COLUMN status ENUM('OPEN','CLOSED','EXPIRED','DRAFT') NOT NULL DEFAULT 'DRAFT'");
+        Schema::table('job_posts', function (Blueprint $table) {
+            $table->enum('status', ['OPEN', 'CLOSED', 'EXPIRED', 'DRAFT'])->default('DRAFT')->change();
+        });
     }
 
     public function down(): void
     {
-        DB::statement("UPDATE job_posts SET status = 'OPEN' WHERE status = 'DRAFT'");
-        DB::statement("ALTER TABLE job_posts MODIFY COLUMN status ENUM('OPEN','CLOSED','EXPIRED') NOT NULL DEFAULT 'OPEN'");
+        Schema::table('job_posts', function (Blueprint $table) {
+            $table->enum('status', ['OPEN', 'CLOSED', 'EXPIRED'])->default('OPEN')->change();
+        });
     }
 };
