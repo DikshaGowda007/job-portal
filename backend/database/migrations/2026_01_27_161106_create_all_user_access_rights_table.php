@@ -50,7 +50,7 @@ return new class extends Migration
             $table->tinyInteger('role_manage')->default(0)->comment('1 - Yes, 0 - No');
 
             $table->dateTime('created_date')->useCurrent();
-            $table->dateTime('modified_date')->useCurrent()->useCurrentOnUpdate();
+            $table->dateTime('modified_date')->useCurrent()->nullable();
 
             $table->unsignedTinyInteger('status')->default(1)->comment('1 - Active, 2 - Inactive');
             $table->unsignedTinyInteger('is_deleted')->default(0)->comment('1 - Yes, 0 - No');

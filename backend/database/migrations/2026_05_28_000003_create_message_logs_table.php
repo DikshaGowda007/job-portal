@@ -17,8 +17,7 @@ return new class extends Migration
             $table->boolean('is_delivered')->default(0);
             $table->tinyInteger('status')->default(1);
             $table->boolean('is_deleted')->default(0);
-            $table->dateTime('created_at')->nullable()->useCurrent();
-            $table->dateTime('updated_at')->nullable()->useCurrent()->useCurrentOnUpdate();
+            $table->timestamps();
         });
     }
 
