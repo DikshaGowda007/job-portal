@@ -18,12 +18,14 @@ import {
 } from "lucide-react";
 
 const STATUS_CONFIG = [
-  { key: "pending",     label: "Pending",     color: "bg-yellow-400", text: "text-yellow-700", bg: "bg-yellow-50 dark:bg-yellow-900/20" },
-  { key: "reviewed",    label: "Reviewed",    color: "bg-blue-400",   text: "text-blue-700",   bg: "bg-blue-50 dark:bg-blue-900/20" },
-  { key: "shortlisted", label: "Shortlisted", color: "bg-indigo-500", text: "text-indigo-700", bg: "bg-indigo-50 dark:bg-indigo-900/20" },
-  { key: "hired",       label: "Hired",       color: "bg-emerald-500",text: "text-emerald-700",bg: "bg-emerald-50 dark:bg-emerald-900/20" },
-  { key: "rejected",    label: "Rejected",    color: "bg-red-400",    text: "text-red-700",    bg: "bg-red-50 dark:bg-red-900/20" },
-  { key: "withdrawn",   label: "Withdrawn",   color: "bg-gray-400",   text: "text-gray-600",   bg: "bg-gray-50 dark:bg-gray-800" },
+  { key: "PENDING",     label: "Pending",     color: "bg-yellow-400", text: "text-yellow-700", bg: "bg-yellow-50 dark:bg-yellow-900/20" },
+  { key: "REVIEWED",    label: "Reviewed",    color: "bg-blue-400",   text: "text-blue-700",   bg: "bg-blue-50 dark:bg-blue-900/20" },
+  { key: "SHORTLISTED", label: "Shortlisted", color: "bg-indigo-500", text: "text-indigo-700", bg: "bg-indigo-50 dark:bg-indigo-900/20" },
+  { key: "INTERVIEW",   label: "Interview",   color: "bg-purple-400", text: "text-purple-700", bg: "bg-purple-50 dark:bg-purple-900/20" },
+  { key: "OFFERED",     label: "Offered",     color: "bg-cyan-400",   text: "text-cyan-700",   bg: "bg-cyan-50 dark:bg-cyan-900/20" },
+  { key: "HIRED",       label: "Hired",       color: "bg-emerald-500",text: "text-emerald-700",bg: "bg-emerald-50 dark:bg-emerald-900/20" },
+  { key: "REJECTED",    label: "Rejected",    color: "bg-red-400",    text: "text-red-700",    bg: "bg-red-50 dark:bg-red-900/20" },
+  { key: "WITHDRAWN",   label: "Withdrawn",   color: "bg-gray-400",   text: "text-gray-600",   bg: "bg-gray-50 dark:bg-gray-800" },
 ];
 
 const JOB_STATUS_CONFIG = [
@@ -178,10 +180,10 @@ export default function AdminDashboard() {
       {/* Bottom quick-stats row */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { icon: Clock,        label: "Pending Review",  value: appsByStatus["pending"]     ?? 0, cls: "text-yellow-500" },
-          { icon: Eye,          label: "Shortlisted",     value: appsByStatus["shortlisted"]  ?? 0, cls: "text-indigo-500" },
-          { icon: CheckCircle2, label: "Hired",           value: appsByStatus["hired"]        ?? 0, cls: "text-emerald-500" },
-          { icon: XCircle,      label: "Rejected",        value: appsByStatus["rejected"]     ?? 0, cls: "text-red-500" },
+          { icon: Clock,        label: "Pending Review",  value: appsByStatus["PENDING"]     ?? 0, cls: "text-yellow-500" },
+          { icon: Eye,          label: "Shortlisted",     value: appsByStatus["SHORTLISTED"]  ?? 0, cls: "text-indigo-500" },
+          { icon: CheckCircle2, label: "Hired",           value: appsByStatus["HIRED"]        ?? 0, cls: "text-emerald-500" },
+          { icon: XCircle,      label: "Rejected",        value: appsByStatus["REJECTED"]     ?? 0, cls: "text-red-500" },
         ].map(({ icon: Icon, label, value, cls }) => (
           <div key={label} className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
             <Icon size={20} className={cls} />
