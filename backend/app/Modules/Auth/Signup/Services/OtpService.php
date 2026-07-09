@@ -32,7 +32,7 @@ class OtpService
 
             return ['status' => CommonConstant::ERROR, 'message' => CommonConstant::OTP_SENT_FAIL];
         } catch (\Throwable $e) {
-
+            return response()->json(['status' => CommonConstant::ERROR, 'message' => $e]);
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
 
             return ['status' => CommonConstant::ERROR, 'message' => CommonConstant::OTP_SENT_FAIL];

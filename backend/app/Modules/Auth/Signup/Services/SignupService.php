@@ -29,6 +29,7 @@ class SignupService
 
             return response()->json(['status' => CommonConstant::SUCCESS, 'message' => CommonConstant::OTP_SENT_SUCCESS, 'data' => $data]);
         } catch (\Throwable $e) {
+            return response()->json(['status' => CommonConstant::ERROR, 'message' => $e]);
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
 
             return response()->json(CommonUtils::errorResponse(ErrorResponseConstant::ERROR_MESSAGE_GENERAL));
