@@ -38,6 +38,7 @@ class LoginService
         } catch (UserNotFoundException $e) {
             return CommonUtils::errorResponse($e->getMessage());
         } catch (Throwable $e) {
+            return Commonutils::errorResponse($e);
             throw $e;
         }
     }
