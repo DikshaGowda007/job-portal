@@ -25,7 +25,11 @@ class SignupService
         $this->userDetailsBo = $userDetailsBo;
         try {
             $data = $this->insert();
-            $this->verifyOtp($data);
+            $otpResult = $this->verifyOtp($data);
+
+            if (($otpResult['status'] ?? null) === CommonConstant::ERROR) {
+                return response()->json($otpResult + ['data' => $data]);
+            }
 
             return response()->json(['status' => CommonConstant::SUCCESS, 'message' => CommonConstant::OTP_SENT_SUCCESS, 'data' => $data]);
         } catch (\Throwable $e) {
