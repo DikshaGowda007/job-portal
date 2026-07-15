@@ -19,9 +19,16 @@ export function EchoProvider({ children }) {
 
   useEffect(() => {
     if (isAuthenticated) {
-      const instance = createEcho();
-      echoRef.current = instance;
-      setEcho(instance);
+      // A misconfigured/missing Reverb env var must not crash the whole app —
+      // without this, an uncaught error here unmounts the entire React tree
+      // (there's no error boundary), leaving a blank screen after login.
+      try {
+        const instance = createEcho();
+        echoRef.current = instance;
+        setEcho(instance);
+      } catch (err) {
+        console.error("Failed to initialize real-time connection:", err);
+      }
     } else {
       // Disconnect and clean up when the user logs out
       if (echoRef.current) {
