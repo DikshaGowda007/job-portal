@@ -14,4 +14,6 @@ export const recruiterApi = {
   markRead: (payload) => axiosClient.post(API.RECRUITER.MARK_READ, payload),
   sendTyping: (payload) => axiosClient.post(API.RECRUITER.TYPING, payload),
   viewSeekerProfile: (userId) => axiosClient.post(API.PROFILE.VIEW, { user_id: userId }),
+  getCompanyProfile: () => axiosClient.post(API.RECRUITER.COMPANY_PROFILE_GET),
+  updateCompanyProfile: (payload) => axiosClient.post(API.RECRUITER.COMPANY_PROFILE_UPDATE, payload),
 };

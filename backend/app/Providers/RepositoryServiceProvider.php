@@ -15,6 +15,7 @@ use App\Repositories\MySql\V1\JobSeekerExperienceRepositoryImpl;
 use App\Repositories\MySql\V1\JobSeekerProfileRepositoryImpl;
 use App\Repositories\MySql\V1\MessageLogRepositoryImpl;
 use App\Repositories\MySql\V1\NotificationRepositoryImpl;
+use App\Repositories\MySql\V1\RecruiterProfileRepositoryImpl;
 use App\Repositories\MySql\V1\SavedJobRepositoryImpl;
 use App\Repositories\MySql\V1\UserOTPVerificationRepositoryImpl;
 use App\Repositories\MySql\V1\UserRepositoryImpl;
@@ -31,6 +32,7 @@ use App\Repositories\V1\JobSeekerExperienceRepository;
 use App\Repositories\V1\JobSeekerProfileRepository;
 use App\Repositories\V1\MessageLogRepository;
 use App\Repositories\V1\NotificationRepository;
+use App\Repositories\V1\RecruiterProfileRepository;
 use App\Repositories\V1\SavedJobRepository;
 use App\Repositories\V1\UserOTPVerificationRepository;
 use App\Repositories\V1\UserRepository;
@@ -60,6 +62,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EmailLogsRepository::class, EmailLogsRepositoryImpl::class);
         $this->app->bind(MessageLogRepository::class, MessageLogRepositoryImpl::class);
         $this->app->bind(NotificationRepository::class, NotificationRepositoryImpl::class);
+        $this->app->bind(RecruiterProfileRepository::class, RecruiterProfileRepositoryImpl::class);
     }
 
     /**

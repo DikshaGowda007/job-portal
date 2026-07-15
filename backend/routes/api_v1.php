@@ -9,6 +9,7 @@ use App\Http\Controllers\JobCategory\JobCategoryController;
 use App\Http\Controllers\JobSeekerProfile\JobSeekerProfileController;
 use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Recruiter\RecruiterController;
+use App\Http\Controllers\RecruiterProfile\RecruiterProfileController;
 use App\Http\Controllers\SavedJob\SavedJobController;
 use App\Http\Controllers\User\ProfileController;
 
@@ -111,6 +112,11 @@ Route::prefix('profile')->middleware(['jwt.verify', 'access.role:'.UserConstant:
 
 Route::prefix('profile')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_RECRUITER.'|'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN])->group(function () {
     Route::post('/view', [JobSeekerProfileController::class, 'view'])->name('JobSeekerProfileController.view');
+});
+
+Route::prefix('recruiter/company-profile')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_RECRUITER])->group(function () {
+    Route::post('/get', [RecruiterProfileController::class, 'get'])->name('RecruiterProfileController.get');
+    Route::post('/update', [RecruiterProfileController::class, 'update'])->name('RecruiterProfileController.update');
 });
 
 Route::prefix('notification')->middleware(['jwt.verify'])->group(function () {

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import DashboardLayout from "./DashboardLayout";
-import { LayoutDashboard, Briefcase, Users, MessageSquare, UserCircle } from "lucide-react";
+import { LayoutDashboard, Briefcase, Users, MessageSquare, UserCircle, Building2 } from "lucide-react";
 import { recruiterApi } from "@/api/recruiter.api";
 import { ROUTES } from "@/utils/routePaths";
 
@@ -18,6 +18,7 @@ export default function RecruiterLayout() {
     { label: "My Jobs",      icon: Briefcase,        to: ROUTES.RECRUITER_JOBS },
     { label: "Applications", icon: Users,            to: ROUTES.RECRUITER_APPLICATIONS },
     { label: "Messages",     icon: MessageSquare,    to: ROUTES.RECRUITER_MESSAGES, badge: unreadCount },
+    { label: "Company Profile", icon: Building2,     to: ROUTES.RECRUITER_COMPANY_PROFILE },
     { label: "My Profile",   icon: UserCircle,       to: ROUTES.RECRUITER_PROFILE },
   ];
 

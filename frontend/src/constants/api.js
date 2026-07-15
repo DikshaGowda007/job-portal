@@ -59,6 +59,8 @@ export const API = {
     SEND_MESSAGE: `${BASE_URL}/api/v1/recruiter/send-message`,
     MARK_READ: `${BASE_URL}/api/v1/recruiter/mark-read`,
     TYPING: `${BASE_URL}/api/v1/recruiter/typing`,
+    COMPANY_PROFILE_GET: `${BASE_URL}/api/v1/recruiter/company-profile/get`,
+    COMPANY_PROFILE_UPDATE: `${BASE_URL}/api/v1/recruiter/company-profile/update`,
   },
 
   SAVED_JOB: {
