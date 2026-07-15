@@ -30,8 +30,12 @@ class OtpService
         } catch (Exception $e) {
             \Log::error('OTP Send Error: '.$e->getMessage());
 
-            return ['status' => CommonConstant::ERROR, 'message' => CommonConstant::OTP_SENT_FAIL];
+            // TEMPORARY: surface the real mail error since production logs aren't
+            // reachable on the free Render plan. Revert once mail delivery is fixed.
+            return ['status' => CommonConstant::ERROR, 'message' => CommonConstant::OTP_SENT_FAIL, 'debug_error' => $e->getMessage()];
         } catch (\Throwable $e) {
+            return ['status' => CommonConstant::ERROR, 'message' => CommonConstant::OTP_SENT_FAIL, 'debug_error' => $e->getMessage()];
+
             return response()->json(['status' => CommonConstant::ERROR, 'message' => $e]);
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
 
