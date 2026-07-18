@@ -34,6 +34,14 @@ class AccessControlConstants
 
     public const SAVED_JOB_DELETE = 'saved_job_delete';
 
+    public const JOB_ALERT_LIST = 'job_alert_list';
+
+    public const JOB_ALERT_ADD = 'job_alert_add';
+
+    public const JOB_ALERT_EDIT = 'job_alert_edit';
+
+    public const JOB_ALERT_DELETE = 'job_alert_delete';
+
     public const COMPANY_PROFILE_VIEW = 'company_profile_view';
 
     public const COMPANY_PROFILE_EDIT = 'company_profile_edit';

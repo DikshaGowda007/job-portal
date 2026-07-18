@@ -8,6 +8,7 @@ use App\Constants\JobConstants;
 use App\Http\Requests\V1\Job\Publish\DetailsRequest;
 use App\Modules\V1\Job\Bo\Publish\DetailsBo;
 use App\Modules\V1\Job\Helpers\JobHelper;
+use App\Modules\V1\JobAlert\Services\Match\DetailsService as JobAlertMatchService;
 use App\Repositories\DAO\V1\JobPostDAO;
 use App\Repositories\V1\JobRepository;
 use App\Utils\CommonUtils;
@@ -19,6 +20,7 @@ class DetailsService
         private JobHelper $jobHelper,
         private JobRepository $jobRepository,
         private JobPostDAO $jobPostDao,
+        private JobAlertMatchService $jobAlertMatchService,
     ) {}
 
     public function publish(DetailsBo $detailsBo): JsonResponse
@@ -48,12 +50,17 @@ class DetailsService
         $this->jobPostDao->setStatus(JobConstants::STATUS_OPEN);
         $this->jobPostDao->setModifiedByUserId(auth()->id());
         $this->jobRepository->updateById($id, $this->jobPostDao);
+
+        $job = $this->jobRepository->findById($id)->first();
+        $this->jobAlertMatchService->notifyMatchingAlerts($job);
     }
 
     private function publishNew(DetailsBo $detailsBo): void
     {
         $dao = $this->jobHelper->prepareDao($detailsBo);
         $dao->setStatus(JobConstants::STATUS_OPEN);
-        $this->jobRepository->insert($dao);
+        $job = $this->jobRepository->insert($dao);
+
+        $this->jobAlertMatchService->notifyMatchingAlerts($job);
     }
 }

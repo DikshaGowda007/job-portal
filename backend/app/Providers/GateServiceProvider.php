@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Policies\JobAlertPolicy;
 use App\Policies\JobApplicationPolicy;
 use App\Policies\JobCategoryPolicy;
 use App\Policies\JobPolicy;
@@ -20,6 +21,7 @@ class GateServiceProvider extends ServiceProvider
         $this->registerJobGates();
         $this->registerJobApplicationGates();
         $this->registerSavedJobGates();
+        $this->registerJobAlertGates();
         $this->registerJobCategoryGates();
         $this->registerUserGates();
     }
@@ -46,6 +48,14 @@ class GateServiceProvider extends ServiceProvider
         Gate::define('saved_job_list', [SavedJobPolicy::class, 'list']);
         Gate::define('saved_job_add', [SavedJobPolicy::class, 'add']);
         Gate::define('saved_job_delete', [SavedJobPolicy::class, 'delete']);
+    }
+
+    private function registerJobAlertGates(): void
+    {
+        Gate::define('job_alert_list', [JobAlertPolicy::class, 'list']);
+        Gate::define('job_alert_add', [JobAlertPolicy::class, 'add']);
+        Gate::define('job_alert_edit', [JobAlertPolicy::class, 'edit']);
+        Gate::define('job_alert_delete', [JobAlertPolicy::class, 'delete']);
     }
 
     private function registerJobCategoryGates(): void

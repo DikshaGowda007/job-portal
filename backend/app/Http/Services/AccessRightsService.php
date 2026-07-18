@@ -93,5 +93,9 @@ class AccessRightsService
         $this->userAccessDetails['saved_job_list'] = 1;
         $this->userAccessDetails['saved_job_add'] = 1;
         $this->userAccessDetails['saved_job_delete'] = 1;
+        $this->userAccessDetails['job_alert_list'] = 1;
+        $this->userAccessDetails['job_alert_add'] = 1;
+        $this->userAccessDetails['job_alert_edit'] = 1;
+        $this->userAccessDetails['job_alert_delete'] = 1;
     }
 }

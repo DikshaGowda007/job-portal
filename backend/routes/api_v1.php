@@ -4,6 +4,7 @@ use App\Constants\UserConstant;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Job\JobController;
+use App\Http\Controllers\JobAlert\JobAlertController;
 use App\Http\Controllers\JobApplication\JobApplicationController;
 use App\Http\Controllers\JobCategory\JobCategoryController;
 use App\Http\Controllers\JobSeekerProfile\JobSeekerProfileController;
@@ -95,6 +96,13 @@ Route::prefix('saved-job')->middleware(['jwt.verify', 'access.role:'.UserConstan
     Route::post('/add', [SavedJobController::class, 'add'])->name('SavedJobController.add');
     Route::post('/list', [SavedJobController::class, 'list'])->name('SavedJobController.list');
     Route::post('/delete', [SavedJobController::class, 'delete'])->name('SavedJobController.delete');
+});
+
+Route::prefix('job-alert')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_JOB_SEEKER])->group(function () {
+    Route::post('/add', [JobAlertController::class, 'add'])->name('JobAlertController.add');
+    Route::post('/edit', [JobAlertController::class, 'edit'])->name('JobAlertController.edit');
+    Route::post('/list', [JobAlertController::class, 'list'])->name('JobAlertController.list');
+    Route::post('/delete', [JobAlertController::class, 'delete'])->name('JobAlertController.delete');
 });
 
 // Job Seeker Profile

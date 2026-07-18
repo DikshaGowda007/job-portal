@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { notificationsApi } from "@/api/notifications.api";
 import { useAuth } from "@/context/AuthContext";
 import { ROUTES } from "@/utils/routePaths";
-import { Bell, Briefcase, CheckCheck } from "lucide-react";
+import { Bell, Briefcase, BellRing, CheckCheck } from "lucide-react";
 
 function formatNotifTime(dateStr) {
   if (!dateStr) return "";
@@ -20,6 +20,7 @@ function formatNotifTime(dateStr) {
 const NOTIFICATION_TYPES = {
   APPLICATION_RECEIVED: "APPLICATION_RECEIVED",
   APPLICATION_STATUS_CHANGED: "APPLICATION_STATUS_CHANGED",
+  JOB_ALERT_MATCH: "JOB_ALERT_MATCH",
 };
 
 function getNavTarget(notification, role) {
@@ -29,6 +30,9 @@ function getNavTarget(notification, role) {
   }
   if (notification.type === NOTIFICATION_TYPES.APPLICATION_STATUS_CHANGED) {
     return ROUTES.SEEKER_APPLICATION_DETAIL.replace(":id", notification.link_id);
+  }
+  if (notification.type === NOTIFICATION_TYPES.JOB_ALERT_MATCH) {
+    return ROUTES.SEEKER_JOB_DETAIL.replace(":id", notification.link_id);
   }
   return null;
 }
@@ -134,10 +138,16 @@ export default function NotificationBell() {
                     className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full ${
                       n.type === NOTIFICATION_TYPES.APPLICATION_RECEIVED
                         ? "bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-400"
-                        : "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400"
+                        : n.type === NOTIFICATION_TYPES.JOB_ALERT_MATCH
+                          ? "bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400"
+                          : "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400"
                     }`}
                   >
-                    <Briefcase size={14} />
+                    {n.type === NOTIFICATION_TYPES.JOB_ALERT_MATCH ? (
+                      <BellRing size={14} />
+                    ) : (
+                      <Briefcase size={14} />
+                    )}
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className={`text-sm ${!n.is_read ? "font-semibold text-gray-900 dark:text-white" : "text-gray-700 dark:text-gray-300"}`}>

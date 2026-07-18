@@ -69,6 +69,13 @@ export const API = {
     DELETE: `${BASE_URL}/api/v1/saved-job/delete`,
   },
 
+  JOB_ALERT: {
+    ADD: `${BASE_URL}/api/v1/job-alert/add`,
+    EDIT: `${BASE_URL}/api/v1/job-alert/edit`,
+    LIST: `${BASE_URL}/api/v1/job-alert/list`,
+    DELETE: `${BASE_URL}/api/v1/job-alert/delete`,
+  },
+
   PROFILE: {
     GET: `${BASE_URL}/api/v1/profile/get`,
     UPDATE: `${BASE_URL}/api/v1/profile/update`,

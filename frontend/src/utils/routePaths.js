@@ -16,6 +16,7 @@ export const ROUTES = {
   SEEKER_APPLICATIONS: "/seeker/applications",
   SEEKER_APPLICATION_DETAIL: "/seeker/applications/:id",
   SEEKER_SAVED_JOBS: "/seeker/saved-jobs",
+  SEEKER_JOB_ALERTS: "/seeker/job-alerts",
   SEEKER_PROFILE: "/seeker/profile",
   SEEKER_MESSAGES: "/seeker/messages",
 

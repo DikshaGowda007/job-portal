@@ -28,6 +28,11 @@ class AccessControlInitializer
         $userAccessDetails[AccessControlConstants::SAVED_JOB_ADD] = 0;
         $userAccessDetails[AccessControlConstants::SAVED_JOB_DELETE] = 0;
 
+        $userAccessDetails[AccessControlConstants::JOB_ALERT_LIST] = 0;
+        $userAccessDetails[AccessControlConstants::JOB_ALERT_ADD] = 0;
+        $userAccessDetails[AccessControlConstants::JOB_ALERT_EDIT] = 0;
+        $userAccessDetails[AccessControlConstants::JOB_ALERT_DELETE] = 0;
+
         $userAccessDetails[AccessControlConstants::COMPANY_PROFILE_VIEW] = 0;
         $userAccessDetails[AccessControlConstants::COMPANY_PROFILE_EDIT] = 0;
         $userAccessDetails[AccessControlConstants::CATEGORY_VIEW] = 0;

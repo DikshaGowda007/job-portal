@@ -84,6 +84,26 @@ class AccessService
         return Gate::allows('saved_job_delete', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
     }
 
+    public function hasJobAlertAddAccess()
+    {
+        return Gate::allows('job_alert_add', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
+    public function hasJobAlertListAccess()
+    {
+        return Gate::allows('job_alert_list', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
+    public function hasJobAlertEditAccess()
+    {
+        return Gate::allows('job_alert_edit', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
+    public function hasJobAlertDeleteAccess()
+    {
+        return Gate::allows('job_alert_delete', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);
+    }
+
     public function hasJobCategoryViewAccess()
     {
         return Gate::allows('category_view', [$this->loggedInUserAccessDetails, $this->loggedInUserRole]);

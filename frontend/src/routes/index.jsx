@@ -23,6 +23,7 @@ import SeekerJobsPage from "@/features/seeker/pages/SeekerJobsPage";
 import SeekerApplicationsPage from "@/features/seeker/pages/SeekerApplicationsPage";
 import SeekerApplicationDetailPage from "@/features/seeker/pages/SeekerApplicationDetailPage";
 import SeekerSavedJobsPage from "@/features/seeker/pages/SeekerSavedJobsPage";
+import SeekerJobAlertsPage from "@/features/seeker/pages/SeekerJobAlertsPage";
 import SeekerProfilePage from "@/features/seeker/pages/SeekerProfilePage";
 import SeekerMessagesPage from "@/features/seeker/pages/SeekerMessagesPage";
 import SeekerJobDetailPage from "@/features/seeker/pages/SeekerJobDetailPage";
@@ -93,6 +94,7 @@ const router = createBrowserRouter([
               { path: ROUTES.SEEKER_APPLICATIONS,       element: <SeekerApplicationsPage /> },
               { path: ROUTES.SEEKER_APPLICATION_DETAIL, element: <SeekerApplicationDetailPage /> },
               { path: ROUTES.SEEKER_SAVED_JOBS,         element: <SeekerSavedJobsPage /> },
+              { path: ROUTES.SEEKER_JOB_ALERTS,         element: <SeekerJobAlertsPage /> },
               { path: ROUTES.SEEKER_PROFILE,            element: <SeekerProfilePage /> },
               { path: ROUTES.SEEKER_MESSAGES,           element: <SeekerMessagesPage /> },
             ],

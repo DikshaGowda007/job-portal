@@ -29,4 +29,9 @@ export const seekerApi = {
   savedJobs: (params) => axiosClient.post(API.SAVED_JOB.LIST, params),
   saveJob: (payload) => axiosClient.post(API.SAVED_JOB.ADD, payload),
   unsaveJob: (payload) => axiosClient.post(API.SAVED_JOB.DELETE, payload),
+
+  jobAlerts: () => axiosClient.post(API.JOB_ALERT.LIST),
+  createJobAlert: (payload) => axiosClient.post(API.JOB_ALERT.ADD, payload),
+  updateJobAlert: (payload) => axiosClient.post(API.JOB_ALERT.EDIT, payload),
+  deleteJobAlert: (payload) => axiosClient.post(API.JOB_ALERT.DELETE, payload),
 };

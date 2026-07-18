@@ -4,6 +4,8 @@ namespace App\Modules\V1\Job\Bo\Publish;
 
 class DetailsBo
 {
+    private ?int $id = null;
+
     private ?int $userId = null;
 
     // Basic job info
@@ -62,6 +64,10 @@ class DetailsBo
     public function toArray(): array
     {
         $data = [];
+
+        if (isset($this->id)) {
+            $data['id'] = $this->id;
+        }
 
         if (isset($this->userId)) {
             $data['user_id'] = $this->userId;
@@ -156,6 +162,24 @@ class DetailsBo
         }
 
         return $data;
+    }
+
+    /**
+     * Get the value of id
+     */
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set the value of id
+     */
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     /**

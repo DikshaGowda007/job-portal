@@ -18,6 +18,7 @@ export default function SeekerLayout() {
     { label: "Browse Jobs",      to: ROUTES.SEEKER_JOBS },
     { label: "My Applications",  to: ROUTES.SEEKER_APPLICATIONS },
     { label: "Saved Jobs",       to: ROUTES.SEEKER_SAVED_JOBS },
+    { label: "Job Alerts",       to: ROUTES.SEEKER_JOB_ALERTS },
     { label: "My Profile",       to: ROUTES.SEEKER_PROFILE },
     { label: "Messages",         to: ROUTES.SEEKER_MESSAGES, badge: unreadCount },
   ];
