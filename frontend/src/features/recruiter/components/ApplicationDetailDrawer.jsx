@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { recruiterApi } from "@/api/recruiter.api";
 import { formatDate } from "@/utils/formatters";
 import { STATUS_BADGE, logoColor, NEXT_ACTIONS } from "@/features/recruiter/utils/applicationHelpers";
+import ApplicationTimeline from "@/components/common/ApplicationTimeline";
 import { X, FileText, DollarSign, Timer, Clock, MapPin, Briefcase, GraduationCap, Loader2, Send, Link2 } from "lucide-react";
 
 export default function ApplicationDetailDrawer({
@@ -18,11 +19,15 @@ export default function ApplicationDetailDrawer({
   const queryClient = useQueryClient();
   const [pendingAction, setPendingAction] = useState(null);
   const [message, setMessage] = useState("");
+  const [interviewScheduledAt, setInterviewScheduledAt] = useState("");
+  const [interviewLocation, setInterviewLocation] = useState("");
 
   useEffect(() => {
     if (app) {
       setPendingAction(initialAction);
       setMessage("");
+      setInterviewScheduledAt("");
+      setInterviewLocation("");
     }
   }, [app, initialAction]);
 
@@ -65,6 +70,8 @@ export default function ApplicationDetailDrawer({
   const handleActionClick = (action) => {
     setPendingAction(action);
     setMessage("");
+    setInterviewScheduledAt("");
+    setInterviewLocation("");
   };
 
   const handleConfirm = () => {
@@ -72,6 +79,8 @@ export default function ApplicationDetailDrawer({
       application_id: app.id,
       status: pendingAction.status,
       ...(message.trim() && { recruiter_notes: message.trim() }),
+      ...(pendingAction.status === "INTERVIEW" && interviewScheduledAt && { interview_scheduled_at: interviewScheduledAt }),
+      ...(pendingAction.status === "INTERVIEW" && interviewLocation.trim() && { interview_location: interviewLocation.trim() }),
     });
   };
 
@@ -310,46 +319,7 @@ export default function ApplicationDetailDrawer({
             {/* Status history */}
             {timeline.length > 0 && (
               <Section title="Status History">
-                <div className="space-y-3">
-                  {timeline.map((entry) => {
-                    const isSubmission = !entry.previous_status;
-                    return (
-                    <div key={entry.id} className="flex gap-3">
-                      <div className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg ${isSubmission ? "bg-indigo-50 dark:bg-indigo-900/30" : "bg-gray-100 dark:bg-gray-800"}`}>
-                        {isSubmission ? (
-                          <FileText size={13} className="text-indigo-500 dark:text-indigo-400" />
-                        ) : (
-                          <Clock size={13} className="text-gray-500 dark:text-gray-400" />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-900 dark:text-white">
-                          {isSubmission ? (
-                            <span className="font-medium">Application submitted</span>
-                          ) : (
-                            <>
-                              <span>{entry.previous_status.charAt(0) + entry.previous_status.slice(1).toLowerCase()}</span>
-                              <span className="mx-1.5 text-gray-400">→</span>
-                              <span className="font-medium">{entry.new_status.charAt(0) + entry.new_status.slice(1).toLowerCase()}</span>
-                            </>
-                          )}
-                        </p>
-                        <div className="mt-0.5 flex flex-wrap gap-2 text-xs text-gray-400 dark:text-gray-500">
-                          <span className="flex items-center gap-1">
-                            <Clock size={10} /> {formatDate(entry.created_at)}
-                          </span>
-                          {entry.changed_by?.name && (
-                            <span>by {entry.changed_by.name}</span>
-                          )}
-                          {entry.notes && (
-                            <span className="italic">{entry.notes}</span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                  })}
-                </div>
+                <ApplicationTimeline timeline={timeline} />
               </Section>
             )}
           </div>
@@ -360,6 +330,33 @@ export default function ApplicationDetailDrawer({
           <div className="sticky bottom-0 border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
             {pendingAction ? (
               <div className="space-y-3 px-6 py-4">
+                {pendingAction.status === "INTERVIEW" && (
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div>
+                      <p className="mb-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+                        Interview date &amp; time
+                      </p>
+                      <input
+                        type="datetime-local"
+                        value={interviewScheduledAt}
+                        onChange={(e) => setInterviewScheduledAt(e.target.value)}
+                        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800 outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                      />
+                    </div>
+                    <div>
+                      <p className="mb-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+                        Location / meeting link
+                      </p>
+                      <input
+                        type="text"
+                        value={interviewLocation}
+                        onChange={(e) => setInterviewLocation(e.target.value)}
+                        placeholder="3rd Floor, Tower A or Zoom link"
+                        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800 outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                      />
+                    </div>
+                  </div>
+                )}
                 <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
                   Message to candidate{" "}
                   <span className="font-normal">(optional)</span>

@@ -35,6 +35,8 @@ class DetailsRequest extends FormRequest
             'application_id' => 'required|integer|exists:job_applications,id',
             'status' => 'required|in:'.implode(',', JobApplicationConstants::RECRUITER_ALLOWED_STATUSES),
             'recruiter_notes' => 'nullable|string|max:2000',
+            'interview_scheduled_at' => ['nullable', 'date', 'after:now', 'required_if:status,'.JobApplicationConstants::STATUS_INTERVIEW],
+            'interview_location' => 'nullable|string|max:500',
         ];
     }
 
@@ -53,6 +55,8 @@ class DetailsRequest extends FormRequest
             'application_id' => 'Application',
             'status' => 'Status',
             'recruiter_notes' => 'Recruiter Notes',
+            'interview_scheduled_at' => 'Interview Date & Time',
+            'interview_location' => 'Interview Location',
         ];
     }
 }

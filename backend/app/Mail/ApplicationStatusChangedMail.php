@@ -24,13 +24,19 @@ class ApplicationStatusChangedMail extends Mailable
 
     public ?string $recruiterNotes;
 
+    public ?string $interviewScheduledAt;
+
+    public ?string $interviewLocation;
+
     public function __construct(
         string $candidateName,
         string $jobTitle,
         string $companyName,
         string $oldStatus,
         string $newStatus,
-        ?string $recruiterNotes = null
+        ?string $recruiterNotes = null,
+        ?string $interviewScheduledAt = null,
+        ?string $interviewLocation = null
     ) {
         $this->candidateName = $candidateName;
         $this->jobTitle = $jobTitle;
@@ -38,6 +44,8 @@ class ApplicationStatusChangedMail extends Mailable
         $this->oldStatus = $oldStatus;
         $this->newStatus = $newStatus;
         $this->recruiterNotes = $recruiterNotes;
+        $this->interviewScheduledAt = $interviewScheduledAt;
+        $this->interviewLocation = $interviewLocation;
     }
 
     public function envelope(): Envelope
@@ -58,6 +66,8 @@ class ApplicationStatusChangedMail extends Mailable
                 'oldStatus' => $this->oldStatus,
                 'newStatus' => $this->newStatus,
                 'recruiterNotes' => $this->recruiterNotes,
+                'interviewScheduledAt' => $this->interviewScheduledAt,
+                'interviewLocation' => $this->interviewLocation,
             ],
         );
     }

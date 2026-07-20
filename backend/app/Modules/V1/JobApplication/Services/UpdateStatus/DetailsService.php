@@ -52,10 +52,10 @@ class DetailsService
 
             $this->validateStatusTransition($detailsBo->getStatus());
             $this->updateApplicationStatus($detailsBo);
-            $this->logApplicationHistory($applicationId, $detailsBo->getStatus(), $detailsBo->getRecruiterNotes());
+            $this->logApplicationHistory($applicationId, $detailsBo->getStatus(), $detailsBo->getRecruiterNotes(), $detailsBo->getInterviewScheduledAt(), $detailsBo->getInterviewLocation());
             $this->saveMessage($applicationId, $seekerUserId, $detailsBo->getRecruiterNotes());
-            $this->sendStatusChangeNotification($application, $detailsBo->getStatus(), $detailsBo->getRecruiterNotes());
-            $this->createSeekerNotification($seekerUserId, $applicationId, $application, $detailsBo->getStatus());
+            $this->sendStatusChangeNotification($application, $detailsBo->getStatus(), $detailsBo->getRecruiterNotes(), $detailsBo->getInterviewScheduledAt(), $detailsBo->getInterviewLocation());
+            $this->createSeekerNotification($seekerUserId, $applicationId, $application, $detailsBo->getStatus(), $detailsBo->getInterviewScheduledAt(), $detailsBo->getInterviewLocation());
 
             return response()->json(CommonUtils::successResponse('Application status updated successfully'));
         } catch (AccessForbiddenException|InvalidDataException $e) {
@@ -98,14 +98,16 @@ class DetailsService
         $this->jobApplicationRepository->updateById($detailsBo->getApplicationId(), $jobApplicationDao);
     }
 
-    private function logApplicationHistory(int $applicationId, string $newStatus, ?string $notes): void
+    private function logApplicationHistory(int $applicationId, string $newStatus, ?string $notes, ?string $interviewScheduledAt = null, ?string $interviewLocation = null): void
     {
         $historyDao = $this->helper->prepareHistoryDao(
             $applicationId,
             $this->oldStatus,
             $newStatus,
             $this->loggedInActionByUserId,
-            $notes ?? 'Status updated from '.$this->oldStatus.' to '.$newStatus
+            $notes ?? 'Status updated from '.$this->oldStatus.' to '.$newStatus,
+            $interviewScheduledAt,
+            $interviewLocation
         );
         $this->jobApplicationHistoryRepository->insert($historyDao);
     }
@@ -176,7 +178,7 @@ class DetailsService
         }
     }
 
-    private function sendStatusChangeNotification(Collection $application, string $newStatus, ?string $message = null): void
+    private function sendStatusChangeNotification(Collection $application, string $newStatus, ?string $message = null, ?string $interviewScheduledAt = null, ?string $interviewLocation = null): void
     {
         try {
             $seekerEmail = $application->get('user')['email'] ?? null;
@@ -191,7 +193,9 @@ class DetailsService
                     $companyName,
                     $this->oldStatus,
                     $newStatus,
-                    $message
+                    $message,
+                    $interviewScheduledAt,
+                    $interviewLocation
                 ));
             }
         } catch (\Exception $e) {
@@ -199,7 +203,7 @@ class DetailsService
         }
     }
 
-    private function createSeekerNotification(?int $seekerUserId, int $applicationId, Collection $application, string $newStatus): void
+    private function createSeekerNotification(?int $seekerUserId, int $applicationId, Collection $application, string $newStatus, ?string $interviewScheduledAt = null, ?string $interviewLocation = null): void
     {
         if (! $seekerUserId) {
             return;
@@ -210,11 +214,18 @@ class DetailsService
             $companyName = $application->get('job_post')['company_name'] ?? '';
             $displayStatus = ucfirst(strtolower($newStatus));
 
+            if ($newStatus === JobApplicationConstants::STATUS_INTERVIEW && $interviewScheduledAt) {
+                $formattedDate = date('M j, Y \a\t g:i A', strtotime($interviewScheduledAt));
+                $body = "Your interview for {$jobTitle}".($companyName ? " at {$companyName}" : '')." is scheduled for {$formattedDate}".($interviewLocation ? " at {$interviewLocation}" : '');
+            } else {
+                $body = "Your application for {$jobTitle}".($companyName ? " at {$companyName}" : '')." is now {$displayStatus}";
+            }
+
             $dao = (new NotificationDAO)
                 ->setUserId($seekerUserId)
                 ->setType(NotificationConstants::TYPE_APPLICATION_STATUS_CHANGED)
                 ->setTitle('Application status updated')
-                ->setBody("Your application for {$jobTitle}".($companyName ? " at {$companyName}" : '')." is now {$displayStatus}")
+                ->setBody($body)
                 ->setLinkId($applicationId);
 
             $this->notificationRepository->insert($dao);

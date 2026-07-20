@@ -16,6 +16,10 @@ class JobApplicationHistoryDAO
 
     private ?string $notes = null;
 
+    private ?string $interviewScheduledAt = null;
+
+    private ?string $interviewLocation = null;
+
     private ?string $createdAt = null;
 
     private ?string $updatedAt = null;
@@ -38,6 +42,12 @@ class JobApplicationHistoryDAO
         }
         if (isset($this->notes)) {
             $collection['notes'] = $this->notes;
+        }
+        if (isset($this->interviewScheduledAt)) {
+            $collection['interview_scheduled_at'] = $this->interviewScheduledAt;
+        }
+        if (isset($this->interviewLocation)) {
+            $collection['interview_location'] = $this->interviewLocation;
         }
         if (isset($this->createdAt)) {
             $collection['created_at'] = $this->createdAt;
@@ -117,6 +127,30 @@ class JobApplicationHistoryDAO
     public function setNotes(?string $notes): self
     {
         $this->notes = $notes;
+
+        return $this;
+    }
+
+    public function getInterviewScheduledAt(): ?string
+    {
+        return $this->interviewScheduledAt;
+    }
+
+    public function setInterviewScheduledAt(?string $interviewScheduledAt): self
+    {
+        $this->interviewScheduledAt = $interviewScheduledAt;
+
+        return $this;
+    }
+
+    public function getInterviewLocation(): ?string
+    {
+        return $this->interviewLocation;
+    }
+
+    public function setInterviewLocation(?string $interviewLocation): self
+    {
+        $this->interviewLocation = $interviewLocation;
 
         return $this;
     }

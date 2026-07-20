@@ -65,6 +65,7 @@ Route::prefix('application')->middleware(['jwt.verify', 'access.role:'.UserConst
     Route::post('/my-applications', [JobApplicationController::class, 'myApplications'])->name('JobApplicationController.myApplications');
     Route::post('/get', [JobApplicationController::class, 'get'])->name('JobApplicationController.get');
     Route::post('/withdraw', [JobApplicationController::class, 'withdraw'])->name('JobApplicationController.withdraw');
+    Route::post('/history', [JobApplicationController::class, 'history'])->name('JobApplicationController.seekerHistory');
     Route::post('/conversations', [JobApplicationController::class, 'conversations'])->name('JobApplicationController.conversations');
     Route::post('/send-message', [JobApplicationController::class, 'sendMessage'])->name('JobApplicationController.sendMessage');
     Route::post('/mark-read', [JobApplicationController::class, 'markRead'])->name('JobApplicationController.markRead');

@@ -43,6 +43,8 @@ class JobApplicationHelper
         $updateStatusDetailsBo->setApplicationId($updateStatusDetailsRequest->input('application_id'));
         $updateStatusDetailsBo->setStatus($updateStatusDetailsRequest->input('status'));
         $updateStatusDetailsBo->setRecruiterNotes($updateStatusDetailsRequest->input('recruiter_notes'));
+        $updateStatusDetailsBo->setInterviewScheduledAt($updateStatusDetailsRequest->input('interview_scheduled_at'));
+        $updateStatusDetailsBo->setInterviewLocation($updateStatusDetailsRequest->input('interview_location'));
 
         return $updateStatusDetailsBo;
     }
@@ -76,7 +78,7 @@ class JobApplicationHelper
         return $jobApplicationDao;
     }
 
-    public function prepareHistoryDao(int $applicationId, ?string $previousStatus, string $newStatus, int $changedBy, string $notes): JobApplicationHistoryDAO
+    public function prepareHistoryDao(int $applicationId, ?string $previousStatus, string $newStatus, int $changedBy, string $notes, ?string $interviewScheduledAt = null, ?string $interviewLocation = null): JobApplicationHistoryDAO
     {
         $historyDao = new JobApplicationHistoryDAO;
 
@@ -85,6 +87,12 @@ class JobApplicationHelper
         $historyDao->setNewStatus($newStatus);
         $historyDao->setChangedBy($changedBy);
         $historyDao->setNotes($notes);
+        if ($interviewScheduledAt) {
+            $historyDao->setInterviewScheduledAt($interviewScheduledAt);
+        }
+        if ($interviewLocation) {
+            $historyDao->setInterviewLocation($interviewLocation);
+        }
 
         return $historyDao;
     }

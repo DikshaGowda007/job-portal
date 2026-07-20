@@ -17,6 +17,20 @@
     </p>
 </div>
 
+@if($interviewScheduledAt)
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f3ff;border:1px solid #ddd6fe;border-radius:12px;margin-bottom:24px;">
+    <tr>
+        <td style="padding:16px 20px;">
+            <p style="margin:0 0 8px;font-size:12px;font-weight:600;color:#7c3aed;text-transform:uppercase;letter-spacing:0.06em;">Interview Details</p>
+            <p style="margin:0 0 4px;font-size:14px;color:#374151;"><strong>When:</strong> {{ date('M j, Y \a\t g:i A', strtotime($interviewScheduledAt)) }}</p>
+            @if($interviewLocation)
+            <p style="margin:0;font-size:14px;color:#374151;"><strong>Where:</strong> {{ $interviewLocation }}</p>
+            @endif
+        </td>
+    </tr>
+</table>
+@endif
+
 @if($recruiterNotes)
 <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:24px;">
     <tr>

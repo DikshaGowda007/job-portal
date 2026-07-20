@@ -4,6 +4,8 @@ namespace App\Modules\V1\JobApplication\Services\History;
 
 use App\Constants\CommonConstant;
 use App\Constants\ErrorResponseConstant;
+use App\Constants\UserConstant;
+use App\Exceptions\AccessForbiddenException;
 use App\Exceptions\DataNotFoundException;
 use App\Repositories\V1\JobApplicationHistoryRepository;
 use App\Repositories\V1\JobApplicationRepository;
@@ -27,11 +29,12 @@ class DetailsService
     {
         try {
             $application = $this->findApplication($applicationId);
+            $this->hasAccess($application);
             $histories = $this->jobApplicationHistoryRepository->fetchByApplicationId($applicationId);
             $response = $this->formatResponse($applicationId, $application, $histories);
 
             return response()->json(CommonUtils::successDataResponse($response));
-        } catch (DataNotFoundException $e) {
+        } catch (DataNotFoundException|AccessForbiddenException $e) {
             return response()->json(CommonUtils::errorResponse($e->getMessage()));
         } catch (\Throwable $e) {
             CommonUtils::handleException($e->getMessage(), $e, CommonConstant::LOG_LEVEL_CRITICAL);
@@ -49,6 +52,17 @@ class DetailsService
         }
 
         return $application;
+    }
+
+    private function hasAccess(Collection $application): void
+    {
+        $isAdmin = in_array($this->loggedInUserRole, [UserConstant::USER_ROLE_ADMIN, UserConstant::USER_ROLE_SUB_ADMIN]);
+        $isOwningRecruiter = $this->loggedInUserRole == UserConstant::USER_ROLE_RECRUITER && $this->loggedInUserId === $application->get('job_post')['user_id'];
+        $isOwningSeeker = $this->loggedInUserRole == UserConstant::USER_ROLE_JOB_SEEKER && $this->loggedInUserId === ($application->get('user')['id'] ?? null);
+
+        if (! $isAdmin && ! $isOwningRecruiter && ! $isOwningSeeker) {
+            throw AccessForbiddenException::withMessage('Unauthorized to view this application history');
+        }
     }
 
     private function formatResponse(int $applicationId, Collection $application, $histories): array
@@ -74,6 +88,8 @@ class DetailsService
                     'name' => $history->changedByUser->name,
                 ] : null,
                 'notes' => $history->notes,
+                'interview_scheduled_at' => $history->interview_scheduled_at,
+                'interview_location' => $history->interview_location,
                 'created_at' => $history->created_at,
             ];
         }

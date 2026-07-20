@@ -12,6 +12,10 @@ class DetailsBo
 
     private ?int $reviewedByUserId = null;
 
+    private ?string $interviewScheduledAt = null;
+
+    private ?string $interviewLocation = null;
+
     public function toArray()
     {
         $data = [];
@@ -27,6 +31,12 @@ class DetailsBo
         }
         if (isset($this->reviewedByUserId)) {
             $data['reviewed_by_user_id'] = $this->reviewedByUserId;
+        }
+        if (isset($this->interviewScheduledAt)) {
+            $data['interview_scheduled_at'] = $this->interviewScheduledAt;
+        }
+        if (isset($this->interviewLocation)) {
+            $data['interview_location'] = $this->interviewLocation;
         }
 
         return $data;
@@ -100,6 +110,42 @@ class DetailsBo
     public function setReviewedByUserId(?int $reviewedByUserId): self
     {
         $this->reviewedByUserId = $reviewedByUserId;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of interviewScheduledAt
+     */
+    public function getInterviewScheduledAt(): ?string
+    {
+        return $this->interviewScheduledAt;
+    }
+
+    /**
+     * Set the value of interviewScheduledAt
+     */
+    public function setInterviewScheduledAt(?string $interviewScheduledAt): self
+    {
+        $this->interviewScheduledAt = $interviewScheduledAt;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of interviewLocation
+     */
+    public function getInterviewLocation(): ?string
+    {
+        return $this->interviewLocation;
+    }
+
+    /**
+     * Set the value of interviewLocation
+     */
+    public function setInterviewLocation(?string $interviewLocation): self
+    {
+        $this->interviewLocation = $interviewLocation;
 
         return $this;
     }

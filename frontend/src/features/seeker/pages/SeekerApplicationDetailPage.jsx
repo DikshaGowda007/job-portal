@@ -9,6 +9,7 @@ import { formatDate, timeAgo } from "@/utils/formatters";
 import Loader from "@/components/common/Loader";
 import CompanyLogo from "@/components/common/CompanyLogo";
 import ConfirmModal from "@/components/modals/ConfirmModal";
+import ApplicationTimeline from "@/components/common/ApplicationTimeline";
 import {
   ArrowLeft,
   Clock,
@@ -18,6 +19,7 @@ import {
   Circle,
   XCircle,
   MessageSquare,
+  History,
 } from "lucide-react";
 
 const PIPELINE_STEPS = ["pending", "reviewed", "shortlisted", "interview", "offered", "hired"];
@@ -113,6 +115,14 @@ export default function SeekerApplicationDetailPage() {
     queryFn: () =>
       seekerApi
         .getApplication({ application_id: id })
+        .then((r) => r.data?.data),
+  });
+
+  const { data: historyData } = useQuery({
+    queryKey: ["application-history", id],
+    queryFn: () =>
+      seekerApi
+        .getApplicationHistory({ application_id: id })
         .then((r) => r.data?.data),
   });
 
@@ -277,6 +287,17 @@ export default function SeekerApplicationDetailPage() {
         </div>
         )}
       </div>
+      )}
+
+      {/* Status timeline */}
+      {historyData?.timeline?.length > 0 && (
+        <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white">
+            <History size={15} className="text-indigo-500" />
+            Status Timeline
+          </h2>
+          <ApplicationTimeline timeline={historyData.timeline} />
+        </div>
       )}
 
       {/* Messages from recruiter */}

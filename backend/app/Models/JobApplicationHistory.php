@@ -15,6 +15,8 @@ class JobApplicationHistory extends Model
         'new_status',
         'changed_by',
         'notes',
+        'interview_scheduled_at',
+        'interview_location',
         'created_at',
         'updated_at',
     ];
