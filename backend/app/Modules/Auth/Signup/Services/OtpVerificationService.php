@@ -5,10 +5,10 @@ namespace App\Modules\Auth\Signup\Services;
 use App\Constants\CommonConstant;
 use App\Exceptions\InvalidOTP;
 use App\Exceptions\OtpExpired;
-use App\Utils\CommonUtils;
 use App\Repositories\DAO\V1\UserDAO;
 use App\Repositories\V1\UserOTPVerificationRepository;
 use App\Repositories\V1\UserRepository;
+use App\Utils\CommonUtils;
 use Carbon\Carbon;
 use Exception;
 
