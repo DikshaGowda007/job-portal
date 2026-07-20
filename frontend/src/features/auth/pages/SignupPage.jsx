@@ -41,10 +41,6 @@ export default function SignupPage() {
   } = useSignupForm();
 
   return (
-    <>
-     <div style={{ background: "yellow", color: "black" }}>
-        DEBUG: Signup
-      </div>
     <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-10 dark:bg-gray-950">
       <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
         {/* Logo */}
@@ -193,6 +189,5 @@ export default function SignupPage() {
         </p>
       </div>
     </div>
-    </>
   );
 }
