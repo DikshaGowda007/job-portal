@@ -21,6 +21,21 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
+## Mail Setup
+
+This project sends transactional mail (OTP, application status updates) via
+[Resend](https://resend.com). To send real mail, add a `RESEND_KEY` to your
+`.env` and set `MAIL_MAILER=resend`:
+
+```
+MAIL_MAILER=resend
+RESEND_KEY=your-resend-api-key
+```
+
+Without a key, mail falls back to whatever `MAIL_MAILER` is configured
+(e.g. `log` or `smtp`). On Render, set `MAIL_MAILER` and `RESEND_KEY` in the
+service's **Environment** tab — `.env` is not read in production.
+
 ## Learning Laravel
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
