@@ -157,6 +157,10 @@ export default function SeekerJobsPage() {
   );
 
   return (
+    <>
+            <div style={{ background: "yellow", color: "black" }}>
+        DEBUG: Seeker Jobs page
+      </div>
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Browse Jobs</h1>
@@ -316,5 +320,6 @@ export default function SeekerJobsPage() {
         </>
       )}
     </div>
+    </>
   );
 }

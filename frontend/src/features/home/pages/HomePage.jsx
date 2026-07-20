@@ -59,6 +59,10 @@ export default function HomePage() {
   };
 
   return (
+<>
+    <div style={{ background: "yellow", color: "black" }}>
+        DEBUG: HomePage
+      </div>
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
       <JobSearchBar onSearch={handleSearch} />
 
@@ -106,5 +110,6 @@ export default function HomePage() {
         />
       )}
     </div>
+    </>
   );
 }
