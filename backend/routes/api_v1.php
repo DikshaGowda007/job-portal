@@ -41,7 +41,6 @@ Route::prefix('user')->middleware(['jwt.verify'])->group(function () {
 Route::prefix('job')->group(function () {
     Route::post('/list', [JobController::class, 'list'])->name('JobController.list');
     Route::post('/get', [JobController::class, 'get'])->name('JobController.get');
-    Route::post('/suggestions', [JobController::class, 'suggestions'])->name('JobController.suggestions');
 });
 
 // Authenticated job write operations

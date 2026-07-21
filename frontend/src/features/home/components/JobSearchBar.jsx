@@ -1,14 +1,10 @@
-import { useState } from "react";
 import { Search, MapPin } from "lucide-react";
-import SuggestionInput from "./SuggestionInput";
 
 export default function JobSearchBar({ onSearch }) {
-  const [keyword, setKeyword] = useState("");
-  const [location, setLocation] = useState("");
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSearch(keyword, location);
+    const form = new FormData(e.target);
+    onSearch(form.get("keyword"), form.get("location"));
   };
 
   return (
@@ -26,28 +22,28 @@ export default function JobSearchBar({ onSearch }) {
 
         <form
           onSubmit={handleSubmit}
-          className="mx-auto mt-7 flex max-w-3xl rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
+          className="mx-auto mt-7 flex max-w-3xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
         >
-          <SuggestionInput
-            type="title"
-            icon={Search}
-            name="keyword"
-            placeholder="Job title or keyword"
-            value={keyword}
-            onChange={setKeyword}
-          />
+          <div className="flex flex-1 items-center gap-2 px-4">
+            <Search size={15} className="shrink-0 text-gray-400" />
+            <input
+              name="keyword"
+              placeholder="Job title or keyword"
+              className="h-12 w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
+            />
+          </div>
           <div className="my-3 w-px bg-gray-200 dark:bg-gray-700" />
-          <SuggestionInput
-            type="location"
-            icon={MapPin}
-            name="location"
-            placeholder="City, state, or zip"
-            value={location}
-            onChange={setLocation}
-          />
+          <div className="flex flex-1 items-center gap-2 px-4">
+            <MapPin size={15} className="shrink-0 text-gray-400" />
+            <input
+              name="location"
+              placeholder="City, state, or zip"
+              className="h-12 w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
+            />
+          </div>
           <button
             type="submit"
-            className="shrink-0 rounded-r-2xl bg-indigo-600 px-6 text-sm font-semibold text-white transition hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400 cursor-pointer"
+            className="shrink-0 bg-indigo-600 px-6 text-sm font-semibold text-white transition hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400 cursor-pointer"
           >
             Find Jobs
           </button>

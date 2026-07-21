@@ -3,13 +3,11 @@
 namespace App\Repositories\MySql\V1;
 
 use App\Constants\CommonConstant;
-use App\Constants\JobConstants;
 use App\Models\JobPost;
 use App\Repositories\DAO\V1\JobPostDAO;
 use App\Repositories\V1\JobRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Collection as SupportCollection;
 
 class JobRepositoryImpl implements JobRepository
 {
@@ -190,29 +188,5 @@ class JobRepositoryImpl implements JobRepository
         return JobPost::where('user_id', $recruiterId)
             ->where('is_deleted', CommonConstant::IS_DELETED_NO)
             ->get();
-    }
-
-    public function fetchTitleSuggestions(?string $query, int $limit): SupportCollection
-    {
-        return JobPost::where('is_deleted', CommonConstant::IS_DELETED_NO)
-            ->where('status', JobConstants::STATUS_OPEN)
-            ->whereNotNull('title')
-            ->when($query, fn ($q) => $q->where('title', 'like', "%$query%"))
-            ->distinct()
-            ->orderBy('title')
-            ->limit($limit)
-            ->pluck('title');
-    }
-
-    public function fetchLocationSuggestions(?string $query, int $limit): SupportCollection
-    {
-        return JobPost::where('is_deleted', CommonConstant::IS_DELETED_NO)
-            ->where('status', JobConstants::STATUS_OPEN)
-            ->whereNotNull('location')
-            ->when($query, fn ($q) => $q->where('location', 'like', "%$query%"))
-            ->distinct()
-            ->orderBy('location')
-            ->limit($limit)
-            ->pluck('location');
     }
 }
