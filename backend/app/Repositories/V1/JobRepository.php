@@ -5,6 +5,7 @@ namespace App\Repositories\V1;
 use App\Models\JobPost;
 use App\Repositories\DAO\V1\JobPostDAO;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 
 interface JobRepository
 {
@@ -23,4 +24,8 @@ interface JobRepository
     public function findAll(): Collection;
 
     public function findByRecruiterId(int $recruiterId): Collection;
+
+    public function fetchTitleSuggestions(?string $query, int $limit): SupportCollection;
+
+    public function fetchLocationSuggestions(?string $query, int $limit): SupportCollection;
 }

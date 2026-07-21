@@ -9,12 +9,14 @@ use App\Http\Requests\V1\Job\Edit\DetailsRequest as EditDetailsRequest;
 use App\Http\Requests\V1\Job\Get\DetailsRequest as GetDetailsRequest;
 use App\Http\Requests\V1\Job\List\DetailsRequest as ListDetailsRequest;
 use App\Http\Requests\V1\Job\Publish\DetailsRequest as PublishDetailsRequest;
+use App\Http\Requests\V1\Job\Suggestions\DetailsRequest as SuggestionsDetailsRequest;
 use App\Modules\V1\Job\Services\Add\DetailsService as AddJobDetailsService;
 use App\Modules\V1\Job\Services\Delete\DeleteService as DeleteJobDetailsService;
 use App\Modules\V1\Job\Services\Edit\DetailsService as EditJobDetailsService;
 use App\Modules\V1\Job\Services\Get\DetailsService as GetJobDetailsService;
 use App\Modules\V1\Job\Services\List\DetailsService as ListJobDetailsService;
 use App\Modules\V1\Job\Services\Publish\DetailsService as PublishJobDetailsService;
+use App\Modules\V1\Job\Services\Suggestions\DetailsService as SuggestionsJobDetailsService;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
@@ -87,6 +89,20 @@ class JobController extends Controller
             $jobId = $getDetailsRequest->input('id');
 
             return $getJobDetailsService->get($jobId);
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
+
+    public function suggestions(SuggestionsDetailsRequest $suggestionsDetailsRequest): JsonResponse
+    {
+        try {
+            $suggestionsJobDetailsService = app(SuggestionsJobDetailsService::class);
+
+            return $suggestionsJobDetailsService->suggest(
+                $suggestionsDetailsRequest->input('type'),
+                $suggestionsDetailsRequest->input('query')
+            );
         } catch (Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
         }
