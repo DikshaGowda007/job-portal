@@ -45,9 +45,12 @@ const Navbar = ({ onMenuClick }) => {
           </button>
         )}
 
-        <h1 className="whitespace-nowrap text-xl font-bold text-indigo-600 dark:text-indigo-400 sm:text-2xl">
+        <Link
+          to={ROUTES.HOME}
+          className="whitespace-nowrap text-xl font-bold text-indigo-600 dark:text-indigo-400 sm:text-2xl"
+        >
           Job Portal
-        </h1>
+        </Link>
 
         <div className="hidden flex-1 sm:flex sm:items-center sm:justify-center">
           <SearchBar />
