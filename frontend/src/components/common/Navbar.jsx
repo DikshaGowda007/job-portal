@@ -8,6 +8,13 @@ import SearchBar from "./SearchBar";
 import NotificationBell from "./NotificationBell";
 import { KeyRound, LogOut, Menu, Moon, Sun, User } from "lucide-react";
 
+const ROLE_HOME = {
+  [ROLES.ADMIN]: ROUTES.ADMIN_DASHBOARD,
+  [ROLES.SUB_ADMIN]: ROUTES.ADMIN_DASHBOARD,
+  [ROLES.RECRUITER]: ROUTES.RECRUITER_DASHBOARD,
+  [ROLES.JOB_SEEKER]: ROUTES.HOME,
+};
+
 const Navbar = ({ onMenuClick }) => {
   const { user, role, logout } = useAuth();
   const { theme, toggle } = useTheme();
@@ -45,9 +52,12 @@ const Navbar = ({ onMenuClick }) => {
           </button>
         )}
 
-        <h1 className="whitespace-nowrap text-xl font-bold text-indigo-600 dark:text-indigo-400 sm:text-2xl">
+        <Link
+          to={ROLE_HOME[role] ?? ROUTES.HOME}
+          className="whitespace-nowrap text-xl font-bold text-indigo-600 dark:text-indigo-400 sm:text-2xl"
+        >
           Job Portal
-        </h1>
+        </Link>
 
         <div className="hidden flex-1 sm:flex sm:items-center sm:justify-center">
           <SearchBar />
