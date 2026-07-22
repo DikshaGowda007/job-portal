@@ -36,4 +36,6 @@ interface JobApplicationRepository
     public function findByRecruiterId(int $recruiterId): Collection;
 
     public function findAllWithFilters(array $filters): Collection;
+
+    public function existsForRecruiterAndCandidate(int $recruiterId, int $candidateUserId): bool;
 }

@@ -56,6 +56,7 @@ export const API = {
     DASHBOARD: `${BASE_URL}/api/v1/recruiter/dashboard`,
     MY_JOBS: `${BASE_URL}/api/v1/recruiter/my-jobs`,
     MY_APPLICATIONS: `${BASE_URL}/api/v1/recruiter/my-applications`,
+    CANDIDATE_SEARCH: `${BASE_URL}/api/v1/recruiter/candidates/search`,
     CONVERSATIONS: `${BASE_URL}/api/v1/recruiter/conversations`,
     SEND_MESSAGE: `${BASE_URL}/api/v1/recruiter/send-message`,
     MARK_READ: `${BASE_URL}/api/v1/recruiter/mark-read`,

@@ -2,8 +2,10 @@
 
 namespace App\Modules\V1\Recruiter\Helpers;
 
+use App\Http\Requests\V1\Recruiter\CandidateSearch\DetailsRequest as CandidateSearchDetailsRequest;
 use App\Http\Requests\V1\Recruiter\MyApplications\DetailsRequest as MyApplicationsDetailsRequest;
 use App\Http\Requests\V1\Recruiter\MyJobs\DetailsRequest as MyJobsDetailsRequest;
+use App\Modules\V1\Recruiter\Bo\CandidateSearch\DetailsBo as CandidateSearchDetailsBo;
 use App\Modules\V1\Recruiter\Bo\MyApplications\DetailsBo as MyApplicationsDetailsBo;
 use App\Modules\V1\Recruiter\Bo\MyJobs\DetailsBo as MyJobsDetailsBo;
 use App\Traits\V1\AccessRightsTrait;
@@ -51,6 +53,28 @@ class RecruiterHelper
         $detailsBo->setPerPage((int) $myApplicationsDetailsRequest->input('per_page', 20));
         $detailsBo->setSortBy($myApplicationsDetailsRequest->input('sort_by', 'job_applications.created_at'));
         $detailsBo->setSortOrder($myApplicationsDetailsRequest->input('sort_order', 'desc'));
+
+        return $detailsBo;
+    }
+
+    public function prepareCandidateSearchBo(CandidateSearchDetailsRequest $candidateSearchDetailsRequest): CandidateSearchDetailsBo
+    {
+        $detailsBo = new CandidateSearchDetailsBo;
+
+        $detailsBo->setText($candidateSearchDetailsRequest->input('text'));
+        $detailsBo->setSkills($candidateSearchDetailsRequest->input('skills'));
+        $detailsBo->setLocation($candidateSearchDetailsRequest->input('location'));
+        $detailsBo->setExperienceMin($candidateSearchDetailsRequest->input('experience_min') !== null ? (float) $candidateSearchDetailsRequest->input('experience_min') : null);
+        $detailsBo->setExperienceMax($candidateSearchDetailsRequest->input('experience_max') !== null ? (float) $candidateSearchDetailsRequest->input('experience_max') : null);
+        $detailsBo->setCurrentJobTitle($candidateSearchDetailsRequest->input('current_job_title'));
+        $detailsBo->setWorkMode($candidateSearchDetailsRequest->input('work_mode'));
+        $detailsBo->setJobType($candidateSearchDetailsRequest->input('job_type'));
+        $detailsBo->setNoticePeriod($candidateSearchDetailsRequest->input('notice_period'));
+        $detailsBo->setImmediateJoiner($candidateSearchDetailsRequest->input('immediate_joiner') !== null ? (bool) $candidateSearchDetailsRequest->input('immediate_joiner') : null);
+        $detailsBo->setPage((int) $candidateSearchDetailsRequest->input('page', 1));
+        $detailsBo->setPerPage((int) $candidateSearchDetailsRequest->input('per_page', 20));
+        $detailsBo->setSortBy($candidateSearchDetailsRequest->input('sort_by', 'updated_at'));
+        $detailsBo->setSortOrder($candidateSearchDetailsRequest->input('sort_order', 'desc'));
 
         return $detailsBo;
     }

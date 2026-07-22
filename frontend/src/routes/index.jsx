@@ -32,6 +32,7 @@ import RecruiterDashboard from "@/features/recruiter/pages/RecruiterDashboard";
 import RecruiterJobsPage from "@/features/recruiter/pages/RecruiterJobsPage";
 import RecruiterJobFormPage from "@/features/recruiter/pages/RecruiterJobFormPage";
 import RecruiterApplicationsPage from "@/features/recruiter/pages/RecruiterApplicationsPage";
+import RecruiterCandidatesPage from "@/features/recruiter/pages/RecruiterCandidatesPage";
 import RecruiterMessagesPage from "@/features/recruiter/pages/RecruiterMessagesPage";
 import RecruiterCompanyProfilePage from "@/features/recruiter/pages/RecruiterCompanyProfilePage";
 
@@ -115,6 +116,7 @@ const router = createBrowserRouter([
               { path: ROUTES.RECRUITER_JOB_PUBLISH, element: <RecruiterJobFormPage /> },
               { path: ROUTES.RECRUITER_JOB_EDIT, element: <RecruiterJobFormPage /> },
               { path: ROUTES.RECRUITER_APPLICATIONS, element: <RecruiterApplicationsPage /> },
+              { path: ROUTES.RECRUITER_CANDIDATES, element: <RecruiterCandidatesPage /> },
               { path: ROUTES.RECRUITER_MESSAGES,     element: <RecruiterMessagesPage /> },
               { path: ROUTES.RECRUITER_PROFILE,      element: <UserProfilePage /> },
               { path: ROUTES.RECRUITER_COMPANY_PROFILE, element: <RecruiterCompanyProfilePage /> },

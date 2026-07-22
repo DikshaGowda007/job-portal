@@ -206,4 +206,16 @@ class JobApplicationRepositoryImpl implements JobApplicationRepository
 
         return $query->get();
     }
+
+    public function existsForRecruiterAndCandidate(int $recruiterId, int $candidateUserId): bool
+    {
+        $jobIds = JobPost::where('user_id', $recruiterId)
+            ->where('is_deleted', CommonConstant::IS_DELETED_NO)
+            ->pluck('id');
+
+        return JobApplication::whereIn('job_post_id', $jobIds)
+            ->where('user_id', $candidateUserId)
+            ->where('is_deleted', CommonConstant::IS_DELETED_NO)
+            ->exists();
+    }
 }

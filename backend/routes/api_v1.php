@@ -124,6 +124,10 @@ Route::prefix('profile')->middleware(['jwt.verify', 'access.role:'.UserConstant:
     Route::post('/view', [JobSeekerProfileController::class, 'view'])->name('JobSeekerProfileController.view');
 });
 
+Route::prefix('recruiter/candidates')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_RECRUITER.'|'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN])->group(function () {
+    Route::post('/search', [RecruiterController::class, 'candidateSearch'])->name('RecruiterController.candidateSearch');
+});
+
 Route::prefix('recruiter/company-profile')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_RECRUITER])->group(function () {
     Route::post('/get', [RecruiterProfileController::class, 'get'])->name('RecruiterProfileController.get');
     Route::post('/update', [RecruiterProfileController::class, 'update'])->name('RecruiterProfileController.update');

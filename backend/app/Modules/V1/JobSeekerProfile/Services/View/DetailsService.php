@@ -3,9 +3,11 @@
 namespace App\Modules\V1\JobSeekerProfile\Services\View;
 
 use App\Constants\CommonConstant;
+use App\Constants\UserConstant;
 use App\Exceptions\UserNotFoundException;
 use App\Http\Requests\V1\JobSeekerProfile\View\DetailsRequest;
 use App\Modules\V1\JobSeekerProfile\Bo\View\DetailsBo;
+use App\Repositories\V1\JobApplicationRepository;
 use App\Repositories\V1\JobSeekerProfileRepository;
 use App\Traits\V1\AccessRightsTrait;
 use App\Utils\CommonUtils;
@@ -20,6 +22,7 @@ class DetailsService
 
     public function __construct(
         private JobSeekerProfileRepository $jobSeekerProfileRepository,
+        private JobApplicationRepository $jobApplicationRepository,
     ) {
         $this->initializeUserAuthorizationData();
     }
@@ -30,6 +33,7 @@ class DetailsService
 
         try {
             $profileDetails = $this->findProfile();
+            $this->assertViewable($profileDetails);
 
             $data = $this->formatResponse($profileDetails);
 
@@ -60,6 +64,23 @@ class DetailsService
         }
 
         return $profileDetails;
+    }
+
+    private function assertViewable(Collection $profileDetails): void
+    {
+        if ($this->loggedInUserRole !== UserConstant::USER_ROLE_RECRUITER) {
+            return;
+        }
+
+        $isDiscoverable = $profileDetails->get('is_public') && $profileDetails->get('open_to_opportunities');
+        $hasApplied = $this->jobApplicationRepository->existsForRecruiterAndCandidate(
+            $this->loggedInUserId,
+            $this->viewDetailsBo->getUserId()
+        );
+
+        if (! $isDiscoverable && ! $hasApplied) {
+            throw UserNotFoundException::withMessage('Profile not found');
+        }
     }
 
     private function formatResponse(Collection $profileDetails): array

@@ -26,6 +26,7 @@ export const ROUTES = {
   RECRUITER_JOB_PUBLISH: "/recruiter/jobs/publish",
   RECRUITER_JOB_EDIT: "/recruiter/jobs/:id/edit",
   RECRUITER_APPLICATIONS: "/recruiter/applications",
+  RECRUITER_CANDIDATES: "/recruiter/candidates",
   RECRUITER_MESSAGES: "/recruiter/messages",
   RECRUITER_PROFILE: "/recruiter/profile",
   RECRUITER_COMPANY_PROFILE: "/recruiter/company-profile",

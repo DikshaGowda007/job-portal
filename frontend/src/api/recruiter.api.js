@@ -5,6 +5,7 @@ export const recruiterApi = {
   dashboard: () => axiosClient.post(API.RECRUITER.DASHBOARD),
   myJobs: (params) => axiosClient.post(API.RECRUITER.MY_JOBS, params),
   myApplications: (params) => axiosClient.post(API.RECRUITER.MY_APPLICATIONS, params),
+  searchCandidates: (params) => axiosClient.post(API.RECRUITER.CANDIDATE_SEARCH, params),
   listApplications: (params) => axiosClient.post(API.APPLICATION.LIST, params),
   updateApplicationStatus: (payload) => axiosClient.post(API.APPLICATION.UPDATE_STATUS, payload),
   viewApplication: (payload) => axiosClient.post(API.APPLICATION.VIEW, payload),
