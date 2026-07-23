@@ -128,6 +128,12 @@ Route::prefix('recruiter/candidates')->middleware(['jwt.verify', 'access.role:'.
     Route::post('/search', [RecruiterController::class, 'candidateSearch'])->name('RecruiterController.candidateSearch');
 });
 
+Route::prefix('recruiter/candidates/shortlist')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_RECRUITER.'|'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN])->group(function () {
+    Route::post('/add', [RecruiterController::class, 'shortlistAdd'])->name('RecruiterController.shortlistAdd');
+    Route::post('/list', [RecruiterController::class, 'shortlistList'])->name('RecruiterController.shortlistList');
+    Route::post('/delete', [RecruiterController::class, 'shortlistDelete'])->name('RecruiterController.shortlistDelete');
+});
+
 Route::prefix('recruiter/company-profile')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_RECRUITER])->group(function () {
     Route::post('/get', [RecruiterProfileController::class, 'get'])->name('RecruiterProfileController.get');
     Route::post('/update', [RecruiterProfileController::class, 'update'])->name('RecruiterProfileController.update');

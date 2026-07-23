@@ -1,6 +1,11 @@
-import { MapPin, Briefcase, Clock, Zap } from "lucide-react";
+import { MapPin, Briefcase, Clock, Zap, Star } from "lucide-react";
 
-export default function CandidateCard({ candidate, onViewProfile }) {
+export default function CandidateCard({
+  candidate,
+  onViewProfile,
+  isShortlisted = false,
+  onToggleShortlist,
+}) {
   const experience = candidate.total_experience;
   const experienceLabel =
     experience && (experience.years || experience.months)
@@ -79,12 +84,27 @@ export default function CandidateCard({ candidate, onViewProfile }) {
             {candidate.profile_completeness}% complete
           </span>
         )}
-        <button
-          onClick={() => onViewProfile(candidate.user_id)}
-          className="ml-auto flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-        >
-          View Full Profile
-        </button>
+        <div className="ml-auto flex items-center gap-2">
+          {onToggleShortlist && (
+            <button
+              onClick={() => onToggleShortlist(candidate.user_id)}
+              title={isShortlisted ? "Remove from shortlist" : "Add to shortlist"}
+              className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-sm transition ${
+                isShortlisted
+                  ? "border-amber-300 bg-amber-50 text-amber-600 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-400"
+                  : "border-gray-300 bg-white text-gray-500 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+              }`}
+            >
+              <Star size={15} fill={isShortlisted ? "currentColor" : "none"} />
+            </button>
+          )}
+          <button
+            onClick={() => onViewProfile(candidate.user_id)}
+            className="flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+          >
+            View Full Profile
+          </button>
+        </div>
       </div>
     </div>
   );

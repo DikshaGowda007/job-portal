@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { recruiterApi } from "@/api/recruiter.api";
 import { PAGINATION_DEFAULT } from "@/utils/constants";
 import Loader from "@/components/common/Loader";
@@ -21,6 +22,7 @@ export default function RecruiterCandidatesPage() {
   const [skills, setSkills] = useState([]);
   const [skillInput, setSkillInput] = useState("");
   const [viewingUserId, setViewingUserId] = useState(null);
+  const queryClient = useQueryClient();
 
   const [filters, setFilters] = useState({});
 
@@ -49,6 +51,37 @@ export default function RecruiterCandidatesPage() {
 
   const candidates = data?.candidates ?? [];
   const totalPages = data?.pagination?.last_page ?? 1;
+
+  const { data: shortlistData } = useQuery({
+    queryKey: ["recruiter-shortlist-ids"],
+    queryFn: () =>
+      recruiterApi
+        .getShortlistedCandidates({ page: 1, per_page: 100 })
+        .then((r) => r.data?.data),
+  });
+
+  const shortlistedIds = new Set(
+    (shortlistData?.candidates ?? []).map((c) => c.user_id)
+  );
+
+  const shortlistMutation = useMutation({
+    mutationFn: ({ candidateUserId, shortlisted }) =>
+      shortlisted
+        ? recruiterApi.unshortlistCandidate({ candidate_user_id: candidateUserId })
+        : recruiterApi.shortlistCandidate({ candidate_user_id: candidateUserId }),
+    onSuccess: (_, { shortlisted }) => {
+      queryClient.invalidateQueries({ queryKey: ["recruiter-shortlist-ids"] });
+      toast.success(shortlisted ? "Removed from shortlist" : "Added to shortlist");
+    },
+    onError: () => toast.error("Failed to update shortlist"),
+  });
+
+  const toggleShortlist = (candidateUserId) => {
+    shortlistMutation.mutate({
+      candidateUserId,
+      shortlisted: shortlistedIds.has(candidateUserId),
+    });
+  };
 
   const toggleWorkMode = (mode) => {
     setWorkMode((prev) =>
@@ -177,6 +210,8 @@ export default function RecruiterCandidatesPage() {
                 key={candidate.user_id}
                 candidate={candidate}
                 onViewProfile={setViewingUserId}
+                isShortlisted={shortlistedIds.has(candidate.user_id)}
+                onToggleShortlist={toggleShortlist}
               />
             ))}
           </div>

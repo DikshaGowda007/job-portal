@@ -17,4 +17,6 @@ interface JobSeekerProfileRepository
     public function updateByUserId(int $userId, JobSeekerProfileDAO $jobSeekerProfileDAO): bool|int;
 
     public function searchPublicProfiles(array $filters): Collection;
+
+    public function findByUserIds(array $userIds): Collection;
 }

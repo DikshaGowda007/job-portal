@@ -120,4 +120,11 @@ class JobSeekerProfileRepositoryImpl implements JobSeekerProfileRepository
 
         return $query->get();
     }
+
+    public function findByUserIds(array $userIds): Collection
+    {
+        return JobSeekerProfile::whereIn('user_id', $userIds)
+            ->where('is_deleted', CommonConstant::IS_DELETED_NO)
+            ->get();
+    }
 }
