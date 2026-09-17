@@ -21,10 +21,11 @@ import {
   Building2,
   SlidersHorizontal,
   Link2,
-  ChevronDown,
 } from "lucide-react";
 import DatePicker from "@/components/ui/DatePicker";
 import YearPicker from "@/components/ui/YearPicker";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Section, GroupLabel, Field, StyledSelect, inp } from "@/components/forms/FormUI";
 
 const CURRENCIES = ["INR", "USD", "EUR", "GBP"];
 
@@ -262,13 +263,17 @@ function BasicInfoSection({ profile, onSave, saving }) {
             />
           </Field>
           <Field label="Gender">
-            <StyledSelect value={form.gender} onChange={set("gender")}>
-              <option value="">Select gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-              <option value="prefer_not_to_say">Prefer not to say</option>
-            </StyledSelect>
+            <StyledSelect
+              value={form.gender}
+              onChange={set("gender")}
+              placeholder="Select gender"
+              options={[
+                { value: "male", label: "Male" },
+                { value: "female", label: "Female" },
+                { value: "other", label: "Other" },
+                { value: "prefer_not_to_say", label: "Prefer not to say" },
+              ]}
+            />
           </Field>
         </div>
 
@@ -471,17 +476,23 @@ function PreferencesSection({ profile, onSave, saving }) {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Current Salary">
             <div className="flex gap-2">
-              <StyledSelect value={form.current_salary_currency} onChange={set("current_salary_currency")} wrapperClassName="w-24 shrink-0">
-                {CURRENCIES.map((c) => <option key={c}>{c}</option>)}
-              </StyledSelect>
+              <StyledSelect
+                value={form.current_salary_currency}
+                onChange={set("current_salary_currency")}
+                wrapperClassName="w-24 shrink-0"
+                options={CURRENCIES.map((c) => ({ value: c, label: c }))}
+              />
               <input type="number" min="0" value={form.current_salary} onChange={set("current_salary")} placeholder="e.g. 800000" {...inp} />
             </div>
           </Field>
           <Field label="Expected Salary">
             <div className="flex gap-2">
-              <StyledSelect value={form.expected_salary_currency} onChange={set("expected_salary_currency")} wrapperClassName="w-24 shrink-0">
-                {CURRENCIES.map((c) => <option key={c}>{c}</option>)}
-              </StyledSelect>
+              <StyledSelect
+                value={form.expected_salary_currency}
+                onChange={set("expected_salary_currency")}
+                wrapperClassName="w-24 shrink-0"
+                options={CURRENCIES.map((c) => ({ value: c, label: c }))}
+              />
               <input type="number" min="0" value={form.expected_salary} onChange={set("expected_salary")} placeholder="e.g. 1200000" {...inp} />
             </div>
           </Field>
@@ -565,7 +576,10 @@ function PreferencesSection({ profile, onSave, saving }) {
           </Field>
           <Field label="Availability">
             <label className="flex h-full cursor-pointer items-center gap-2.5 rounded-xl border border-gray-300 px-3 py-2.5 dark:border-gray-700">
-              <input type="checkbox" checked={form.immediate_joiner} onChange={setCheck("immediate_joiner")} className="accent-indigo-600" />
+              <Checkbox
+                checked={form.immediate_joiner}
+                onCheckedChange={(checked) => setCheck("immediate_joiner")({ target: { checked } })}
+              />
               <span className="text-sm text-gray-700 dark:text-gray-300">Immediate joiner</span>
             </label>
           </Field>
@@ -790,16 +804,20 @@ function ExperienceSection({ experiences, onAdd, onUpdate, onDelete, loading }) 
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             <Field label="Employment Type">
-              <StyledSelect value={form.employment_type} onChange={set("employment_type")}>
-                <option value="">Select type</option>
-                {JOB_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-              </StyledSelect>
+              <StyledSelect
+                value={form.employment_type}
+                onChange={set("employment_type")}
+                placeholder="Select type"
+                options={JOB_TYPES}
+              />
             </Field>
             <Field label="Work Mode">
-              <StyledSelect value={form.work_mode} onChange={set("work_mode")}>
-                <option value="">Select mode</option>
-                {WORK_MODES.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
-              </StyledSelect>
+              <StyledSelect
+                value={form.work_mode}
+                onChange={set("work_mode")}
+                placeholder="Select mode"
+                options={WORK_MODES}
+              />
             </Field>
             <Field label="Location">
               <input value={form.location} onChange={set("location")} placeholder="e.g. Bangalore" {...inp} />
@@ -814,7 +832,10 @@ function ExperienceSection({ experiences, onAdd, onUpdate, onDelete, loading }) 
             </Field>
           </div>
           <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-            <input type="checkbox" checked={form.is_current} onChange={set("is_current")} className="accent-indigo-600" />
+            <Checkbox
+              checked={form.is_current}
+              onCheckedChange={(checked) => set("is_current")({ target: { type: "checkbox", checked } })}
+            />
             Currently working here
           </label>
           <Field label="Description">
@@ -935,7 +956,10 @@ function EducationSection({ educations, onAdd, onUpdate, onDelete, loading }) {
             </Field>
           </div>
           <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-            <input type="checkbox" checked={form.is_current} onChange={setCheck("is_current")} className="accent-indigo-600" />
+            <Checkbox
+              checked={form.is_current}
+              onCheckedChange={(checked) => setCheck("is_current")({ target: { checked } })}
+            />
             Currently studying here
           </label>
           <Field label="Description">
@@ -951,66 +975,6 @@ function EducationSection({ educations, onAdd, onUpdate, onDelete, loading }) {
 }
 
 /* ─── Shared primitives ──────────────────────────────────────── */
-
-const inp = {
-  className:
-    "w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 hover:border-indigo-300 hover:bg-white focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:hover:border-indigo-600 dark:hover:bg-gray-800 dark:focus:border-indigo-500 dark:focus:bg-gray-900 dark:focus:ring-indigo-950/50",
-};
-
-function Section({ title, icon: Icon, iconColor, iconBg, count, children }) {
-  return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-      <div className="flex items-center gap-3 border-b border-gray-100 px-6 py-4 dark:border-gray-800">
-        {Icon && (
-          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${iconBg}`}>
-            <Icon size={15} className={iconColor} />
-          </div>
-        )}
-        <h2 className="flex-1 text-sm font-semibold text-gray-900 dark:text-white">{title}</h2>
-        {count > 0 && (
-          <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">
-            {count}
-          </span>
-        )}
-      </div>
-      <div className="p-6">{children}</div>
-    </div>
-  );
-}
-
-function StyledSelect({ value, onChange, wrapperClassName = "", className = "", children }) {
-  return (
-    <div className={`relative ${wrapperClassName}`}>
-      <select
-        value={value}
-        onChange={onChange}
-        className={`${inp.className} w-full appearance-none pr-9 ${className}`}
-      >
-        {children}
-      </select>
-      <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
-    </div>
-  );
-}
-
-function GroupLabel({ children }) {
-  return (
-    <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
-      {children}
-    </p>
-  );
-}
-
-function Field({ label, children }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-        {label}
-      </label>
-      {children}
-    </div>
-  );
-}
 
 function Badge({ children }) {
   return (

@@ -9,6 +9,7 @@ import EmptyState from "@/components/common/EmptyState";
 import ConfirmModal from "@/components/modals/ConfirmModal";
 import FilterGroup from "@/features/home/components/FilterGroup";
 import { Bell, MapPin, Search, Pencil, Trash2, X } from "lucide-react";
+import { StyledSelect } from "@/components/forms/FormUI";
 
 const EMPTY_FORM = {
   keyword: "",
@@ -164,18 +165,12 @@ export default function SeekerJobAlertsPage() {
             <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">
               Category
             </label>
-            <select
+            <StyledSelect
               value={form.job_category_id}
               onChange={(e) => setForm((prev) => ({ ...prev, job_category_id: e.target.value }))}
-              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-700 dark:bg-gray-900"
-            >
-              <option value="">Any category</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+              placeholder="Any category"
+              options={categories.map((cat) => ({ value: String(cat.id), label: cat.name }))}
+            />
           </div>
         )}
 

@@ -2,6 +2,7 @@ import { useRef } from "react";
 import PropTypes from "prop-types";
 import { Paperclip, UploadCloud, Loader2 } from "lucide-react";
 import { CURRENCIES } from "@/utils/constants";
+import { StyledSelect } from "@/components/forms/FormUI";
 
 export default function ApplyForm({
   form,
@@ -96,17 +97,14 @@ export default function ApplyForm({
             placeholder="e.g. 500000"
             className="min-w-0 flex-1 rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-700 dark:bg-gray-800"
           />
-          <select
+          <StyledSelect
             value={form.expected_salary_currency}
             onChange={(e) =>
               onChange("expected_salary_currency", e.target.value)
             }
-            className="rounded-xl border border-gray-300 bg-white px-2 py-2 text-sm outline-none focus:border-indigo-500 dark:border-gray-700 dark:bg-gray-800"
-          >
-            {CURRENCIES.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
+            wrapperClassName="w-24 shrink-0"
+            options={CURRENCIES.map((c) => ({ value: c, label: c }))}
+          />
         </div>
       </div>
 
