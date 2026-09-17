@@ -9,8 +9,10 @@ use App\Http\Requests\V1\Job\Edit\DetailsRequest as EditDetailsRequest;
 use App\Http\Requests\V1\Job\Get\DetailsRequest as GetDetailsRequest;
 use App\Http\Requests\V1\Job\List\DetailsRequest as ListDetailsRequest;
 use App\Http\Requests\V1\Job\Publish\DetailsRequest as PublishDetailsRequest;
+use App\Http\Requests\V1\Job\Analyze\DetailsRequest as AnalyzeDetailsRequest;
 use App\Http\Requests\V1\Job\Suggestions\DetailsRequest as SuggestionsDetailsRequest;
 use App\Modules\V1\Job\Services\Add\DetailsService as AddJobDetailsService;
+use App\Modules\V1\Job\Services\Analyze\DetailsService as AnalyzeJobDetailsService;
 use App\Modules\V1\Job\Services\Delete\DeleteService as DeleteJobDetailsService;
 use App\Modules\V1\Job\Services\Edit\DetailsService as EditJobDetailsService;
 use App\Modules\V1\Job\Services\Get\DetailsService as GetJobDetailsService;
@@ -102,6 +104,19 @@ class JobController extends Controller
             return $suggestionsJobDetailsService->suggest(
                 $suggestionsDetailsRequest->input('type'),
                 $suggestionsDetailsRequest->input('query')
+            );
+        } catch (Throwable $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);
+        }
+    }
+
+    public function analyze(AnalyzeDetailsRequest $analyzeDetailsRequest): JsonResponse
+    {
+        try {
+            $analyzeJobDetailsService = app(AnalyzeJobDetailsService::class);
+
+            return $analyzeJobDetailsService->analyze(
+                $analyzeDetailsRequest->input('job_description')
             );
         } catch (Throwable $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 200);

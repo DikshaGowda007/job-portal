@@ -31,8 +31,17 @@ import {
   X,
   Save,
   Send,
+  Sparkles,
+  Plus,
+  Check,
 } from "lucide-react";
 
+const SENIORITY_TO_EXP_LEVEL = {
+  Junior: "JUNIOR",
+  Mid: "MID",
+  Senior: "SENIOR",
+  Lead: "TEAM_LEAD",
+};
 
 const EMPTY_FORM = {
   title: "",
@@ -66,6 +75,7 @@ export default function RecruiterJobFormPage() {
 
   const [form, setForm] = useState(EMPTY_FORM);
   const [skillInput, setSkillInput] = useState("");
+  const [analysis, setAnalysis] = useState(null);
 
   const { data: jobData, isLoading: jobLoading } = useQuery({
     queryKey: ["job-detail", id],
@@ -124,6 +134,65 @@ export default function RecruiterJobFormPage() {
     },
     onError: (err) => toast.error(err.message),
   });
+
+  const analyzeMutation = useMutation({
+    mutationFn: () => jobsApi.analyze({ job_description: form.job_description }),
+    onSuccess: (res) => {
+      const data = res.data?.data;
+      if (!data) {
+        toast.error("No suggestions found");
+        return;
+      }
+      setAnalysis(data);
+    },
+    onError: (err) => toast.error(err.message || "Couldn't analyze description"),
+  });
+
+  const addSuggestedSkill = (skill) => {
+    setForm((f) => (f.skills.includes(skill) ? f : { ...f, skills: [...f.skills, skill] }));
+  };
+
+  const applySuggestedExperience = () => {
+    if (!analysis) return;
+    setForm((f) => ({
+      ...f,
+      experience_level: SENIORITY_TO_EXP_LEVEL[analysis.seniority_level] ?? f.experience_level,
+      experience_min:
+        analysis.minimum_years_experience != null
+          ? analysis.minimum_years_experience
+          : f.experience_min,
+    }));
+    toast.success("Applied to Experience section below");
+  };
+
+  const applySuggestedSalary = () => {
+    if (!analysis) return;
+    setForm((f) => ({
+      ...f,
+      salary_min: analysis.salary_min ?? f.salary_min,
+      salary_max: analysis.salary_max ?? f.salary_max,
+      salary_currency: analysis.salary_currency ?? f.salary_currency,
+      salary_type: analysis.salary_type ?? f.salary_type,
+    }));
+    toast.success("Applied to Salary section below");
+  };
+
+  const applySuggestedEducation = () => {
+    if (!analysis?.education) return;
+    setForm((f) => ({ ...f, education: analysis.education }));
+    toast.success("Applied to Education field above");
+  };
+
+  const applySuggestedRoles = () => {
+    if (!analysis?.roles_responsibility?.length) return;
+    setForm((f) => ({
+      ...f,
+      roles_responsibility: f.roles_responsibility
+        ? `${f.roles_responsibility}\n${analysis.roles_responsibility.join("\n")}`
+        : analysis.roles_responsibility.join("\n"),
+    }));
+    toast.success("Added to Roles & Responsibilities below");
+  };
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
@@ -293,11 +362,221 @@ export default function RecruiterJobFormPage() {
               required
               rows={6}
               value={form.job_description}
-              onChange={set("job_description")}
+              onChange={(e) => {
+                set("job_description")(e);
+                setAnalysis(null);
+              }}
               placeholder="Describe the role, responsibilities, and requirements…"
               {...inp}
             />
           </Field>
+
+          <button
+            type="button"
+            onClick={() => analyzeMutation.mutate()}
+            disabled={analyzeMutation.isPending || form.job_description.trim().length < 40}
+            className="flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300"
+          >
+            <Sparkles size={13} />
+            {analyzeMutation.isPending ? "Analyzing…" : "Review description"}
+          </button>
+          {form.job_description.trim().length > 0 &&
+            form.job_description.trim().length < 40 && (
+              <p className="mt-1 text-xs text-gray-400">
+                Write at least 40 characters to enable review
+              </p>
+            )}
+
+          {analysis && (
+            <div className="mt-3 rounded-xl border border-indigo-100 bg-indigo-50/60 p-3 dark:border-indigo-900 dark:bg-indigo-900/10">
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-xs font-semibold text-indigo-700 dark:text-indigo-300">
+                  Review — click a skill to add, apply below before saving
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setAnalysis(null)}
+                  className="text-indigo-400 hover:text-indigo-600"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+
+              {analysis.issues?.length > 0 ? (
+                <div className="mb-3">
+                  <p className="mb-1 text-[11px] font-medium uppercase tracking-wide text-gray-500">
+                    Things to check
+                  </p>
+                  <ul className="space-y-1.5">
+                    {analysis.issues.map((issue, idx) => (
+                      <li
+                        key={idx}
+                        className="flex items-start gap-2 rounded-lg bg-white/80 px-2.5 py-1.5 text-xs text-gray-700 dark:bg-gray-900/40 dark:text-gray-300"
+                      >
+                        <span
+                          className={`mt-1 h-1.5 w-1.5 shrink-0 rounded-full ${
+                            issue.severity === "high"
+                              ? "bg-red-500"
+                              : issue.severity === "medium"
+                                ? "bg-amber-500"
+                                : "bg-gray-400"
+                          }`}
+                        />
+                        <span>
+                          <span className="font-semibold capitalize text-gray-500">
+                            {issue.category?.replace("_", " ")}:
+                          </span>{" "}
+                          {issue.message}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <p className="mb-3 text-xs text-emerald-600 dark:text-emerald-400">
+                  No issues found in the description
+                </p>
+              )}
+
+              {analysis.required_skills?.length > 0 && (
+                <div className="mb-2">
+                  <p className="mb-1 text-[11px] font-medium uppercase tracking-wide text-gray-500">
+                    Required
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {analysis.required_skills.map((s) => {
+                      const added = form.skills.includes(s);
+                      return (
+                        <button
+                          type="button"
+                          key={s}
+                          disabled={added}
+                          onClick={() => addSuggestedSkill(s)}
+                          className={`flex items-center gap-1 rounded-full px-2.5 py-1.5 text-xs font-medium shadow-sm ring-1 ring-inset transition disabled:cursor-default ${
+                            added
+                              ? "bg-indigo-600 text-white ring-indigo-600 dark:bg-indigo-500 dark:ring-indigo-500"
+                              : "bg-white text-gray-700 ring-indigo-200 hover:-translate-y-0.5 hover:bg-indigo-600 hover:text-white hover:ring-indigo-600 dark:bg-gray-900 dark:text-gray-300 dark:ring-indigo-800 dark:hover:bg-indigo-500 dark:hover:ring-indigo-500"
+                          }`}
+                        >
+                          {added ? <Check size={11} /> : <Plus size={11} />}
+                          {s}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {analysis.preferred_skills?.length > 0 && (
+                <div className="mb-2">
+                  <p className="mb-1 text-[11px] font-medium uppercase tracking-wide text-gray-500">
+                    Preferred
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {analysis.preferred_skills.map((s) => {
+                      const added = form.skills.includes(s);
+                      return (
+                        <button
+                          type="button"
+                          key={s}
+                          disabled={added}
+                          onClick={() => addSuggestedSkill(s)}
+                          className={`flex items-center gap-1 rounded-full px-2.5 py-1.5 text-xs font-medium shadow-sm ring-1 ring-inset transition disabled:cursor-default ${
+                            added
+                              ? "bg-gray-700 text-white ring-gray-700 dark:bg-gray-600 dark:ring-gray-600"
+                              : "bg-white text-gray-700 ring-gray-200 hover:-translate-y-0.5 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-300 dark:ring-gray-700 dark:hover:bg-gray-800"
+                          }`}
+                        >
+                          {added ? <Check size={11} /> : <Plus size={11} />}
+                          {s}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {(analysis.seniority_level || analysis.minimum_years_experience != null) && (
+                <div className="flex items-center justify-between rounded-lg bg-white/70 px-2.5 py-1.5 text-xs text-gray-600 dark:bg-gray-900/40 dark:text-gray-300">
+                  <span>
+                    Suggested level: <strong>{analysis.seniority_level}</strong>
+                    {analysis.minimum_years_experience != null && (
+                      <>
+                        {" "}
+                        · min <strong>{analysis.minimum_years_experience}</strong> yrs
+                      </>
+                    )}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={applySuggestedExperience}
+                    className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400"
+                  >
+                    Apply
+                  </button>
+                </div>
+              )}
+
+              {(analysis.salary_min != null || analysis.salary_max != null) && (
+                <div className="mt-1.5 flex items-center justify-between rounded-lg bg-white/70 px-2.5 py-1.5 text-xs text-gray-600 dark:bg-gray-900/40 dark:text-gray-300">
+                  <span>
+                    Suggested salary:{" "}
+                    <strong>
+                      {analysis.salary_currency} {analysis.salary_min?.toLocaleString()}
+                      {analysis.salary_max != null &&
+                        ` – ${analysis.salary_max.toLocaleString()}`}
+                    </strong>
+                    {analysis.salary_type && <> · {analysis.salary_type}</>}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={applySuggestedSalary}
+                    className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400"
+                  >
+                    Apply
+                  </button>
+                </div>
+              )}
+
+              {analysis.education && (
+                <div className="mt-1.5 flex items-center justify-between rounded-lg bg-white/70 px-2.5 py-1.5 text-xs text-gray-600 dark:bg-gray-900/40 dark:text-gray-300">
+                  <span>
+                    Suggested education: <strong>{analysis.education}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={applySuggestedEducation}
+                    className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400"
+                  >
+                    Apply
+                  </button>
+                </div>
+              )}
+
+              {analysis.roles_responsibility?.length > 0 && (
+                <div className="mt-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-xs text-gray-600 dark:bg-gray-900/40 dark:text-gray-300">
+                  <div className="mb-1 flex items-center justify-between">
+                    <span className="font-medium text-gray-500 dark:text-gray-400">
+                      Suggested responsibilities
+                    </span>
+                    <button
+                      type="button"
+                      onClick={applySuggestedRoles}
+                      className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400"
+                    >
+                      Add below
+                    </button>
+                  </div>
+                  <ul className="list-inside list-disc space-y-0.5">
+                    {analysis.roles_responsibility.map((r, idx) => (
+                      <li key={idx}>{r}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
           <Field label="Roles & Responsibilities">
             <textarea
               rows={4}
@@ -319,13 +598,13 @@ export default function RecruiterJobFormPage() {
           iconBg="bg-emerald-50 dark:bg-emerald-900/30"
         >
           <Field label="Skills">
-            <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 transition focus-within:border-indigo-500 focus-within:bg-white focus-within:ring-4 focus-within:ring-indigo-50 dark:border-gray-700 dark:bg-gray-800 dark:focus-within:border-indigo-500 dark:focus-within:bg-gray-900 dark:focus-within:ring-indigo-950/50">
               {form.skills.length > 0 && (
                 <div className="mb-2 flex flex-wrap gap-1.5">
                   {form.skills.map((s) => (
                     <span
                       key={s}
-                      className="flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300"
+                      className="group flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-medium text-indigo-700 shadow-sm ring-1 ring-inset ring-indigo-100 transition hover:ring-indigo-300 dark:bg-gray-900 dark:text-indigo-300 dark:ring-indigo-900 dark:hover:ring-indigo-700"
                     >
                       {s}
                       <button
@@ -336,7 +615,7 @@ export default function RecruiterJobFormPage() {
                             skills: f.skills.filter((x) => x !== s),
                           }))
                         }
-                        className="ml-0.5 text-indigo-400 hover:text-indigo-600"
+                        className="flex h-3.5 w-3.5 items-center justify-center rounded-full text-indigo-300 transition group-hover:text-indigo-500 hover:!bg-indigo-100 hover:!text-indigo-700 dark:text-indigo-600 dark:group-hover:text-indigo-400 dark:hover:!bg-indigo-900/60 dark:hover:!text-indigo-300"
                       >
                         <X size={10} />
                       </button>
@@ -344,7 +623,8 @@ export default function RecruiterJobFormPage() {
                   ))}
                 </div>
               )}
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2">
+                <Plus size={14} className="shrink-0 text-gray-400" />
                 <input
                   value={skillInput}
                   onChange={(e) => setSkillInput(e.target.value)}
@@ -361,7 +641,7 @@ export default function RecruiterJobFormPage() {
                   <button
                     type="button"
                     onClick={addSkill}
-                    className="shrink-0 rounded-lg bg-indigo-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-indigo-700"
+                    className="shrink-0 rounded-lg bg-indigo-600 px-2.5 py-1 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400"
                   >
                     Add
                   </button>

@@ -52,6 +52,11 @@ Route::prefix('job')->middleware(['jwt.verify', 'access.role:'.UserConstant::USE
     Route::post('/delete', [JobController::class, 'delete'])->name('JobController.delete');
 });
 
+// AI-assisted job authoring
+Route::prefix('job')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN.'|'.UserConstant::USER_ROLE_RECRUITER, 'throttle:15,1'])->group(function () {
+    Route::post('/analyze', [JobController::class, 'analyze'])->name('JobController.analyze');
+});
+
 // Recruiter + Admin: view and manage all applications
 Route::prefix('application')->middleware(['jwt.verify', 'access.role:'.UserConstant::USER_ROLE_ADMIN.'|'.UserConstant::USER_ROLE_SUB_ADMIN.'|'.UserConstant::USER_ROLE_RECRUITER])->group(function () {
     Route::post('/list', [JobApplicationController::class, 'list'])->name('JobApplicationController.list');

@@ -27,6 +27,7 @@ export const API = {
     DELETE: `${BASE_URL}/api/v1/job/delete`,
     PUBLISH: `${BASE_URL}/api/v1/job/publish`,
     SUGGESTIONS: `${BASE_URL}/api/v1/job/suggestions`,
+    ANALYZE: `${BASE_URL}/api/v1/job/analyze`,
   },
 
   APPLICATION: {

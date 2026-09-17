@@ -9,4 +9,5 @@ export const jobsApi = {
   delete: (payload) => axiosClient.post(API.JOB.DELETE, payload),
   publish: (payload) => axiosClient.post(API.JOB.PUBLISH, payload),
   suggestions: (payload) => axiosClient.post(API.JOB.SUGGESTIONS, payload),
+  analyze: (payload) => axiosClient.post(API.JOB.ANALYZE, payload),
 };

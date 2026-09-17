@@ -1,4 +1,10 @@
-import { ChevronDown } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const inp = {
   className:
@@ -10,23 +16,26 @@ export function StyledSelect({
   onChange,
   required,
   wrapperClassName = "",
-  children,
+  options,
+  placeholder,
 }) {
   return (
-    <div className={`relative ${wrapperClassName}`}>
-      <select
-        value={value}
-        onChange={onChange}
-        required={required}
-        className={`${inp.className} appearance-none pr-9`}
-      >
-        {children}
-      </select>
-      <ChevronDown
-        size={14}
-        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-      />
-    </div>
+    <Select
+      value={value || undefined}
+      onValueChange={(val) => onChange({ target: { value: val } })}
+      required={required}
+    >
+      <SelectTrigger className={wrapperClassName}>
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((o) => (
+          <SelectItem key={o.value} value={o.value}>
+            {o.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
@@ -40,14 +49,13 @@ export function SelectField({
 }) {
   return (
     <Field label={label}>
-      <StyledSelect value={value} onChange={onChange} required={required}>
-        {placeholder && <option value="">{placeholder}</option>}
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </StyledSelect>
+      <StyledSelect
+        value={value}
+        onChange={onChange}
+        required={required}
+        options={options}
+        placeholder={placeholder}
+      />
     </Field>
   );
 }
